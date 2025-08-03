@@ -1,0 +1,11 @@
+{
+    "name": "daskitchen",
+    "version": "1.0.0",
+    "description": "Home site for Das Kitchen Organization",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Evan White",
+    "license": "AGPL-3.0-or-later"
+}
