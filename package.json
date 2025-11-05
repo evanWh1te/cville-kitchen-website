@@ -1,11 +1,49 @@
 {
-    "name": "daskitchen",
+    "name": "das-kitchen",
     "version": "1.0.0",
-    "description": "Home site for Das Kitchen Organization",
-    "main": "index.js",
+    "description": "Das Kitchen - Mutual Aid Organization Website",
+    "private": true,
+    "workspaces": [
+        "frontend",
+        "backend"
+    ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:frontend": "cd frontend && npm run dev",
+        "dev:backend": "cd backend && npm run dev",
+        "build": "npm run build:frontend && npm run build:backend",
+        "build:frontend": "cd frontend && npm run build",
+        "build:backend": "cd backend && npm run build",
+        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+        "start:frontend": "cd frontend && npm run start",
+        "start:backend": "cd backend && npm run start",
+        "lint": "npm run lint:frontend && npm run lint:backend",
+        "lint:frontend": "cd frontend && npm run lint",
+        "lint:backend": "cd backend && npm run lint",
+        "type-check": "npm run type-check:frontend && npm run type-check:backend",
+        "type-check:frontend": "cd frontend && npm run type-check",
+        "type-check:backend": "cd backend && npm run type-check",
+        "clean": "rm -rf frontend/.next backend/dist frontend/node_modules backend/node_modules node_modules",
+        "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=8.0.0"
     },
     "author": "Evan White",
-    "license": "AGPL-3.0-or-later"
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/your-org/das-kitchen.git"
+    },
+    "keywords": [
+        "mutual-aid",
+        "community",
+        "nextjs",
+        "express",
+        "typescript"
+    ]
 }
