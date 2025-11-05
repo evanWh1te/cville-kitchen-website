@@ -31,7 +31,8 @@ export default function Header() {
 
     const navigation = [
         { name: 'Home', href: '/' },
-        { name: 'About', href: '/about' },
+        // { name: 'About', href: '/about' },
+        { name: 'Community Resources', href: '/resources' },
         { name: 'Political Education', href: '/education' },
         { name: 'Contact', href: '/contact' }
     ];
