@@ -81,7 +81,9 @@ app.use('*', (req, res) => {
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-    console.log(`🚀 Das Kitchen API server running on port ${PORT}`);
+    console.log(
+        `🚀 Charlottesville Kitchen API server running on port ${PORT}`
+    );
     console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(
         `🌐 CORS enabled for: ${
