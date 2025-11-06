@@ -20,36 +20,36 @@ import Link from 'next/link';
 
 export default function Footer() {
     return (
-        <footer className="bg-gray-900">
+        <footer className="bg-accent-900 border-t-4 border-primary-600">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
                 <div className="grid md:grid-cols-4 gap-8">
                     {/* Brand */}
                     <div className="md:col-span-1">
                         <Link
                             href="/"
-                            className="text-2xl font-bold text-white font-heading"
+                            className="text-2xl font-bold text-secondary-400 font-heading hover:text-secondary-300 transition-colors"
                         >
-                            CVille Kitchen
+                            Charlottesville Kitchen
                         </Link>
-                        <p className="mt-4 text-gray-300 text-sm">
-                            Building community resilience through mutual aid,
-                            solidarity, and collective care.
+                        <p className="mt-4 text-accent-300 text-sm">
+                            Building revolutionary community through mutual aid,
+                            solidarity, and collective liberation.
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-8 pt-8 border-t border-gray-700">
+                <div className="mt-8 pt-8 border-t border-primary-700">
                     <div className="md:flex md:items-center md:justify-between">
                         <div className="flex space-x-6 md:order-2">
                             <Link
                                 href="/privacy"
-                                className="text-gray-400 hover:text-white text-sm"
+                                className="text-accent-400 hover:text-secondary-300 text-sm transition-colors"
                             >
                                 Privacy Policy
                             </Link>
                             <Link
                                 href="/terms"
-                                className="text-gray-400 hover:text-white text-sm"
+                                className="text-accent-400 hover:text-secondary-300 text-sm transition-colors"
                             >
                                 Terms of Service
                             </Link>

@@ -31,39 +31,40 @@ export default function AboutPage() {
         <>
             <Header />
             <main className="flex-1">
-                <section className="py-16 bg-white">
+                <section className="py-16 bg-accent-50">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6">
                         <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-gray-900 font-heading mb-4">
+                            <h1 className="text-4xl font-bold text-primary-700 font-heading mb-4">
                                 About Das Kitchen
                             </h1>
-                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Building community resilience through mutual
-                                aid, solidarity, and collective care.
+                            <p className="text-xl text-accent-700 max-w-3xl mx-auto">
+                                Building revolutionary community through mutual
+                                aid, solidarity, and collective liberation.
                             </p>
                         </div>
 
                         <div className="prose prose-lg max-w-none">
                             <div className="grid md:grid-cols-2 gap-12 mb-12">
                                 <div>
-                                    <h2 className="text-2xl font-semibold text-gray-900 font-heading mb-4">
+                                    <h2 className="text-2xl font-semibold text-primary-600 font-heading mb-4">
                                         Our Mission
                                     </h2>
-                                    <p className="text-gray-700 mb-6">
+                                    <p className="text-accent-800 mb-6">
                                         Das Kitchen exists to strengthen our
                                         community through direct action, mutual
-                                        aid, and solidarity. We believe in the
-                                        power of collective care and the
-                                        importance of building networks of
-                                        support that center the most vulnerable
-                                        among us.
+                                        aid, and revolutionary solidarity. We
+                                        believe in the power of collective care
+                                        and the importance of building networks
+                                        of support that center the working class
+                                        and most oppressed among us.
                                     </p>
-                                    <p className="text-gray-700">
+                                    <p className="text-accent-800">
                                         Our work is rooted in the understanding
                                         that true security comes not from
-                                        individual wealth or institutional
-                                        power, but from strong communities where
-                                        everyone has what they need to thrive.
+                                        individual wealth or capitalist
+                                        institutions, but from strong
+                                        communities where everyone has what they
+                                        need to thrive.
                                     </p>
                                 </div>
 

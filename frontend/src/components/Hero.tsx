@@ -23,31 +23,31 @@ export default function Hero() {
         <section className="bg-white py-20">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                    Das Kitchen
+                    Charlottesville Kitchen
                 </h1>
                 <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                     Community mutual aid and solidarity
                 </p>
                 <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur.
+                    Building revolutionary community through mutual aid, direct
+                    action, and solidarity. We believe in collective power,
+                    workers' rights, and creating systems of care that serve the
+                    people, not profit. Join us in building a more just and
+                    equitable world through grassroots organizing and community
+                    support.
                 </p>
                 <div className="space-y-4 sm:space-y-0 sm:flex sm:gap-4 sm:justify-center">
                     <Link
-                        href="/contact"
-                        className="block sm:inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded transition-colors"
+                        href="/resources"
+                        className="block sm:inline-block bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-6 rounded transition-colors shadow-lg"
                     >
-                        Get Involved
+                        Community Resources
                     </Link>
                     <Link
-                        href="/about"
-                        className="block sm:inline-block border border-gray-300 hover:border-gray-400 text-gray-700 hover:text-gray-900 font-medium py-3 px-6 rounded transition-colors"
+                        href="/education"
+                        className="block sm:inline-block bg-secondary-500 hover:bg-secondary-600 text-accent-900 font-medium py-3 px-6 rounded transition-colors shadow-lg"
                     >
-                        Learn More
+                        Political Education
                     </Link>
                 </div>
             </div>

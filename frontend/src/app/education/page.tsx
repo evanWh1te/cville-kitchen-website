@@ -31,22 +31,23 @@ export default function EducationPage() {
         <>
             <Header />
             <main className="flex-1">
-                <section className="py-16 bg-white">
+                <section className="py-16 bg-accent-50">
                     <div className="max-w-6xl mx-auto px-4 sm:px-6">
                         <div className="text-center mb-12">
-                            <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                            <h1 className="text-4xl font-bold text-primary-700 mb-4">
                                 Political Education
                             </h1>
-                            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            <p className="text-xl text-accent-700 max-w-3xl mx-auto">
                                 Understanding socialist principles and building
-                                community power through mutual aid
+                                revolutionary community power through collective
+                                action
                             </p>
                         </div>
 
-                        <div className="prose prose-lg max-w-none space-y-12">
+                        <div className="prose prose-lg max-w-none space-y-12 prose-headings:text-primary-600 prose-h2:text-primary-700 prose-p:text-accent-800 prose-strong:text-revolutionary-700 prose-a:text-primary-600 hover:prose-a:text-primary-800">
                             {/* Mutual Aid as Revolutionary Practice */}
                             <section>
-                                <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                                <h2 className="text-3xl font-semibold text-primary-700 mb-6">
                                     Mutual Aid as Revolutionary Practice
                                 </h2>
                                 <div className="grid md:grid-cols-2 gap-8">
