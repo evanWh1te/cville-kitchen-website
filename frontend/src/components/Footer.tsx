@@ -27,9 +27,14 @@ export default function Footer() {
                     <div className="md:col-span-1">
                         <Link
                             href="/"
-                            className="text-2xl font-bold text-secondary-400 font-heading hover:text-secondary-300 transition-colors"
+                            className="group flex items-center space-x-1 hover:opacity-90 transition-opacity"
                         >
-                            Charlottesville Kitchen
+                            <span className="text-xl font-light text-white tracking-wide">
+                                Charlottesville
+                            </span>
+                            <span className="text-2xl font-bold text-white tracking-tight">
+                                Kitchen
+                            </span>
                         </Link>
                         <p className="mt-4 text-accent-300 text-sm">
                             Building revolutionary community through mutual aid,
@@ -55,8 +60,8 @@ export default function Footer() {
                             </Link>
                         </div>
                         <p className="mt-4 md:mt-0 md:order-1 text-gray-400 text-sm">
-                            &copy; 2025 CVille Kitchen. Built with ❤️ for
-                            community.
+                            &copy; 2025 Charlottesville Kitchen. Built with ❤️
+                            for community.
                         </p>
                     </div>
                 </div>

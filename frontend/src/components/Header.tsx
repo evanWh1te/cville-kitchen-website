@@ -41,8 +41,16 @@ export default function Header() {
         <header className="bg-white border-b border-gray-200">
             <nav className="mx-auto max-w-6xl px-4 sm:px-6">
                 <div className="flex h-16 items-center justify-between">
-                    <Link href="/" className="text-xl font-bold text-gray-900">
-                        Charlottesville Kitchen
+                    <Link
+                        href="/"
+                        className="group flex items-center space-x-1 hover:opacity-90 transition-opacity"
+                    >
+                        <span className="text-xl font-light text-black tracking-wide">
+                            Charlottesville
+                        </span>
+                        <span className="text-2xl font-bold text-black tracking-tight">
+                            Kitchen
+                        </span>
                     </Link>
 
                     <div className="hidden md:flex md:space-x-8">

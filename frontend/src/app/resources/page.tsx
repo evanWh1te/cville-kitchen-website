@@ -31,7 +31,7 @@ export default async function ResourcesPage() {
             <Header />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                 <div
-                    className="prose prose-lg max-w-none prose-headings:text-accent-900 prose-h1:text-4xl prose-h1:font-bold prose-h1:tracking-tight prose-h1:text-primary-700 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-primary-600 prose-h3:text-xl prose-h3:font-semibold prose-h3:text-revolutionary-600 prose-a:text-primary-600 hover:prose-a:text-primary-700 prose-strong:text-accent-900 prose-p:text-accent-800"
+                    className="prose prose-lg max-w-none prose-headings:text-accent-900 prose-h1:text-4xl prose-h1:font-bold prose-h1:tracking-tight prose-h1:text-gray-700 prose-h2:text-2xl prose-h2:font-bold prose-h2:text-white prose-h2:bg-gray-700 prose-h2:px-4 prose-h2:py-2 prose-h2:rounded-lg prose-h2:border-l-4 prose-h2:border-primary-500 prose-h3:text-xl prose-h3:font-semibold prose-h3:text-revolutionary-600 prose-a:text-primary-600 hover:prose-a:text-primary-700 prose-strong:text-accent-900 prose-p:text-accent-800"
                     dangerouslySetInnerHTML={{ __html: markdownContent }}
                 />
             </div>
