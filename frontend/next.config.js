@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     typescript: {
@@ -11,7 +13,13 @@ const nextConfig = {
     },
     env: {
         NEXT_PUBLIC_API_URL:
-            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'
+    },
+    // Enable standalone build for Docker
+    output: 'standalone',
+    // Optimize for production
+    experimental: {
+        outputFileTracingRoot: path.join(__dirname, '../')
     }
 };
 
