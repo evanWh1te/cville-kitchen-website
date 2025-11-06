@@ -2,6 +2,12 @@
 
 _Last updated: October 2, 2025_
 
+We have compiled community resources for you and for all in solidarity as fellow
+members of the working class of Charlottesville. Food is a human right. Scarcity
+is a capitalist construct intended to oppress us. Together we will win a
+socialist future &ndash; a future that provides to each according to their
+needs. Venceremos.
+
 This information is compiled by the Charlottesville Access Project
 (cvillestreetsheet@gmail.com, 412-415-6402).
 
@@ -22,6 +28,63 @@ community and maintained by volunteers in the spirit of mutual aid and
 solidarity. Best practices often include making sure donated food is sealed,
 packaged, labeled, and dated - not half-eaten leftovers or opened or expired
 items.
+
+---
+
+## Public Meals
+
+### Breakfast
+
+**The Haven** - 112 W Market St  
+7 days a week, 7:30-8:30am  
+_(Updated 8/8/25)_
+
+**The Salvation Army** - 207 Ridge St
+
+-   Monday-Saturday: 8:00-8:30am
+-   Sunday: 9:15am  
+    _(Updated 8/8/25)_
+
+### Lunch
+
+**Monday, 12:00-1:00pm**  
+First United Methodist Church, 101 E Jefferson St  
+_(Updated 8/8/25)_
+
+**Tuesday, 12:00-1:00pm**  
+Christ's Church, 120 W High St  
+_(Updated 5/9/25)_
+
+**Wednesday, 12:00-1:00pm**  
+First Presbyterian, 500 Park Street  
+_(Updated 8/8/25)_
+
+**Thursday, 12:00-1:00pm**  
+Holy Comforter, 208 East Jefferson St  
+_(Updated 8/8/25)_
+
+**Friday, 12:00-1:00pm**  
+The Haven, 112 W Market St  
+Walk-up, no request needed ahead of time  
+_(Updated 8/8/25)_
+
+**Sunday, 11:00am-12:00pm**  
+The Haven, 112 W Market St  
+_(Updated 8/8/25)_
+
+**Monday-Saturday, 12:00-12:30pm**  
+The Salvation Army, 207 Ridge St  
+_(Updated 8/8/25)_
+
+### Dinner
+
+**Monday-Saturday, 5:15-6:00pm**  
+The Salvation Army, 207 Ridge St  
+_(Updated 8/8/25)_
+
+**Sunday, 4:00-4:45pm**  
+The Salvation Army, 207 Ridge St  
+_(Updated 8/8/25)_
 
 ---
 
@@ -88,121 +151,6 @@ Shelf-stable, reapportioned items, StudCo Free Store
 _For UVA students and employees_  
 **Location:** Corner Building at University Avenue, main floor  
 **Hours:** Monday-Friday: 9am-5pm (during academic year)
-
----
-
-## Additional Local Efforts & Ways to Help
-
-### Charlottesville Food Not Bombs
-
-Food distribution + potluck every Wednesday at 6:15pm  
-**Location:** IX Art Park, 522 2nd Street SE D
-
-### Food Sharing is Caring
-
-**Distribution:** Every Sunday at 10am at Tonsler Park - bring two bags  
-**Donate:** Money at website / in-kind donations, email
-edisa@foodsharingiscaring.org  
-**Volunteer:** 9:30am-12:30pm on distribution days
-
-### Bread Across Borders
-
-**Distribution:** Sunday afternoons  
-**Volunteer:** Can help sorting 11:30am-1pm  
-**Contact:** breadacrossborders@gmail.com
-
-### Cville Care Bears
-
-On the mall every weekend to provide food, drink, harm reduction, and other
-necessities  
-**Updates:** Instagram
-[@cvillecarebears](https://instagram.com/cvillecarebears)  
-Also organize the Free Farmers Market & Potluck  
-**Email:** CvilleFreeFarmersMarket@proton.me
-
-### Community Potluck at Visible/Records
-
-**Location:** 1740 Broadway Street  
-**When:** 1st Sunday monthly, 12:30-3:30pm  
-Bringing a dish is not required to attend  
-**Updates:** Instagram
-[@communitypotluck.cville](https://instagram.com/communitypotluck.cville)
-
-### Virginia Fresh Match Program
-
-**Locations:**
-
--   Farmers Market at IX Art Park, Saturdays 9am-1pm
--   Charlottesville City Farmers Market (100 Water Street), Saturdays 9am-1pm
-
-**All November:** Choose how much SNAP to spend, get double your SNAP for fruits
-and vegetables, plus get an extra $20 in tokens for free. If your SNAP balance
-is $0, you can still get $20 in free tokens for fruits and vegetables.
-
-### Other Resources
-
--   **Grocery 'buddy' match program** via Reddit
--   **Piedmont Feeds:** Website connecting individuals and families with food
-    pantries, prepared meals, free grocery programs, and other resources across
-    Culpeper, Fauquier, Madison, Orange, and Rappahannock counties
--   **Food Assist @ UVA**
-
----
-
-## Public Meals
-
-### Breakfast
-
-**The Haven** - 112 W Market St  
-7 days a week, 7:30-8:30am  
-_(Updated 8/8/25)_
-
-**The Salvation Army** - 207 Ridge St
-
--   Monday-Saturday: 8:00-8:30am
--   Sunday: 9:15am  
-    _(Updated 8/8/25)_
-
-### Lunch
-
-**Monday, 12:00-1:00pm**  
-First United Methodist Church, 101 E Jefferson St  
-_(Updated 8/8/25)_
-
-**Tuesday, 12:00-1:00pm**  
-Christ's Church, 120 W High St  
-_(Updated 5/9/25)_
-
-**Wednesday, 12:00-1:00pm**  
-First Presbyterian, 500 Park Street  
-_(Updated 8/8/25)_
-
-**Thursday, 12:00-1:00pm**  
-Holy Comforter, 208 East Jefferson St  
-_(Updated 8/8/25)_
-
-**Friday, 12:00-1:00pm**  
-The Haven, 112 W Market St  
-Walk-up, no request needed ahead of time  
-_(Updated 8/8/25)_
-
-**Sunday, 11:00am-12:00pm**  
-The Haven, 112 W Market St  
-_(Updated 8/8/25)_
-
-**Monday-Saturday, 12:00-12:30pm**  
-The Salvation Army, 207 Ridge St  
-_(Updated 8/8/25)_
-
-### Dinner
-
-**Monday-Saturday, 5:15-6:00pm**  
-The Salvation Army, 207 Ridge St  
-_(Updated 8/8/25)_
-
-**Sunday, 4:00-4:45pm**  
-The Salvation Army, 207 Ridge St  
-_(Updated 8/8/25)_
 
 ---
 
@@ -279,6 +227,25 @@ partner food pantries. Regular assistance from Monday-Friday 7:30am-4:00pm.
 
 To find a pantry in their area, people can use the
 [food finder tool](https://foodfinder.brafb.org/).
+
+---
+
+## Student Meal Services
+
+### Albemarle County Student Meal Services
+
+**For students:** Under 18 in Albemarle County Public School feeder areas  
+**Current status (8/8/25):**
+[Apply for free and reduced meals](https://www.k12albemarle.org/our-divisions/student-services/child-nutrition)
+
+### Charlottesville City School Meals
+
+**For students:** Under 18 in Charlottesville City School feeder area  
+**Current status (8/8/25):**
+[Apply for free and reduced lunch](https://www.charlottesvilleschools.org/departments/nutrition)  
+**Questions:** Contact Carlton Jones, Nutrition Administrator  
+**Phone:** 434-245-2830  
+**Email:** JonesC1@charlottesvilleschools.org
 
 ---
 
@@ -392,25 +359,6 @@ calling 434-823-5171.
 
 ---
 
-## Student Meal Services
-
-### Albemarle County Student Meal Services
-
-**For students:** Under 18 in Albemarle County Public School feeder areas  
-**Current status (8/8/25):**
-[Apply for free and reduced meals](https://www.k12albemarle.org/our-divisions/student-services/child-nutrition)
-
-### Charlottesville City School Meals
-
-**For students:** Under 18 in Charlottesville City School feeder area  
-**Current status (8/8/25):**
-[Apply for free and reduced lunch](https://www.charlottesvilleschools.org/departments/nutrition)  
-**Questions:** Contact Carlton Jones, Nutrition Administrator  
-**Phone:** 434-245-2830  
-**Email:** JonesC1@charlottesvilleschools.org
-
----
-
 ## Food Delivery Services
 
 ### JABA Home Delivered Meals
@@ -446,6 +394,64 @@ Monday through Friday.
 **Current status (8/8/25):** Works with community partners to provide Reach
 bags, either via delivery or pickup at their location, to seniors and homebound
 individuals who are food insecure.
+
+---
+
+## Additional Local Efforts & Ways to Help
+
+### Charlottesville Food Not Bombs
+
+Food distribution + potluck every Wednesday at 6:15pm  
+**Location:** IX Art Park, 522 2nd Street SE D
+
+### Food Sharing is Caring
+
+**Distribution:** Every Sunday at 10am at Tonsler Park - bring two bags  
+**Donate:** Money at website / in-kind donations, email
+edisa@foodsharingiscaring.org  
+**Volunteer:** 9:30am-12:30pm on distribution days
+
+### Bread Across Borders
+
+**Distribution:** Sunday afternoons  
+**Volunteer:** Can help sorting 11:30am-1pm  
+**Contact:** breadacrossborders@gmail.com
+
+### Cville Care Bears
+
+On the mall every weekend to provide food, drink, harm reduction, and other
+necessities  
+**Updates:** Instagram
+[@cvillecarebears](https://instagram.com/cvillecarebears)  
+Also organize the Free Farmers Market & Potluck  
+**Email:** CvilleFreeFarmersMarket@proton.me
+
+### Community Potluck at Visible/Records
+
+**Location:** 1740 Broadway Street  
+**When:** 1st Sunday monthly, 12:30-3:30pm  
+Bringing a dish is not required to attend  
+**Updates:** Instagram
+[@communitypotluck.cville](https://instagram.com/communitypotluck.cville)
+
+### Virginia Fresh Match Program
+
+**Locations:**
+
+-   Farmers Market at IX Art Park, Saturdays 9am-1pm
+-   Charlottesville City Farmers Market (100 Water Street), Saturdays 9am-1pm
+
+**All November:** Choose how much SNAP to spend, get double your SNAP for fruits
+and vegetables, plus get an extra $20 in tokens for free. If your SNAP balance
+is $0, you can still get $20 in free tokens for fruits and vegetables.
+
+### Other Resources
+
+-   **Grocery 'buddy' match program** via Reddit
+-   **Piedmont Feeds:** Website connecting individuals and families with food
+    pantries, prepared meals, free grocery programs, and other resources across
+    Culpeper, Fauquier, Madison, Orange, and Rappahannock counties
+-   **Food Assist @ UVA**
 
 ---
 
