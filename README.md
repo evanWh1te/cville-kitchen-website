@@ -1,31 +1,48 @@
-# Das Kitchen - Mutual Aid Organization Website
+# ✊ Charlottesville Kitchen - Revolutionary Mutual Aid Website
 
-A modern, accessible website for Das Kitchen, a mutual aid organization focused
-on building community resilience through solidarity and collective care.
+A modern, accessible website for Charlottesville Kitchen, a leftist mutual aid
+organization focused on building revolutionary community through solidarity,
+direct action, and collective liberation.
+
+## 🚩 About This Project
+
+This website serves as a digital hub for socialist organizing and mutual aid in
+the Charlottesville area. Built with revolutionary principles in mind, it
+provides:
+
+-   **Community Resources**: Comprehensive food resources and mutual aid
+    networks
+-   **Political Education**: Socialist theory and organizing materials
+-   **Direct Action**: Tools for community organizing and solidarity work
+-   **Workers' Solidarity**: Platform for collective action and support
 
 ## 🏗️ Project Structure
 
-This is a monorepo containing:
-
--   **Frontend**: Next.js 14 with TypeScript, Tailwind CSS, and App Router
--   **Backend**: Express.js API with TypeScript, CORS, and security middleware
--   **Shared**: Configuration files, documentation, and development scripts
+This is a full-stack monorepo with socialist-themed design:
 
 ```
-das-kitchen/
-├── frontend/           # Next.js frontend application
+cville-kitchen-website/
+├── frontend/                 # Next.js 14 with socialist color scheme
 │   ├── src/
-│   │   ├── app/        # App Router pages and layouts
-│   │   └── components/ # Reusable React components
-│   ├── package.json
-│   └── tailwind.config.js
-├── backend/            # Express.js API server
+│   │   ├── app/             # App Router pages
+│   │   │   ├── resources/   # Community resource listings (markdown-driven)
+│   │   │   ├── education/   # Political education materials
+│   │   │   ├── about/       # Organization mission
+│   │   │   └── contact/     # Contact and organizing
+│   │   ├── components/      # Revolutionary-themed components
+│   │   ├── lib/            # Markdown processing utilities
+│   │   └── resources/      # Community resource data (markdown)
+│   ├── tailwind.config.js  # Socialist color palette
+│   └── next.config.js      # Docker-optimized build
+├── backend/                 # Express.js API
 │   ├── src/
-│   │   ├── routes/     # API endpoints
-│   │   └── middleware/ # Express middleware
-│   ├── package.json
-│   └── tsconfig.json
-├── package.json        # Root package.json with workspace scripts
+│   │   ├── routes/         # API endpoints
+│   │   └── middleware/     # Security middleware
+│   └── package.json
+├── Dockerfile              # Multi-stage production build
+├── docker-compose.yml      # Container orchestration
+├── nginx.conf             # Reverse proxy configuration
+├── deploy.sh              # Production deployment script
 └── README.md
 ```
 
@@ -35,55 +52,69 @@ das-kitchen/
 
 -   Node.js 18+ and npm 8+
 -   Git
+-   Docker & Docker Compose (for production deployment)
 
-### Installation
+### Local Development
 
 1. **Clone the repository**
 
     ```bash
-    git clone <repository-url>
-    cd das-kitchen
+    git clone https://github.com/evanWh1te/cville-kitchen-website.git
+    cd cville-kitchen-website
     ```
 
 2. **Install dependencies**
 
     ```bash
-    npm run install:all
-    ```
-
-3. **Set up environment variables**
-
-    ```bash
     # Frontend
-    cp frontend/.env.local.example frontend/.env.local
+    cd frontend && npm install
 
     # Backend
-    cp backend/.env.example backend/.env
+    cd ../backend && npm install
     ```
 
-4. **Start development servers**
+3. **Start development servers**
+
     ```bash
-    npm run dev
+    # From frontend directory
+    npm run dev  # Runs on http://localhost:3000
+
+    # From backend directory (in separate terminal)
+    npm run dev  # Runs on http://localhost:3001
     ```
 
-This will start both the frontend (http://localhost:3000) and backend
-(http://localhost:3001) servers.
+### Production Deployment (Digital Ocean)
+
+1. **Install Docker on your droplet**
+
+    ```bash
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    sudo sh get-docker.sh
+    sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    ```
+
+2. **Install and configure nginx**
+
+    ```bash
+    sudo apt update && sudo apt install nginx
+    sudo cp nginx.conf /etc/nginx/sites-available/cville-kitchen
+    sudo ln -s /etc/nginx/sites-available/cville-kitchen /etc/nginx/sites-enabled/
+    sudo rm /etc/nginx/sites-enabled/default
+    sudo nginx -t && sudo systemctl reload nginx
+    ```
+
+3. **Deploy the application**
+    ```bash
+    ./deploy.sh
+    ```
 
 ## 📦 Available Scripts
-
-### Root Scripts
-
--   `npm run dev` - Start both frontend and backend in development mode
--   `npm run build` - Build both applications for production
--   `npm run start` - Start both applications in production mode
--   `npm run lint` - Lint both applications
--   `npm run type-check` - Type check both applications
--   `npm run clean` - Clean all build artifacts and node_modules
 
 ### Frontend Scripts (cd frontend/)
 
 -   `npm run dev` - Start Next.js development server
--   `npm run build` - Build for production
+-   `npm run build` - Build for production (standalone Docker build)
 -   `npm run start` - Start production server
 -   `npm run lint` - Run ESLint
 -   `npm run type-check` - TypeScript type checking
@@ -95,133 +126,218 @@ This will start both the frontend (http://localhost:3000) and backend
 -   `npm run start` - Start production server
 -   `npm run lint` - Run ESLint on backend code
 
-## 🎨 Frontend Features
+### Docker/Deployment Scripts
 
--   **Next.js 14** with App Router and TypeScript
--   **Tailwind CSS** for styling with custom design system
--   **Responsive Design** optimized for mobile and desktop
--   **Accessibility** compliant with WCAG guidelines
--   **SEO Optimized** with proper meta tags and structured data
+-   `./deploy.sh` - Full production deployment script
+-   `docker-compose build` - Build Docker images
+-   `docker-compose up -d` - Start containers in background
+-   `docker-compose logs -f` - View container logs
 
-### Pages
+## 🎨 Socialist Design System
 
--   **Homepage** - Hero section, features, and call-to-action
--   **About** - Organization mission, values, and impact
--   **Contact** - Contact form with validation and rate limiting
+### Revolutionary Color Palette
+
+-   **Primary Red** (`#dc2626`) - Classic socialist/communist red
+-   **Secondary Gold** (`#eab308`) - Soviet-inspired gold/yellow
+-   **Revolutionary Red** (`#e11d48`) - Deep action red
+-   **Solidarity Brown** (`#78716c`) - Working class earth tones
+-   **Accent Grays** - Industrial worker aesthetics
+
+### Pages & Features
+
+-   **Homepage** - Revolutionary hero with gradient backgrounds and solidarity
+    symbolism
+-   **Community Resources** - Dynamic markdown-driven resource listings
+-   **Political Education** - Socialist theory and organizing materials
+-   **About** - Revolutionary mission and anti-capitalist values
+-   **Contact** - Organizing and solidarity contact forms
 
 ### Components
 
--   `Header` - Navigation with mobile menu
--   `Hero` - Landing page hero section
--   `Features` - Service highlights and impact metrics
--   `CallToAction` - Engagement prompts
--   `Footer` - Site footer with links and information
+-   `Header` - Socialist-themed navigation with solidarity fist (✊)
+-   `Hero` - Revolutionary messaging with leftist color gradients
+-   `Footer` - "Workers of the world, unite!" messaging
+-   **Logo Design** - Stylized "Charlottesville Kitchen" with thin/bold contrast
+
+### Key Features
+
+-   **Dynamic Content** - Markdown-powered resource pages
+-   **Accessibility First** - WCAG compliant for community access
+-   **Mobile Responsive** - Optimized for organizing on-the-go
+-   **Socialist Aesthetics** - Consistent revolutionary branding
 
 ## 🔧 Backend Features
 
 -   **Express.js** with TypeScript
--   **Security** with Helmet, CORS, and rate limiting
--   **Validation** with express-validator
--   **Error Handling** with custom middleware
--   **Logging** with Morgan
+-   **Security Hardened** - Helmet, CORS, rate limiting for activist protection
+-   **Input Validation** - express-validator for secure form processing
+-   **Error Handling** - Custom middleware for robust operation
+-   **Request Logging** - Morgan for monitoring and security
 
 ### API Endpoints
 
--   `GET /health` - Health check endpoint
--   `POST /api/contact` - Contact form submission
+-   `GET /health` - Health check for monitoring
+-   `POST /api/contact` - Secure contact form processing
+
+### Security Features
+
+-   **Rate Limiting** - Protects against DoS attacks
+-   **CORS Protection** - Secure cross-origin requests
+-   **Input Sanitization** - Prevents injection attacks
+-   **Security Headers** - Helmet.js protection
 
 ## 🎯 Tech Stack
 
 ### Frontend
 
--   Next.js 14
--   React 18
--   TypeScript
--   Tailwind CSS
--   Heroicons
+-   **Next.js 14** - React framework with App Router
+-   **React 18** - Modern component architecture
+-   **TypeScript** - Type safety for reliable organizing tools
+-   **Tailwind CSS** - Revolutionary design system
+-   **Remark/Markdown** - Dynamic content management
+-   **Heroicons** - Consistent iconography
 
 ### Backend
 
--   Express.js
--   TypeScript
--   CORS
--   Helmet (security)
--   express-validator
--   express-rate-limit
--   Morgan (logging)
+-   **Express.js** - Node.js web framework
+-   **TypeScript** - Server-side type safety
+-   **Security Stack** - Helmet, CORS, rate limiting
+-   **Validation** - express-validator for secure inputs
+-   **Logging** - Morgan for request monitoring
+
+### Deployment & DevOps
+
+-   **Docker** - Multi-stage containerization
+-   **nginx** - Reverse proxy and static serving
+-   **Digital Ocean** - Production hosting
+-   **Docker Compose** - Container orchestration
 
 ### Development Tools
 
--   ESLint
--   Prettier
--   Nodemon
--   Concurrently
+-   **ESLint** - Code quality enforcement
+-   **Prettier** - Code formatting
+-   **Nodemon** - Development hot reloading
 
-## 🌱 Development
+## 🌱 Development Guide
+
+### Adding Community Resources
+
+1. Edit `frontend/src/resources/foodResources.md` with new resources
+2. Content automatically appears on `/resources` page
+3. Markdown supports full formatting, links, and structure
 
 ### Adding New Pages
 
-1. Create page component in `frontend/src/app/[page-name]/page.tsx`
-2. Update navigation in `frontend/src/components/Header.tsx`
-3. Add any necessary API endpoints in `backend/src/routes/`
+1. Create page: `frontend/src/app/[page-name]/page.tsx`
+2. Update navigation: `frontend/src/components/Header.tsx`
+3. Add API endpoints: `backend/src/routes/` (if needed)
 
-### Styling Guidelines
+### Socialist Design Guidelines
 
--   Use Tailwind CSS utility classes
--   Follow the custom color palette (primary, secondary, accent)
--   Ensure responsive design with mobile-first approach
--   Maintain accessibility standards
+-   **Colors**: Use revolutionary palette (primary red, secondary gold)
+-   **Typography**: Bold headers, accessible body text
+-   **Symbols**: Incorporate solidarity imagery (✊, etc.)
+-   **Messaging**: Anti-capitalist, pro-worker language
+-   **Accessibility**: Ensure community access for all
 
-### Code Style
+### Code Standards
 
--   TypeScript for type safety
--   ESLint for code quality
--   Prettier for formatting
--   Follow conventional commit messages
+-   **TypeScript** - Mandatory for type safety
+-   **ESLint** - Enforce code quality
+-   **Revolutionary Naming** - Use meaningful, activist-oriented naming
+-   **Security First** - Protect organizers and community data
 
-## 📚 Key Concepts
+## 📚 Revolutionary Principles
 
-### Mutual Aid Focus
+### Mutual Aid as Revolutionary Practice
 
-This website is designed specifically for mutual aid organizations with:
+This platform embodies leftist organizing principles:
 
--   Community-centered messaging
--   Accessibility-first design
--   Clear calls-to-action for volunteer engagement
--   Resource sharing and support request features
+-   **Solidarity over Charity** - Building power, not dependency
+-   **Direct Action** - Community solutions without state/corporate mediation
+-   **Anti-Capitalist** - Rejecting profit-driven resource distribution
+-   **Collective Care** - Supporting the most vulnerable community members
+-   **Workers' Power** - Centering working-class struggle and liberation
 
-### Security & Privacy
+### Digital Security for Activists
 
--   Rate limiting on API endpoints
--   Input validation and sanitization
--   CORS protection
--   Environment variable configuration
--   AGPL-3.0 license ensuring community access
+-   **Rate Limiting** - Protects against coordinated attacks
+-   **Input Sanitization** - Prevents infiltration attempts
+-   **CORS Protection** - Secure cross-origin communication
+-   **Docker Isolation** - Containerized security boundaries
+-   **AGPL-3.0 License** - Ensures revolutionary tools remain free
 
-## 🤝 Contributing
+### Community-Centered Design
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+-   **Accessibility First** - No barriers to community participation
+-   **Mobile Optimized** - Organizing tools work anywhere
+-   **Multi-language Ready** - Prepared for internationalization
+-   **Resource Focused** - Practical tools over performative content
+
+## ✊ Contributing to the Revolution
+
+We welcome contributions from fellow organizers and activists!
+
+### How to Contribute
+
+1. **Fork the repository** - Make it yours, comrade
+2. **Create a feature branch** - `git checkout -b feature/revolutionary-feature`
+3. **Follow socialist principles** - Code for the people, not profit
+4. **Test your changes** - Ensure reliability for the community
+5. **Submit a Pull Request** - Share your contributions with the collective
+
+### Contribution Areas
+
+-   **Community Resources** - Add local mutual aid networks
+-   **Political Education** - Expand socialist theory content
+-   **Accessibility** - Improve community access
+-   **Security** - Strengthen activist protections
+-   **Translation** - Make tools available in multiple languages
+
+### Code of Conduct
+
+-   **Solidarity First** - Support fellow contributors
+-   **Anti-Oppression** - Challenge all forms of domination
+-   **Collective Decision Making** - Major changes discussed collectively
+-   **Security Conscious** - Protect community members and activists
 
 ## 📄 License
 
-This project is licensed under the GNU Affero General Public License v3.0 or
-later - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **GNU Affero General Public License v3.0** -
+see the [LICENSE](LICENSE) file for details.
 
-The AGPL-3.0 license ensures that this mutual aid website remains free and open
-source, and that any network use or modifications are also made available to the
-community.
+**Why AGPL-3.0?** This copyleft license ensures that revolutionary organizing
+tools remain free and accessible to all communities. Any modifications, even
+when used over a network, must be shared back with the community. This prevents
+corporate co-optation of mutual aid technologies.
 
-## 🔗 Links
+## 🔗 Resources & Links
 
--   [Live Site](https://your-domain.com) (when deployed)
--   [Documentation](./docs/) (if additional docs exist)
--   [Issues](https://github.com/your-org/das-kitchen/issues)
--   [Contributing Guide](./CONTRIBUTING.md) (if exists)
+### Project Links
+
+-   **Repository**:
+    [GitHub](https://github.com/evanWh1te/cville-kitchen-website)
+-   **Issues**:
+    [Bug Reports & Feature Requests](https://github.com/evanWh1te/cville-kitchen-website/issues)
+-   **Live Site**: _[Coming Soon - Post-Deployment]_
+
+### Community Resources
+
+-   **Charlottesville Access Project** - Resource compilation source
+-   **Local Mutual Aid Networks** - Connected through the platform
+-   **Socialist Organizations** - Building revolutionary community
+
+### Technical Documentation
+
+-   **Docker Hub** - Container images
+-   **Deployment Guides** - Production setup instructions
+-   **API Documentation** - Backend endpoint details
 
 ---
 
-**Built with ❤️ for community mutual aid and solidarity.**
+## 🚩 Join the Revolution
+
+**This platform is built by organizers, for organizers.**
+
+**Built with ✊ for revolutionary community organizing and collective
+liberation.**
