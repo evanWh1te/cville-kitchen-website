@@ -86,8 +86,8 @@ export default function ContactPage() {
                                 Contact Charlottesville Kitchen
                             </h1>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                                Ready to get involved or need support? We'd love
-                                to hear from you.
+                                Ready to get involved or need support? We&apos;d
+                                love to hear from you.
                             </p>
                         </div>
 

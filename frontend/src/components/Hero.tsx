@@ -31,10 +31,10 @@ export default function Hero() {
                 <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
                     Building revolutionary community through mutual aid, direct
                     action, and solidarity. We believe in collective power,
-                    workers' rights, and creating systems of care that serve the
-                    people, not profit. Join us in building a more just and
-                    equitable world through grassroots organizing and community
-                    support.
+                    workers&apos; rights, and creating systems of care that
+                    serve the people, not profit. Join us in building a more
+                    just and equitable world through grassroots organizing and
+                    community support.
                 </p>
                 <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
                     We have compiled community resources for you and for all in
