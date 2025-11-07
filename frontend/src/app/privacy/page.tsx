@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy - Das Kitchen',
-    description: 'Das Kitchen privacy policy and data protection information.'
+    title: 'Privacy Policy - Charlottesville Kitchen',
+    description:
+        'Charlottesville Kitchen privacy policy and data protection information.'
 };
 
 export default function PrivacyPage() {
@@ -37,7 +38,7 @@ export default function PrivacyPage() {
                                 Privacy Policy
                             </h1>
                             <p className="text-gray-600 mb-8">
-                                Last updated: January 3, 2025
+                                Last updated: November 7, 2025
                             </p>
 
                             <div className="space-y-8">
@@ -46,14 +47,14 @@ export default function PrivacyPage() {
                                         Our Commitment to Privacy
                                     </h2>
                                     <p className="text-gray-700 mb-4">
-                                        Das Kitchen is committed to protecting
-                                        your privacy and personal information.
-                                        As a mutual aid organization, we
-                                        understand the importance of trust and
-                                        confidentiality in our community
-                                        relationships. This policy explains how
-                                        we collect, use, and protect your
-                                        information.
+                                        Charlottesville Kitchen is committed to
+                                        protecting your privacy and personal
+                                        information. As a mutual aid
+                                        organization, we understand the
+                                        importance of trust and confidentiality
+                                        in our community relationships. This
+                                        policy explains how we collect, use, and
+                                        protect your information.
                                     </p>
                                 </section>
 
@@ -135,11 +136,11 @@ export default function PrivacyPage() {
                                                 We Do Not Sell Your Data
                                             </h3>
                                             <p className="text-gray-700">
-                                                Das Kitchen will never sell,
-                                                trade, or rent your personal
-                                                information to third parties.
-                                                Your trust is fundamental to our
-                                                mission.
+                                                Charlottesville Kitchen will
+                                                never sell, trade, or rent your
+                                                personal information to third
+                                                parties. Your trust is
+                                                fundamental to our mission.
                                             </p>
                                         </div>
                                         <div>
@@ -261,9 +262,11 @@ export default function PrivacyPage() {
                                     </p>
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <p className="text-gray-700">
-                                            <strong>Das Kitchen</strong>
+                                            <strong>
+                                                Charlottesville Kitchen
+                                            </strong>
                                             <br />
-                                            Email: contact@daskitchen.org
+                                            Email: contact@cville.kitchen
                                             <br />
                                             Subject: Privacy Policy Inquiry
                                         </p>

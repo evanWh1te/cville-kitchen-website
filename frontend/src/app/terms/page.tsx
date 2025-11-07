@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,8 +21,9 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terms of Service - Das Kitchen',
-    description: 'Das Kitchen terms of service and usage guidelines.'
+    title: 'Terms of Service - Charlottesville Mutual Aid',
+    description:
+        'Charlottesville Mutual Aid terms of service and usage guidelines.'
 };
 
 export default function TermsPage() {
@@ -43,14 +44,16 @@ export default function TermsPage() {
                             <div className="space-y-8">
                                 <section>
                                     <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-                                        Welcome to Das Kitchen
+                                        Welcome to Charlottesville Kitchen
+                                        Mutual Aid
                                     </h2>
                                     <p className="text-gray-700 mb-4">
                                         These terms of service outline the
-                                        guidelines for using the Das Kitchen
-                                        website and participating in our mutual
-                                        aid community. By using our website or
-                                        services, you agree to these terms.
+                                        guidelines for using the Charlottesville
+                                        Kitchen website and participating in our
+                                        mutual aid community. By using our
+                                        website or services, you agree to these
+                                        terms.
                                     </p>
                                 </section>
 
@@ -59,8 +62,8 @@ export default function TermsPage() {
                                         Our Mission and Values
                                     </h2>
                                     <p className="text-gray-700 mb-4">
-                                        Das Kitchen is a mutual aid organization
-                                        committed to:
+                                        Charlottesville Kitchen is a mutual aid
+                                        organization committed to:
                                     </p>
                                     <ul className="list-disc pl-6 text-gray-700 space-y-2">
                                         <li>
@@ -170,7 +173,8 @@ export default function TermsPage() {
                                                 What We Provide
                                             </h3>
                                             <p className="text-gray-700 mb-3">
-                                                Das Kitchen provides:
+                                                Charlottesville Kitchen
+                                                provides:
                                             </p>
                                             <ul className="list-disc pl-6 text-gray-700 space-y-2">
                                                 <li>
@@ -197,14 +201,14 @@ export default function TermsPage() {
                                                 Limitations
                                             </h3>
                                             <p className="text-gray-700">
-                                                Please understand that Das
-                                                Kitchen is a grassroots
-                                                organization with limited
-                                                resources. While we strive to
-                                                help everyone who reaches out,
-                                                we cannot guarantee that we can
-                                                meet all requests for
-                                                assistance.
+                                                Please understand that
+                                                Charlottesville Kitchen is a
+                                                grassroots organization with
+                                                limited resources. While we
+                                                strive to help everyone who
+                                                reaches out, we cannot guarantee
+                                                that we can meet all requests
+                                                for assistance.
                                             </p>
                                         </div>
                                     </div>
@@ -376,9 +380,11 @@ export default function TermsPage() {
                                     </p>
                                     <div className="bg-gray-50 p-4 rounded-lg">
                                         <p className="text-gray-700">
-                                            <strong>Das Kitchen</strong>
+                                            <strong>
+                                                Charlottesville Kitchen
+                                            </strong>
                                             <br />
-                                            Email: contact@daskitchen.org
+                                            Email: contact@cville.kitchen
                                             <br />
                                             Subject: Terms of Service Inquiry
                                         </p>
@@ -387,11 +393,11 @@ export default function TermsPage() {
 
                                 <section className="border-t pt-8">
                                     <p className="text-gray-600 text-sm">
-                                        By using Das Kitchen&apos;s services,
-                                        you acknowledge that you have read,
-                                        understood, and agree to be bound by
-                                        these Terms of Service and our Privacy
-                                        Policy.
+                                        By using Charlottesville Kitchen&apos;s
+                                        services, you acknowledge that you have
+                                        read, understood, and agree to be bound
+                                        by these Terms of Service and our
+                                        Privacy Policy.
                                     </p>
                                 </section>
                             </div>
