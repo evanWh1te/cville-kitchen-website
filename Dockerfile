@@ -1,34 +1,44 @@
 # Multi-stage build for production optimization
-FROM node:18-alpine AS base
+FROM node:24-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy package files
-COPY frontend/package.json frontend/package-lock.json* ./frontend/
-COPY backend/package.json backend/package-lock.json* ./backend/
+# Copy ALL package files (root and workspaces)
+COPY package.json package-lock.json ./
+COPY frontend/package.json ./frontend/
+COPY backend/package.json ./backend/
 
-# Install dependencies
-RUN cd frontend && npm ci --only=production && npm cache clean --force
-RUN cd backend && npm ci --only=production && npm cache clean --force
+# Install all dependencies (including dev dependencies needed for build)
+RUN npm ci && npm cache clean --force
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 
-# Copy node_modules from deps stage
-COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
-COPY --from=deps /app/backend/node_modules ./backend/node_modules
+# Copy node_modules from deps stage (all in root for monorepo)
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy package files
+COPY package.json package-lock.json ./
+COPY frontend/package.json ./frontend/
+COPY backend/package.json ./backend/
 
 # Copy source code
-COPY frontend/ ./frontend/
-COPY backend/ ./backend/
+COPY frontend ./frontend
+COPY backend ./backend
+
+# Ensure public directory exists
+RUN mkdir -p /app/frontend/public
 
 # Build applications
-RUN cd backend && npm run build
-RUN cd frontend && npm run build
+WORKDIR /app/backend
+RUN npm run build
+
+WORKDIR /app/frontend
+RUN npm run build
 
 # Production image
 FROM base AS runner
@@ -41,20 +51,30 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 appuser
 
+# Install pm2 globally
+RUN npm install -g pm2
+
+# Copy node_modules (only production dependencies if possible)
+COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
+
 # Copy built applications
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone ./
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./.next/static
 COPY --from=builder --chown=appuser:nodejs /app/frontend/public ./public
-COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/
-COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
-COPY --from=builder --chown=appuser:nodejs /app/backend/node_modules ./backend/node_modules
+COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
+COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/package.json
 
-# Copy startup script
+RUN ls -R ./.next/static
+
+# Copy startup script using pm2
 COPY --chown=appuser:nodejs <<EOF /app/start.sh
 #!/bin/sh
-cd /app/backend && node index.js &
-cd /app && node server.js &
-wait
+# Start backend and frontend using pm2
+pm2 start /app/backend/dist/index.js --name backend
+pm2 start /app/frontend/server.js --name frontend
+
+# Keep pm2 running in the foreground
+pm2-runtime start all
 EOF
 
 RUN chmod +x /app/start.sh
