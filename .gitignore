@@ -1,6 +1,10 @@
 # Node
 package-lock.json
 
+# Docker
+.dockerignore
+.dockerenv
+
 # Dependencies
 node_modules/
 npm-debug.log*
