@@ -83,7 +83,7 @@ export default function ContactPage() {
                     <div className="max-w-6xl mx-auto px-4 sm:px-6">
                         <div className="text-center mb-12">
                             <h1 className="text-4xl font-bold text-gray-900 font-heading mb-4">
-                                Contact cville kitchen
+                                Contact Charlottesville Kitchen
                             </h1>
                             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                                 Ready to get involved or need support? We'd love
@@ -156,15 +156,15 @@ export default function ContactPage() {
                                             <option value="">
                                                 Select a subject
                                             </option>
-                                            <option value="volunteer">
+                                            {/* <option value="volunteer">
                                                 I want to volunteer
-                                            </option>
+                                            </option> */}
                                             <option value="support">
                                                 I need support/assistance
                                             </option>
-                                            <option value="partnership">
+                                            {/* <option value="partnership">
                                                 Partnership opportunities
-                                            </option>
+                                            </option> */}
                                             <option value="donation">
                                                 Donation/resources
                                             </option>
