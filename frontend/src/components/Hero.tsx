@@ -36,6 +36,17 @@ export default function Hero() {
                     equitable world through grassroots organizing and community
                     support.
                 </p>
+                <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    We have compiled community resources for you and for all in
+                    solidarity as fellow members of the working class of
+                    Charlottesville. Food is a human right. Scarcity is a
+                    capitalist construct intended to oppress us. Together we
+                    will win a socialist future &ndash; a future that provides
+                    to each according to their needs.
+                </p>
+                <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+                    Venceremos.
+                </p>
                 <div className="space-y-4 sm:space-y-0 sm:flex sm:gap-4 sm:justify-center">
                     <Link
                         href="/resources"

@@ -1,12 +1,6 @@
 # Community Food Resources - Charlottesville Area
 
-_Last updated: October 2, 2025_
-
-We have compiled community resources for you and for all in solidarity as fellow
-members of the working class of Charlottesville. Food is a human right. Scarcity
-is a capitalist construct intended to oppress us. Together we will win a
-socialist future &ndash; a future that provides to each according to their
-needs. Venceremos.
+_Last updated: November 7, 2025_
 
 This information is compiled by the Charlottesville Access Project
 (cvillestreetsheet@gmail.com, 412-415-6402).
