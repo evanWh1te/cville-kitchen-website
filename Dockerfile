@@ -1,25 +1,30 @@
 # Multi-stage build for production optimization
 FROM node:24-alpine AS base
 
-# Deps stage
+# Deps stage: install frontend and backend deps separately
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-COPY frontend/package.json ./frontend/
-COPY backend/package.json ./backend/
+# Frontend deps
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm ci
 
+# Backend deps
+WORKDIR /app/backend
+COPY backend/package*.json ./
 RUN npm ci
 
 # Builder stage
 FROM base AS builder
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json ./
+# Bring in source and node_modules for each app
 COPY frontend ./frontend
 COPY backend ./backend
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
+COPY --from=deps /app/backend/node_modules ./backend/node_modules
 
 # Build backend
 WORKDIR /app/backend
@@ -40,16 +45,16 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 appuser && \
     npm install -g pm2
 
-# Copy standalone Next.js - it contains a 'frontend' folder, so we extract it
+# Copy standalone Next.js output
+# Standalone contains the server and minimal node_modules tree
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone/frontend ./frontend
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./frontend/.next/static
+COPY --from=builder --chown=appuser:nodejs /app/frontend/public ./frontend/public
 
-# Copy backend
+# Copy backend build and runtime deps
 COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
+COPY --from=deps    --chown=appuser:nodejs /app/backend/node_modules ./backend/node_modules
 COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
-
-# Copy root node_modules
-COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
 
 # PM2 ecosystem config
 COPY --chown=appuser:nodejs <<'EOF' /app/ecosystem.config.js
