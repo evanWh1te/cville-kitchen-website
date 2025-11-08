@@ -1,6 +1,6 @@
 services:
   web:
-    build: .
+    image: ghcr.io/evanwh1te/cville-kitchen-website:sha-29ba6db
     ports:
       - '3000:3000'
 
