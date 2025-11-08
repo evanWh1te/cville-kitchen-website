@@ -1,86 +1,84 @@
 # Multi-stage build for production optimization
 FROM node:24-alpine AS base
 
-# Install dependencies only when needed
+# Deps stage
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Copy ALL package files (root and workspaces)
 COPY package.json package-lock.json ./
 COPY frontend/package.json ./frontend/
 COPY backend/package.json ./backend/
 
-# Install all dependencies (including dev dependencies needed for build)
-RUN npm ci && npm cache clean --force
+RUN npm ci
 
-# Rebuild the source code only when needed
+# Builder stage
 FROM base AS builder
 WORKDIR /app
 
-# Copy node_modules from deps stage (all in root for monorepo)
 COPY --from=deps /app/node_modules ./node_modules
-
-# Copy package files
 COPY package.json package-lock.json ./
-COPY frontend/package.json ./frontend/
-COPY backend/package.json ./backend/
-
-# Copy source code
 COPY frontend ./frontend
 COPY backend ./backend
 
-# Ensure public directory exists
-RUN mkdir -p /app/frontend/public
-
-# Build applications
+# Build backend
 WORKDIR /app/backend
 RUN npm run build
 
+# Build frontend
 WORKDIR /app/frontend
 RUN npm run build
 
-# Production image
+# Runner stage
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 appuser
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 appuser && \
+    npm install -g pm2
 
-# Install pm2 globally
-RUN npm install -g pm2
+# Copy standalone Next.js - it contains a 'frontend' folder, so we extract it
+COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone/frontend ./frontend
+COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./frontend/.next/static
 
-# Copy node_modules (only production dependencies if possible)
+# Copy backend
+COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
+COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
+
+# Copy root node_modules
 COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
 
-# Copy built applications
-COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone ./
-COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./.next/static
-COPY --from=builder --chown=appuser:nodejs /app/frontend/public ./public
-COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
-COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/package.json
-
-RUN ls -R ./.next/static
-
-# Copy startup script using pm2
-COPY --chown=appuser:nodejs <<EOF /app/start.sh
-#!/bin/sh
-# Start backend and frontend using pm2
-pm2 start /app/backend/dist/index.js --name backend
-pm2 start /app/frontend/server.js --name frontend
-
-# Keep pm2 running in the foreground
-pm2-runtime start all
+# PM2 ecosystem config
+COPY --chown=appuser:nodejs <<'EOF' /app/ecosystem.config.js
+module.exports = {
+  apps: [
+    {
+      name: 'backend',
+      script: './backend/dist/index.js',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G',
+      kill_timeout: 5000,
+      wait_ready: true,
+      listen_timeout: 10000
+    },
+    {
+      name: 'frontend',
+      script: './frontend/server.js',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      max_memory_restart: '1G'
+    }
+  ]
+};
 EOF
 
-RUN chmod +x /app/start.sh
-
 USER appuser
-
 EXPOSE 3000
 
-CMD ["/app/start.sh"]
+CMD ["pm2-runtime", "start", "/app/ecosystem.config.js"]
