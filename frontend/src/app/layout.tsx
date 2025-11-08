@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: 'CVille Kitchen - Community Mutual Aid',
+    title: 'Charlottesville Kitchen - Community Mutual Aid',
     description:
         'Building community resilience through mutual aid and solidarity. Join us in creating a more equitable world.',
     keywords: [
@@ -42,19 +42,13 @@ export const metadata: Metadata = {
         'social justice',
         'das kitchen'
     ],
-    authors: [{ name: 'Das Kitchen Organization' }],
+    authors: [{ name: 'Charlottesville Kitchen Organization' }],
     openGraph: {
-        title: 'Das Kitchen - Community Mutual Aid',
+        title: 'Charlottesville Kitchen - Community Mutual Aid',
         description:
             'Building community resilience through mutual aid and solidarity.',
         type: 'website',
         locale: 'en_US'
-    },
-    twitter: {
-        card: 'summary_large_image',
-        title: 'Das Kitchen - Community Mutual Aid',
-        description:
-            'Building community resilience through mutual aid and solidarity.'
     }
 };
 
