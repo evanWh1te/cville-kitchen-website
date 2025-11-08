@@ -28,7 +28,7 @@ import { errorHandler } from './middleware/errorHandler';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.BACKEND_PORT || 3001;
 
 // Security middleware
 app.use(helmet());
@@ -80,7 +80,7 @@ app.use('*', (req, res) => {
 // Error handling middleware
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(
         `🚀 Charlottesville Kitchen API server running on port ${PORT}`
     );
@@ -90,4 +90,25 @@ app.listen(PORT, () => {
             process.env.FRONTEND_URL || 'http://localhost:3000'
         }`
     );
+    // Signal to PM2 that app is ready (if using wait_ready)
+    if (process.send) {
+        process.send('ready');
+    }
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+    console.log('SIGINT received, closing server...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
+});
+
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, closing server...');
+    server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+    });
 });
