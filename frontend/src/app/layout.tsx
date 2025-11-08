@@ -49,6 +49,11 @@ export const metadata: Metadata = {
             'Building community resilience through mutual aid and solidarity.',
         type: 'website',
         locale: 'en_US'
+    },
+    icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon-16x16.png',
+        apple: '/apple-touch-icon.png'
     }
 };
 
