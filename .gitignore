@@ -1,6 +1,3 @@
-# Node
-package-lock.json
-
 # Docker
 .dockerignore
 .dockerenv
