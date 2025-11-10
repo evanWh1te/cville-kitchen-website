@@ -33,6 +33,7 @@ export default function Header() {
         { name: 'Home', href: '/' },
         // { name: 'About', href: '/about' },
         { name: 'Community Resources', href: '/resources' },
+        { name: 'Volunteer Opportunities', href: '/volunteer' },
         { name: 'Political Education', href: '/education' },
         { name: 'Contact', href: '/contact' }
     ];
