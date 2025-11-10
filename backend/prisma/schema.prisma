@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Resource {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  category    ResourceCategory
+  type        ResourceType
+  location    String?
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  hours       String?
+  notes       String?
+  requirements String?
+  contactInfo String?
+  lastUpdated DateTime      @default(now())
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("resources")
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+}
+
+enum ResourceCategory {
+  PUBLIC_MEALS
+  FREE_FRIDGES_PANTRIES
+  EMERGENCY_FOOD
+  STUDENT_MEALS
+  CHURCH_PANTRIES
+  FOOD_DELIVERY
+  LOCAL_EFFORTS
+  ADDITIONAL_RESOURCES
+}
+
+enum ResourceType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  PANTRY
+  DELIVERY
+  MARKET
+  PROGRAM
+  OTHER
+}
