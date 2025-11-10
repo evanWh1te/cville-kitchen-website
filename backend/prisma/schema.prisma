@@ -44,6 +44,31 @@ model Resource {
   @@map("resources")
 }
 
+model VolunteerOpportunity {
+  id          String                    @id @default(cuid())
+  title       String
+  description String?
+  category    VolunteerCategory
+  type        VolunteerType
+  location    String?
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  hours       String?
+  notes       String?
+  requirements String?
+  contactInfo String?
+  timeCommitment String?
+  skills      String?
+  lastUpdated DateTime                  @default(now())
+  isActive    Boolean                   @default(true)
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+
+  @@map("volunteer_opportunities")
+}
+
 enum Role {
   ADMIN
   MODERATOR
@@ -69,4 +94,28 @@ enum ResourceType {
   MARKET
   PROGRAM
   OTHER
+}
+
+enum VolunteerCategory {
+  FOOD_PREPARATION
+  FOOD_DISTRIBUTION
+  COMMUNITY_GARDENS
+  ADMINISTRATIVE
+  FUNDRAISING
+  OUTREACH
+  EDUCATION
+  TRANSPORTATION
+  EVENT_COORDINATION
+  OTHER
+}
+
+enum VolunteerType {
+  ONE_TIME
+  RECURRING
+  SEASONAL
+  FLEXIBLE
+  REMOTE
+  ON_SITE
+  LEADERSHIP
+  TRAINING_PROVIDED
 }
