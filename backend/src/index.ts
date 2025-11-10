@@ -21,8 +21,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import contactRoutes from './routes/contact';
+import authRoutes from './routes/auth';
+import resourceRoutes from './routes/resources';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -52,6 +55,7 @@ app.use(
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Logging
 app.use(morgan('combined'));
@@ -67,6 +71,8 @@ app.get('/health', (_req, res) => {
 
 // API routes
 app.use('/api/contact', contactRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/resources', resourceRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
