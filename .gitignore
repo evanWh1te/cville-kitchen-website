@@ -20,6 +20,10 @@ build/
 .env.test.local
 .env.production.local
 
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+
 # Logs
 logs
 *.log
