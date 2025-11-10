@@ -23,6 +23,7 @@ build/
 # Prisma
 prisma/dev.db
 prisma/dev.db-journal
+dev.db
 
 # Logs
 logs
