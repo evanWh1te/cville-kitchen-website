@@ -78,6 +78,51 @@ export type ResourceType =
     | 'PROGRAM'
     | 'OTHER';
 
+export interface VolunteerOpportunity {
+    id: string;
+    title: string;
+    description?: string;
+    category: VolunteerCategory;
+    type: VolunteerType;
+    location?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    hours?: string;
+    notes?: string;
+    requirements?: string;
+    contactInfo?: string;
+    timeCommitment?: string;
+    skills?: string;
+    lastUpdated: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export type VolunteerCategory =
+    | 'FOOD_PREPARATION'
+    | 'FOOD_DISTRIBUTION'
+    | 'COMMUNITY_GARDENS'
+    | 'ADMINISTRATIVE'
+    | 'FUNDRAISING'
+    | 'OUTREACH'
+    | 'EDUCATION'
+    | 'TRANSPORTATION'
+    | 'EVENT_COORDINATION'
+    | 'OTHER';
+
+export type VolunteerType =
+    | 'ONE_TIME'
+    | 'RECURRING'
+    | 'SEASONAL'
+    | 'FLEXIBLE'
+    | 'REMOTE'
+    | 'ON_SITE'
+    | 'LEADERSHIP'
+    | 'TRAINING_PROVIDED';
+
 export interface LoginData {
     email: string;
     password: string;
@@ -97,6 +142,25 @@ export interface CreateResourceData {
     notes?: string;
     requirements?: string;
     contactInfo?: string;
+    isActive?: boolean;
+}
+
+export interface CreateVolunteerData {
+    title: string;
+    description?: string;
+    category: VolunteerCategory;
+    type: VolunteerType;
+    location?: string;
+    address?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    hours?: string;
+    notes?: string;
+    requirements?: string;
+    contactInfo?: string;
+    timeCommitment?: string;
+    skills?: string;
     isActive?: boolean;
 }
 
@@ -164,6 +228,53 @@ export const resourcesAPI = {
 
     delete: async (id: string): Promise<{ message: string }> => {
         const response = await api.delete(`/resources/${id}`);
+        return response.data;
+    }
+};
+
+// Volunteer Opportunities API
+export const volunteersAPI = {
+    getAll: async (): Promise<{ volunteers: VolunteerOpportunity[] }> => {
+        const response = await api.get('/volunteers');
+        return response.data;
+    },
+
+    getAllAdmin: async (): Promise<{ volunteers: VolunteerOpportunity[] }> => {
+        const response = await api.get('/volunteers/admin');
+        return response.data;
+    },
+
+    getByCategory: async (
+        category: string
+    ): Promise<{ volunteers: VolunteerOpportunity[] }> => {
+        const response = await api.get(`/volunteers/category/${category}`);
+        return response.data;
+    },
+
+    getById: async (
+        id: string
+    ): Promise<{ volunteer: VolunteerOpportunity }> => {
+        const response = await api.get(`/volunteers/${id}`);
+        return response.data;
+    },
+
+    create: async (
+        data: CreateVolunteerData
+    ): Promise<{ message: string; volunteer: VolunteerOpportunity }> => {
+        const response = await api.post('/volunteers', data);
+        return response.data;
+    },
+
+    update: async (
+        id: string,
+        data: Partial<CreateVolunteerData>
+    ): Promise<{ message: string; volunteer: VolunteerOpportunity }> => {
+        const response = await api.put(`/volunteers/${id}`, data);
+        return response.data;
+    },
+
+    delete: async (id: string): Promise<{ message: string }> => {
+        const response = await api.delete(`/volunteers/${id}`);
         return response.data;
     }
 };
