@@ -231,7 +231,7 @@ export default function ResourcesPage() {
 
     if (error) {
         return (
-            <div className="bg-accent-50">
+            <div className="min-h-screen bg-accent-50">
                 <Header />
                 <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                     <div className="bg-red-50 border border-red-200 rounded-lg p-6">
@@ -241,6 +241,7 @@ export default function ResourcesPage() {
                         <p className="text-red-700">{error}</p>
                     </div>
                 </div>
+                <Footer />
             </div>
         );
     }
@@ -250,9 +251,11 @@ export default function ResourcesPage() {
             <Header />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="prose prose-lg max-w-none">
-                    <h1 className="text-4xl font-bold tracking-tight text-gray-700 mb-8">
-                        Community Food Resources - Charlottesville Area
-                    </h1>
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold tracking-tight text-primary-700 mb-8">
+                            Community Food Resources
+                        </h1>
+                    </div>
 
                     {/* <div className="mb-8 p-4 bg-blue-50 rounded-lg">
                         <p className="text-accent-800 mb-2">

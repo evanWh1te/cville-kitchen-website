@@ -265,25 +265,18 @@ export default function Volunteer() {
     if (error) {
         return (
             <>
-                <Header />
-                <main className="min-h-screen bg-gray-50">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                        <div className="text-center">
-                            <div className="text-red-600 text-xl mb-4">⚠️</div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                                Unable to Load Volunteer Opportunities
+                <div className="min-h-screen bg-accent-50">
+                    <Header />
+                    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                            <h2 className="text-lg font-semibold text-red-800 mb-2">
+                                Error Loading Volunteer Opportunities
                             </h2>
-                            <p className="text-gray-600">{error}</p>
-                            <button
-                                onClick={() => window.location.reload()}
-                                className="mt-4 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                            >
-                                Try Again
-                            </button>
+                            <p className="text-red-700">{error}</p>
                         </div>
                     </div>
-                </main>
-                <Footer />
+                    <Footer />
+                </div>
             </>
         );
     }
@@ -291,61 +284,43 @@ export default function Volunteer() {
     return (
         <>
             <Header />
-            <main className="min-h-screen bg-gray-50">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                    {/* Header */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl font-bold text-primary-700 mb-4">
-                            Volunteer Opportunities
-                        </h1>
-                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Join our mission to fight food insecurity in
-                            Charlottesville. Find ways to get involved and make
-                            a difference in your community.
+            <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl font-bold text-primary-700 mb-4">
+                        Volunteer Opportunities
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                        Join our mission to fight food insecurity in
+                        Charlottesville. Find ways to get involved and make a
+                        difference in your community.
+                    </p>
+                </div>
+
+                {volunteers.length === 0 ? (
+                    <div className="text-center py-12">
+                        <div className="text-gray-400 text-6xl mb-4">🤝</div>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                            No Volunteer Opportunities Available
+                        </h2>
+                        <p className="text-gray-600">
+                            Check back soon for new volunteer opportunities, or
+                            contact us if you're interested in helping out!
                         </p>
                     </div>
-
-                    {/* Quick Stats */}
-                    <div className="bg-gray-700 rounded-lg shadow-md p-6 mb-8">
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-secondary-400 mb-2">
-                                {volunteers.length}
-                            </div>
-                            <div className="text-white">
-                                Active Volunteer Opportunities
-                            </div>
-                        </div>
+                ) : (
+                    <div>
+                        {categoryOrder.map((category) => (
+                            <VolunteerSection
+                                key={category}
+                                category={category}
+                                volunteers={
+                                    volunteersByCategory[category] || []
+                                }
+                            />
+                        ))}
                     </div>
-
-                    {volunteers.length === 0 ? (
-                        <div className="text-center py-12">
-                            <div className="text-gray-400 text-6xl mb-4">
-                                🤝
-                            </div>
-                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                                No Volunteer Opportunities Available
-                            </h2>
-                            <p className="text-gray-600">
-                                Check back soon for new volunteer opportunities,
-                                or contact us if you're interested in helping
-                                out!
-                            </p>
-                        </div>
-                    ) : (
-                        <div>
-                            {categoryOrder.map((category) => (
-                                <VolunteerSection
-                                    key={category}
-                                    category={category}
-                                    volunteers={
-                                        volunteersByCategory[category] || []
-                                    }
-                                />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </main>
+                )}
+            </div>
             <Footer />
         </>
     );
