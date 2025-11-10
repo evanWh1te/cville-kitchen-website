@@ -26,6 +26,7 @@ import dotenv from 'dotenv';
 import contactRoutes from './routes/contact';
 import authRoutes from './routes/auth';
 import resourceRoutes from './routes/resources';
+import volunteerRoutes from './routes/volunteers';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -73,6 +74,7 @@ app.get('/health', (_req, res) => {
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/resources', resourceRoutes);
+app.use('/api/volunteers', volunteerRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
