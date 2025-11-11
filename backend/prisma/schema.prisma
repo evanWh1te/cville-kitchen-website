@@ -90,6 +90,7 @@ enum ResourceType {
   LUNCH
   DINNER
   PANTRY
+  FRIDGE
   DELIVERY
   MARKET
   PROGRAM
