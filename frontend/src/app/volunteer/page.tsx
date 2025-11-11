@@ -293,8 +293,8 @@ export default function Volunteer() {
                             </h2>
                             <p className="text-gray-600">
                                 Check back soon for new volunteer opportunities,
-                                or contact us if you're interested in helping
-                                out!
+                                or contact us if you&apos;re interested in
+                                helping out!
                             </p>
                         </div>
                     ) : (
