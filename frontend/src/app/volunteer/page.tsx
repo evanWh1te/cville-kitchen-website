@@ -41,147 +41,133 @@ const categoryLabels: Record<VolunteerCategory, string> = {
 };
 
 const categoryOrder: VolunteerCategory[] = [
-    'FOOD_PREPARATION',
-    'FOOD_DISTRIBUTION',
-    'COMMUNITY_GARDENS',
     'ADMINISTRATIVE',
+    'COMMUNITY_GARDENS',
+    'EDUCATION',
+    'EVENT_COORDINATION',
+    'FOOD_DISTRIBUTION',
+    'FOOD_PREPARATION',
     'FUNDRAISING',
     'OUTREACH',
-    'EDUCATION',
     'TRANSPORTATION',
-    'EVENT_COORDINATION',
     'OTHER'
 ];
 
 function VolunteerCard({ volunteer }: { volunteer: VolunteerOpportunity }) {
     return (
         <div>
-            <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-revolutionary-600">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {volunteer.title}
-                </h3>
+            <h3 className="text-xl font-semibold text-revolutionary-600 mb-2">
+                {volunteer.title}
+            </h3>
 
-                {volunteer.description && (
-                    <p className="text-gray-700 mb-4">
-                        {volunteer.description}
-                    </p>
+            {volunteer.description && (
+                <p className="text-accent-800 mb-3">{volunteer.description}</p>
+            )}
+
+            <div className="space-y-2 text-sm text-accent-700">
+                {volunteer.location && (
+                    <div>
+                        <strong className="text-accent-900">Location:</strong>{' '}
+                        {volunteer.location}
+                    </div>
                 )}
 
-                <div className="space-y-2 text-sm text-gray-600">
-                    {volunteer.location && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Location:</span>
-                            <span className="ml-2">{volunteer.location}</span>
-                        </div>
-                    )}
+                {volunteer.address && (
+                    <div>
+                        <strong className="text-accent-900">Address:</strong>{' '}
+                        {volunteer.address}
+                    </div>
+                )}
 
-                    {volunteer.address && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Address:</span>
-                            <span className="ml-2">{volunteer.address}</span>
-                        </div>
-                    )}
+                {volunteer.hours && (
+                    <div>
+                        <strong className="text-accent-900">Hours:</strong>{' '}
+                        {volunteer.hours}
+                    </div>
+                )}
 
-                    {volunteer.hours && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Hours:</span>
-                            <span className="ml-2">{volunteer.hours}</span>
-                        </div>
-                    )}
+                {volunteer.timeCommitment && (
+                    <div>
+                        <strong className="text-accent-900">
+                            Time Commitment:
+                        </strong>{' '}
+                        {volunteer.timeCommitment}
+                    </div>
+                )}
 
-                    {volunteer.timeCommitment && (
-                        <div className="flex items-center">
-                            <span className="font-medium">
-                                Time Commitment:
-                            </span>
-                            <span className="ml-2">
-                                {volunteer.timeCommitment}
-                            </span>
-                        </div>
-                    )}
+                {volunteer.skills && (
+                    <div>
+                        <strong className="text-accent-900">
+                            Skills Needed:
+                        </strong>{' '}
+                        {volunteer.skills}
+                    </div>
+                )}
 
-                    {volunteer.skills && (
-                        <div className="flex items-start">
-                            <span className="font-medium">Skills Needed:</span>
-                            <span className="ml-2">{volunteer.skills}</span>
-                        </div>
-                    )}
+                {volunteer.requirements && (
+                    <div>
+                        <strong className="text-accent-900">
+                            Requirements:
+                        </strong>{' '}
+                        {volunteer.requirements}
+                    </div>
+                )}
 
-                    {volunteer.requirements && (
-                        <div className="flex items-start">
-                            <span className="font-medium">Requirements:</span>
-                            <span className="ml-2">
-                                {volunteer.requirements}
-                            </span>
-                        </div>
-                    )}
+                {volunteer.phone && (
+                    <div>
+                        <strong className="text-accent-900">Phone:</strong>{' '}
+                        <a
+                            href={`tel:${volunteer.phone}`}
+                            className="text-primary-600 hover:text-primary-700"
+                        >
+                            {volunteer.phone}
+                        </a>
+                    </div>
+                )}
 
-                    {volunteer.phone && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Phone:</span>
-                            <a
-                                href={`tel:${volunteer.phone}`}
-                                className="ml-2 text-blue-600 hover:underline"
-                            >
-                                {volunteer.phone}
-                            </a>
-                        </div>
-                    )}
+                {volunteer.email && (
+                    <div>
+                        <strong className="text-accent-900">Email:</strong>{' '}
+                        <a
+                            href={`mailto:${volunteer.email}`}
+                            className="text-primary-600 hover:text-primary-700"
+                        >
+                            {volunteer.email}
+                        </a>
+                    </div>
+                )}
 
-                    {volunteer.email && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Email:</span>
-                            <a
-                                href={`mailto:${volunteer.email}`}
-                                className="ml-2 text-blue-600 hover:underline"
-                            >
-                                {volunteer.email}
-                            </a>
-                        </div>
-                    )}
+                {volunteer.website && (
+                    <div>
+                        <strong className="text-accent-900">Website:</strong>{' '}
+                        <a
+                            href={volunteer.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary-600 hover:text-primary-700"
+                        >
+                            {volunteer.website}
+                        </a>
+                    </div>
+                )}
 
-                    {volunteer.website && (
-                        <div className="flex items-center">
-                            <span className="font-medium">Website:</span>
-                            <a
-                                href={volunteer.website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="ml-2 text-blue-600 hover:underline"
-                            >
-                                Visit Website
-                            </a>
-                        </div>
-                    )}
+                {volunteer.contactInfo && (
+                    <div>
+                        <strong className="text-accent-900">
+                            Additional Contact Info:
+                        </strong>{' '}
+                        {volunteer.contactInfo}
+                    </div>
+                )}
 
-                    {volunteer.contactInfo && (
-                        <div className="flex items-start">
-                            <span className="font-medium">Contact Info:</span>
-                            <span className="ml-2">
-                                {volunteer.contactInfo}
-                            </span>
-                        </div>
-                    )}
-
-                    {volunteer.notes && (
-                        <div className="flex items-start">
-                            <span className="font-medium">
-                                Additional Notes:
-                            </span>
-                            <span className="ml-2">{volunteer.notes}</span>
-                        </div>
-                    )}
-                </div>
-
-                {/* Type badge */}
-                <div className="mt-4">
-                    <span className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
-                        {volunteer.type
-                            .replace(/_/g, ' ')
-                            .toLowerCase()
-                            .replace(/\b\w/g, (l) => l.toUpperCase())}
-                    </span>
-                </div>
+                {volunteer.notes && (
+                    <div>
+                        <strong className="text-accent-900">
+                            Additional Notes:
+                        </strong>{' '}
+                        {volunteer.notes}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -198,10 +184,10 @@ function VolunteerSection({
 
     return (
         <section className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6 border-b-2 border-accent-500 pb-2">
+            <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
                 {categoryLabels[category]}
             </h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-1">
+            <div className="space-y-4">
                 {volunteers.map((volunteer) => (
                     <VolunteerCard key={volunteer.id} volunteer={volunteer} />
                 ))}
@@ -282,46 +268,51 @@ export default function Volunteer() {
     }
 
     return (
-        <>
+        <div className="bg-accent-50">
             <Header />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                <div className="text-center mb-12">
-                    <h1 className="text-4xl font-bold text-primary-700 mb-4">
-                        Volunteer Opportunities
-                    </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Join our mission to fight food insecurity in
-                        Charlottesville. Find ways to get involved and make a
-                        difference in your community.
-                    </p>
-                </div>
-
-                {volunteers.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="text-gray-400 text-6xl mb-4">🤝</div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                            No Volunteer Opportunities Available
-                        </h2>
-                        <p className="text-gray-600">
-                            Check back soon for new volunteer opportunities, or
-                            contact us if you're interested in helping out!
+                <div className="prose prose-lg max-w-none">
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-bold tracking-tight text-primary-700 mb-8">
+                            Volunteer Opportunities
+                        </h1>
+                        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                            Join our mission to fight food insecurity in
+                            Charlottesville. Find ways to get involved and make
+                            a difference in your community.
                         </p>
                     </div>
-                ) : (
-                    <div>
-                        {categoryOrder.map((category) => (
-                            <VolunteerSection
-                                key={category}
-                                category={category}
-                                volunteers={
-                                    volunteersByCategory[category] || []
-                                }
-                            />
-                        ))}
-                    </div>
-                )}
+
+                    {volunteers.length === 0 ? (
+                        <div className="text-center py-12">
+                            <div className="text-gray-400 text-6xl mb-4">
+                                🤝
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                                No Volunteer Opportunities Available
+                            </h2>
+                            <p className="text-gray-600">
+                                Check back soon for new volunteer opportunities,
+                                or contact us if you're interested in helping
+                                out!
+                            </p>
+                        </div>
+                    ) : (
+                        <div>
+                            {categoryOrder.map((category) => (
+                                <VolunteerSection
+                                    key={category}
+                                    category={category}
+                                    volunteers={
+                                        volunteersByCategory[category] || []
+                                    }
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
             <Footer />
-        </>
+        </div>
     );
 }
