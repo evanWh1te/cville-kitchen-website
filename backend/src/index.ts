@@ -32,6 +32,8 @@ import { errorHandler } from './middleware/errorHandler';
 dotenv.config();
 
 const app = express();
+// Behind reverse proxies (nginx), trust X-Forwarded-* so req.secure reflects TLS
+app.set('trust proxy', 1);
 const PORT = process.env.BACKEND_PORT || 3001;
 
 // Security middleware

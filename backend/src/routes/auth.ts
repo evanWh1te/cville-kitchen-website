@@ -23,6 +23,17 @@ import { body, validationResult } from 'express-validator';
 import { PrismaClient } from '@prisma/client';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 
+// Centralized cookie options used for auth cookies
+const isProd = process.env.NODE_ENV === 'production';
+const insecureOverride = process.env.COOKIE_INSECURE === 'true';
+const authCookieOptions = {
+    httpOnly: true as const,
+    sameSite: 'lax' as const,
+    secure: isProd && !insecureOverride,
+    path: '/',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+};
+
 const router = express.Router();
 const prisma = new PrismaClient();
 
@@ -80,13 +91,8 @@ router.post(
                 { expiresIn: '24h' }
             );
 
-            // Set HTTP-only cookie
-            res.cookie('token', token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                maxAge: 24 * 60 * 60 * 1000 // 24 hours
-            });
+            // Set HTTP-only cookie (domain omitted to let browser infer current host)
+            res.cookie('token', token, authCookieOptions);
 
             res.json({
                 message: 'Login successful',
@@ -105,7 +111,8 @@ router.post(
 
 // Logout endpoint
 router.post('/logout', (req, res) => {
-    res.clearCookie('token');
+    // Clear cookie with same options to ensure deletion
+    res.clearCookie('token', { ...authCookieOptions, maxAge: 0 });
     res.json({ message: 'Logout successful' });
 });
 

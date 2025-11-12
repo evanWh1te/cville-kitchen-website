@@ -9,6 +9,7 @@ services:
     environment:
       - NODE_ENV=production
       - BACKEND_INTERNAL_URL=http://localhost:3001/api
+      - COOKIE_INSECURE=true
       - DATABASE_URL=file:/app/backend/data/database.db
     env_file:
       - ./backend/.env
