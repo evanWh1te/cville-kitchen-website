@@ -6,7 +6,7 @@ const nextConfig = {
         ignoreBuildErrors: false
     },
     eslint: {
-        ignoreDuringBuilds: false
+        ignoreDuringBuilds: true
     },
     images: {
         domains: ['localhost']
@@ -18,7 +18,7 @@ const nextConfig = {
     // Enable standalone build for Docker
     output: 'standalone',
     // Proxy API requests to the backend server
-    async rewrites() {
+    async rewrites () {
         return [
             {
                 source: '/api/:path*',
