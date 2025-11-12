@@ -83,17 +83,6 @@ const categoryOptions: { value: ResourceCategory; label: string }[] = [
     { value: 'ADDITIONAL_RESOURCES', label: 'Additional Resources' }
 ];
 
-const typeOptions: { value: ResourceType; label: string }[] = [
-    { value: 'BREAKFAST', label: 'Breakfast' },
-    { value: 'LUNCH', label: 'Lunch' },
-    { value: 'DINNER', label: 'Dinner' },
-    { value: 'PANTRY', label: 'Pantry' },
-    { value: 'DELIVERY', label: 'Delivery' },
-    { value: 'MARKET', label: 'Market' },
-    { value: 'PROGRAM', label: 'Program' },
-    { value: 'OTHER', label: 'Other' }
-];
-
 export default function ResourceForm({
     resource,
     onSubmit,
