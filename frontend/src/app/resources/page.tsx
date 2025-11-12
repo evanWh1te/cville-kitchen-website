@@ -282,7 +282,7 @@ export default function ResourcesPage() {
                         </h2>
 
                         <div className="space-y-3 max-w-2xl mx-auto">
-                            {categoryOrder.map((category, index) => {
+                            {categoryOrder.map((category) => {
                                 const categoryResources =
                                     resourcesByCategory[category];
                                 if (
