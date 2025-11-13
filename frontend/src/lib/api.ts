@@ -281,3 +281,73 @@ export const volunteersAPI = {
 };
 
 export default api;
+
+// Users API
+export type UserRole = 'ADMIN' | 'MODERATOR';
+
+export interface ListUsersParams {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+}
+
+export interface CreateUserData {
+    email: string;
+    password: string;
+    role?: UserRole;
+}
+
+export interface UpdateUserData {
+    email?: string;
+    password?: string;
+    role?: UserRole;
+}
+
+export const usersAPI = {
+    list: async (
+        params: ListUsersParams = {}
+    ): Promise<{
+        users: User[];
+        total: number;
+        page: number;
+        pageSize: number;
+    }> => {
+        const response = await api.get('/users', { params });
+        return response.data;
+    },
+
+    get: async (id: string): Promise<{ user: User }> => {
+        const response = await api.get(`/users/${id}`);
+        return response.data;
+    },
+
+    create: async (
+        data: CreateUserData
+    ): Promise<{ message: string; user: User }> => {
+        const response = await api.post('/users', data);
+        return response.data;
+    },
+
+    update: async (
+        id: string,
+        data: UpdateUserData
+    ): Promise<{ message: string; user: User }> => {
+        const response = await api.put(`/users/${id}`, data);
+        return response.data;
+    },
+
+    delete: async (id: string): Promise<{ message: string }> => {
+        const response = await api.delete(`/users/${id}`);
+        return response.data;
+    },
+
+    resetPassword: async (
+        id: string,
+        password: string
+    ): Promise<{ message: string }> => {
+        const response = await api.post(`/users/${id}/reset-password`, {
+            password
+        });
+        return response.data;
+    }
+};

@@ -18,6 +18,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Backrelations for audits
+  auditsTarget UserAudit[] @relation("AuditUser")
+  auditsActor  UserAudit[] @relation("AuditActor")
+
   @@map("users")
 }
 
@@ -119,4 +123,23 @@ enum VolunteerType {
   ON_SITE
   LEADERSHIP
   TRAINING_PROVIDED
+}
+
+model UserAudit {
+  id        String      @id @default(cuid())
+  userId    String
+  actorId   String?
+  action    AuditAction
+  details   String?
+  createdAt DateTime    @default(now())
+
+  user   User  @relation("AuditUser", fields: [userId], references: [id])
+  actor  User? @relation("AuditActor", fields: [actorId], references: [id])
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  RESET_PASSWORD
 }

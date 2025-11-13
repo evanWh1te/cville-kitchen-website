@@ -27,6 +27,7 @@ import contactRoutes from './routes/contact';
 import authRoutes from './routes/auth';
 import resourceRoutes from './routes/resources';
 import volunteerRoutes from './routes/volunteers';
+import userRoutes from './routes/users';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -77,6 +78,7 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/resources', resourceRoutes);
 app.use('/api/volunteers', volunteerRoutes);
+app.use('/api/users', userRoutes);
 
 // 404 handler
 app.use('*', (req, res) => {
