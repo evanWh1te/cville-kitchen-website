@@ -133,14 +133,14 @@ function ResourceCard({ resource }: { resource: Resource }) {
                 )}
 
                 {resource.notes && (
-                    <div className="mt-3 p-3 bg-accent-50 rounded">
+                    <div>
                         <strong className="text-accent-900">Notes:</strong>{' '}
                         {resource.notes}
                     </div>
                 )}
 
                 {resource.contactInfo && (
-                    <div className="mt-3 p-3 bg-blue-50 rounded">
+                    <div>
                         <strong className="text-accent-900">
                             Contact Info:
                         </strong>{' '}
@@ -213,6 +213,52 @@ export default function ResourcesPage() {
             return a.title.localeCompare(b.title);
         });
     });
+
+    // Hardcoded resources not stored in DB; displayed separately
+    const staticResources: Resource[] = [
+        {
+            id: 'street-sheet',
+            title: 'Charlottesville Access Project - Street Sheet Resources',
+            description:
+                'Contains information on public meals, emergency food, church based pantries, kids/student meals, and food delivery services.',
+            category: 'ADDITIONAL_RESOURCES',
+            type: 'OTHER',
+            website:
+                'https://docs.google.document/d/1VQbcXQhIjkVTlDjaqh3swStDV8Qb_pau5owZaOmjhaw/edit?tab=t.0',
+            email: 'cvillestreetsheet@gmail.com',
+            lastUpdated: new Date().toISOString(),
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        },
+        {
+            id: 'helpful-resource-by-city',
+            title: '@helpfulresourcesbycity',
+            description:
+                'Available resources to reduce violence, poverty, drug overdoses, etc. by city.',
+            category: 'ADDITIONAL_RESOURCES',
+            type: 'OTHER',
+            website: 'https://linktr.ee/helpfulresourcesbycity',
+            lastUpdated: new Date().toISOString(),
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        },
+        {
+            id: 'municipality',
+            title: 'City of Charlottesville & Albermarle County Food Resources',
+            description:
+                'Links to emergency food, delivered food, and public meal resources',
+            category: 'ADDITIONAL_RESOURCES',
+            type: 'OTHER',
+            website:
+                'https://www.charlottesville.gov/377/Available-Food-Resources-in-the-Communit',
+            lastUpdated: new Date().toISOString(),
+            isActive: true,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+        }
+    ];
 
     if (loading) {
         return (
@@ -361,6 +407,27 @@ export default function ResourcesPage() {
                             restrictions based on operating hours or location
                             (e.g., student access cards needed).
                         </p>
+                    </div>
+
+                    <div className="my-8 border-t border-accent-300 pt-6">
+                        <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
+                            External Resources
+                        </h2>
+                        <p className="text-accent-700 mb-4">
+                            These projects are put together by other
+                            organizations and community members. These projects
+                            provide comprehensive information to find resources
+                            spanning food scarecity, substance use support,
+                            mental health, housing, and more.
+                        </p>
+                        <div className="space-y-4">
+                            {staticResources.map((resource) => (
+                                <ResourceCard
+                                    key={resource.id}
+                                    resource={resource}
+                                />
+                            ))}
+                        </div>
                     </div>
 
                     {error ? (
