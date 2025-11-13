@@ -302,17 +302,35 @@ router.delete(
                     return;
                 }
             }
-            await prisma.user.delete({ where: { id: req.params.id } });
+            // Delete dependent audit records first to avoid FK violation (P2003)
+            // Then delete the user. Finally, create an audit row referencing actor only.
+            await prisma.$transaction([
+                prisma.userAudit.deleteMany({
+                    where: { userId: req.params.id }
+                }),
+                prisma.userAudit.deleteMany({
+                    where: { actorId: req.params.id }
+                }),
+                prisma.user.delete({ where: { id: req.params.id } })
+            ]);
+            // Log deletion (store deleted user id inside details for traceability)
             await prisma.userAudit.create({
                 data: {
-                    userId: req.params.id,
+                    userId: req.user?.id || '', // actor's userId for relation; empty string fallback shouldn't occur due to auth middleware
                     actorId: req.user?.id || null,
-                    action: 'DELETE' as AuditAction
+                    action: 'DELETE' as AuditAction,
+                    details: JSON.stringify({ deletedUserId: req.params.id })
                 }
             });
             res.json({ message: 'User deleted' });
         } catch (err) {
             console.error('Delete user error:', err);
+            if ((err as any)?.code === 'P2003') {
+                res.status(409).json({
+                    error: 'Foreign key constraint prevented deletion. Remove or detach related records and try again.'
+                });
+                return;
+            }
             res.status(500).json({ error: 'Failed to delete user' });
         }
     }
