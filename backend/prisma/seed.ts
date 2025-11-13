@@ -24,20 +24,28 @@ const prisma = new PrismaClient();
 async function main() {
     console.log('🌱 Starting database seed...');
 
-    // Create admin user if it doesn't exist
+    // Optional admin bootstrap (only if env vars provided & no users yet)
     const existingUser = await prisma.user.findFirst();
     if (!existingUser) {
-        const hashedPassword = await bcrypt.hash('admin123', 12);
-        const admin = await prisma.user.create({
-            data: {
-                email: 'admin@cville.kitchen',
-                password: hashedPassword,
-                role: 'ADMIN'
-            }
-        });
-        console.log('✅ Created admin user:', admin.email);
+        const seedEmail = process.env.SEED_ADMIN_EMAIL;
+        const seedPassword = process.env.SEED_ADMIN_PASSWORD;
+        if (seedEmail && seedPassword) {
+            const hashedPassword = await bcrypt.hash(seedPassword, 12);
+            const admin = await prisma.user.create({
+                data: {
+                    email: seedEmail,
+                    password: hashedPassword,
+                    role: 'ADMIN'
+                }
+            });
+            console.log('✅ Seeded initial admin user:', admin.email);
+        } else {
+            console.log(
+                'ℹ️ No users exist. Provide SEED_ADMIN_EMAIL & SEED_ADMIN_PASSWORD env vars to create initial admin or use /api/auth/create-admin endpoint.'
+            );
+        }
     } else {
-        console.log('👤 Admin user already exists');
+        console.log('👤 Users already exist; skipping admin seed');
     }
 
     // Complete resources from foodResources.md (Last updated: November 7, 2025)
