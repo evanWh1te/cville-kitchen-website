@@ -18,8 +18,9 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import {
     resourcesAPI,
@@ -103,6 +104,8 @@ export default function AdminDashboard() {
     const [deleteVolunteerConfirm, setDeleteVolunteerConfirm] = useState<
         string | null
     >(null);
+    const [resourceSearch, setResourceSearch] = useState('');
+    const [volunteerSearch, setVolunteerSearch] = useState('');
 
     useEffect(() => {
         if (!authLoading && !user) {
@@ -194,6 +197,54 @@ export default function AdminDashboard() {
         await loadData();
     };
 
+    // Filtering helpers
+    const normalize = (s?: string) => (s || '').toLowerCase();
+    const resourceMatches = (r: Resource, q: string) => {
+        if (!q) return true;
+        const query = normalize(q);
+        return (
+            normalize(r.title).includes(query) ||
+            normalize(r.description).includes(query) ||
+            normalize(r.location).includes(query) ||
+            normalize(r.address).includes(query) ||
+            normalize(r.notes).includes(query) ||
+            normalize(r.requirements).includes(query) ||
+            normalize(r.contactInfo).includes(query) ||
+            normalize(r.email).includes(query) ||
+            normalize(r.website).includes(query) ||
+            normalize(resourceCategoryLabels[r.category]).includes(query) ||
+            normalize(resourceTypeLabels[r.type]).includes(query)
+        );
+    };
+    const volunteerMatches = (v: VolunteerOpportunity, q: string) => {
+        if (!q) return true;
+        const query = normalize(q);
+        return (
+            normalize(v.title).includes(query) ||
+            normalize(v.description).includes(query) ||
+            normalize(v.location).includes(query) ||
+            normalize(v.address).includes(query) ||
+            normalize(v.notes).includes(query) ||
+            normalize(v.requirements).includes(query) ||
+            normalize(v.contactInfo).includes(query) ||
+            normalize(v.email).includes(query) ||
+            normalize(v.website).includes(query) ||
+            normalize(v.timeCommitment).includes(query) ||
+            normalize(v.skills).includes(query) ||
+            normalize(volunteerCategoryLabels[v.category]).includes(query) ||
+            normalize(volunteerTypeLabels[v.type]).includes(query)
+        );
+    };
+
+    const filteredResources = useMemo(
+        () => resources.filter((r) => resourceMatches(r, resourceSearch)),
+        [resources, resourceSearch]
+    );
+    const filteredVolunteers = useMemo(
+        () => volunteers.filter((v) => volunteerMatches(v, volunteerSearch)),
+        [volunteers, volunteerSearch]
+    );
+
     if (authLoading || !user) {
         return (
             <div className="min-h-screen bg-accent-50 flex items-center justify-center">
@@ -250,7 +301,7 @@ export default function AdminDashboard() {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {resources.map((resource) => (
+                    {filteredResources.map((resource) => (
                         <tr key={resource.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-gray-900">
@@ -333,7 +384,7 @@ export default function AdminDashboard() {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    {volunteers.map((volunteer) => (
+                    {filteredVolunteers.map((volunteer) => (
                         <tr key={volunteer.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <div className="text-sm font-medium text-gray-900">
@@ -399,9 +450,23 @@ export default function AdminDashboard() {
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center py-6">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-900">
-                                Admin Dashboard
-                            </h1>
+                            <div className="flex items-center gap-3 flex-wrap">
+                                <Link
+                                    href="/"
+                                    className="group flex items-center space-x-1 hover:opacity-90 transition-opacity"
+                                >
+                                    <span className="text-xl font-light text-black tracking-wide">
+                                        Charlottesville
+                                    </span>
+                                    <span className="text-2xl font-bold text-black tracking-tight">
+                                        Kitchen
+                                    </span>
+                                </Link>
+
+                                <h1 className="text-2xl font-bold text-gray-900">
+                                    Admin Dashboard
+                                </h1>
+                            </div>
                             <p className="mt-1 text-sm text-gray-500">
                                 Welcome back, {user.email}
                             </p>
@@ -480,6 +545,55 @@ export default function AdminDashboard() {
                         <div className="px-4 py-5 sm:p-6">
                             {activeTab === 'resources' ? (
                                 <>
+                                    {/* Search Bar */}
+                                    <div className="mb-4 flex items-center gap-3">
+                                        <div className="relative w-full sm:w-96">
+                                            <input
+                                                type="text"
+                                                value={resourceSearch}
+                                                onChange={(e) =>
+                                                    setResourceSearch(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Search resources by title, location, notes, etc."
+                                                className="block w-full rounded-md border border-gray-300 pl-10 pr-10 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                aria-label="Search resources"
+                                            />
+                                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                                <svg
+                                                    className="h-5 w-5"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                                                    />
+                                                </svg>
+                                            </span>
+                                            {resourceSearch && (
+                                                <button
+                                                    onClick={() =>
+                                                        setResourceSearch('')
+                                                    }
+                                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                                                    aria-label="Clear search"
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            {filteredResources.length} of{' '}
+                                            {resources.length} shown
+                                        </div>
+                                    </div>
+
                                     {resources.length === 0 ? (
                                         <div className="text-center py-12">
                                             <p className="text-gray-500">
@@ -498,6 +612,55 @@ export default function AdminDashboard() {
                                 </>
                             ) : (
                                 <>
+                                    {/* Search Bar */}
+                                    <div className="mb-4 flex items-center gap-3">
+                                        <div className="relative w-full sm:w-96">
+                                            <input
+                                                type="text"
+                                                value={volunteerSearch}
+                                                onChange={(e) =>
+                                                    setVolunteerSearch(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder="Search volunteers by title, location, notes, etc."
+                                                className="block w-full rounded-md border border-gray-300 pl-10 pr-10 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500"
+                                                aria-label="Search volunteer opportunities"
+                                            />
+                                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+                                                <svg
+                                                    className="h-5 w-5"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                                                    />
+                                                </svg>
+                                            </span>
+                                            {volunteerSearch && (
+                                                <button
+                                                    onClick={() =>
+                                                        setVolunteerSearch('')
+                                                    }
+                                                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                                                    aria-label="Clear search"
+                                                >
+                                                    ×
+                                                </button>
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-gray-500">
+                                            {filteredVolunteers.length} of{' '}
+                                            {volunteers.length} shown
+                                        </div>
+                                    </div>
+
                                     {volunteers.length === 0 ? (
                                         <div className="text-center py-12">
                                             <p className="text-gray-500">
