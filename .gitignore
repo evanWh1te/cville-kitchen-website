@@ -33,6 +33,15 @@ data/*.db-shm
 # But keep the README
 !data/README.md
 
+# Test database files (SQLite) - exclude from version control
+testdata/*.db
+testdata/*.db-journal
+testdata/*.db-wal
+testdata/*.db-shm
+
+# Scripts
+createUser.ts
+
 # Logs
 logs
 *.log
