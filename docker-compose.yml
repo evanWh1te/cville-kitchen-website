@@ -1,12 +1,16 @@
 services:
   web:
-    image: ghcr.io/evanwh1te/cville-kitchen-website:sha-29ba6db
+    # image: ghcr.io/evanwh1te/cville-kitchen-website:sha-29ba6db
+    build: .
     ports:
       - '3000:3000'
-
+    volumes:
+      - ./testdata:/app/backend/data
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - BACKEND_INTERNAL_URL=http://localhost:3001/api
+      - COOKIE_INSECURE=true
+      - DATABASE_URL=file:/app/backend/data/database.db
     env_file:
       - ./backend/.env
     restart: unless-stopped

@@ -20,6 +20,28 @@ build/
 .env.test.local
 .env.production.local
 
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+dev.db
+
+# Production database files (SQLite) - exclude from version control
+data/*.db
+data/*.db-journal
+data/*.db-wal
+data/*.db-shm
+# But keep the README
+!data/README.md
+
+# Test database files (SQLite) - exclude from version control
+testdata/*.db
+testdata/*.db-journal
+testdata/*.db-wal
+testdata/*.db-shm
+
+# Scripts
+createUser.ts
+
 # Logs
 logs
 *.log

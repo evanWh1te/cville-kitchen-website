@@ -1,0 +1,145 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Backrelations for audits
+  auditsTarget UserAudit[] @relation("AuditUser")
+  auditsActor  UserAudit[] @relation("AuditActor")
+
+  @@map("users")
+}
+
+model Resource {
+  id          String        @id @default(cuid())
+  title       String
+  description String?
+  category    ResourceCategory
+  type        ResourceType
+  location    String?
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  hours       String?
+  notes       String?
+  requirements String?
+  contactInfo String?
+  lastUpdated DateTime      @default(now())
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@map("resources")
+}
+
+model VolunteerOpportunity {
+  id          String                    @id @default(cuid())
+  title       String
+  description String?
+  category    VolunteerCategory
+  type        VolunteerType
+  location    String?
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  hours       String?
+  notes       String?
+  requirements String?
+  contactInfo String?
+  timeCommitment String?
+  skills      String?
+  lastUpdated DateTime                  @default(now())
+  isActive    Boolean                   @default(true)
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+
+  @@map("volunteer_opportunities")
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+}
+
+enum ResourceCategory {
+  PUBLIC_MEALS
+  FREE_FRIDGES_PANTRIES
+  EMERGENCY_FOOD
+  STUDENT_MEALS
+  CHURCH_PANTRIES
+  FOOD_DELIVERY
+  LOCAL_EFFORTS
+  ADDITIONAL_RESOURCES
+}
+
+enum ResourceType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  PANTRY
+  FRIDGE
+  DELIVERY
+  MARKET
+  PROGRAM
+  OTHER
+}
+
+enum VolunteerCategory {
+  FOOD_PREPARATION
+  FOOD_DISTRIBUTION
+  COMMUNITY_GARDENS
+  ADMINISTRATIVE
+  FUNDRAISING
+  OUTREACH
+  EDUCATION
+  TRANSPORTATION
+  EVENT_COORDINATION
+  OTHER
+}
+
+enum VolunteerType {
+  ONE_TIME
+  RECURRING
+  SEASONAL
+  FLEXIBLE
+  REMOTE
+  ON_SITE
+  LEADERSHIP
+  TRAINING_PROVIDED
+}
+
+model UserAudit {
+  id        String      @id @default(cuid())
+  userId    String
+  actorId   String?
+  action    AuditAction
+  details   String?
+  createdAt DateTime    @default(now())
+
+  user   User  @relation("AuditUser", fields: [userId], references: [id])
+  actor  User? @relation("AuditActor", fields: [actorId], references: [id])
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  RESET_PASSWORD
+}
