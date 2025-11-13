@@ -407,12 +407,14 @@ export default function AdminDashboard() {
                             </p>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <button
-                                onClick={() => router.push('/admin/users')}
-                                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            >
-                                Manage Users
-                            </button>
+                            {user.role === 'ADMIN' && (
+                                <button
+                                    onClick={() => router.push('/admin/users')}
+                                    className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                >
+                                    Manage Users
+                                </button>
+                            )}
                             {activeTab === 'resources' ? (
                                 <button
                                     onClick={handleCreateResource}

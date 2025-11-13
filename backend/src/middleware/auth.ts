@@ -173,3 +173,24 @@ export const requireAdmin = (
 
     next();
 };
+
+// Admin-only (exclude moderators)
+export const requireAdminOnly = (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+): void => {
+    if (!req.user) {
+        res.status(401).json({
+            error: 'Access denied. Authentication required.'
+        });
+        return;
+    }
+    if (req.user.role !== 'ADMIN') {
+        res.status(403).json({
+            error: 'Access denied. ADMIN role required.'
+        });
+        return;
+    }
+    next();
+};

@@ -7,7 +7,7 @@ import { body, param, query, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import {
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     AuthRequest
 } from '../middleware/auth';
 
@@ -35,7 +35,7 @@ function sanitizeUser(user: {
 router.get(
     '/',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [
         query('page').optional().isInt({ min: 1 }).toInt(),
         query('pageSize').optional().isInt({ min: 1, max: 200 }).toInt(),
@@ -96,7 +96,7 @@ router.get(
 router.get(
     '/:id',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [param('id').isString().trim()],
     async (req: AuthRequest, res: Response) => {
         const errors = validationResult(req);
@@ -134,7 +134,7 @@ router.get(
 router.post(
     '/',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [
         body('email').isEmail().normalizeEmail(),
         body('password').isLength({ min: 8 }),
@@ -177,7 +177,10 @@ router.post(
                     userId: newUser.id,
                     actorId: req.user?.id || null,
                     action: 'CREATE' as AuditAction,
-                    details: JSON.stringify({ email: newUser.email, role: newUser.role })
+                    details: JSON.stringify({
+                        email: newUser.email,
+                        role: newUser.role
+                    })
                 }
             });
             res.status(201).json({
@@ -195,7 +198,7 @@ router.post(
 router.put(
     '/:id',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [
         param('id').isString().trim(),
         body('email').optional().isEmail().normalizeEmail(),
@@ -241,7 +244,9 @@ router.put(
                 }
             });
             // Build changed fields list (excluding password content)
-            const changed: string[] = Object.keys(updateData).filter((k) => k !== 'password');
+            const changed: string[] = Object.keys(updateData).filter(
+                (k) => k !== 'password'
+            );
             await prisma.userAudit.create({
                 data: {
                     userId: updated.id,
@@ -266,7 +271,7 @@ router.put(
 router.delete(
     '/:id',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [param('id').isString().trim()],
     async (req: AuthRequest, res: Response) => {
         const errors = validationResult(req);
@@ -319,22 +324,30 @@ export default router;
 router.post(
     '/:id/reset-password',
     authenticateToken,
-    requireAdmin,
+    requireAdminOnly,
     [param('id').isString().trim(), body('password').isLength({ min: 8 })],
     async (req: AuthRequest, res: Response) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            res.status(400).json({ error: 'Invalid input', details: errors.array() });
+            res.status(400).json({
+                error: 'Invalid input',
+                details: errors.array()
+            });
             return;
         }
         try {
-            const target = await prisma.user.findUnique({ where: { id: req.params.id } });
+            const target = await prisma.user.findUnique({
+                where: { id: req.params.id }
+            });
             if (!target) {
                 res.status(404).json({ error: 'User not found' });
                 return;
             }
             const hashed = await bcrypt.hash(req.body.password, 12);
-            await prisma.user.update({ where: { id: req.params.id }, data: { password: hashed } });
+            await prisma.user.update({
+                where: { id: req.params.id },
+                data: { password: hashed }
+            });
             await prisma.userAudit.create({
                 data: {
                     userId: req.params.id,

@@ -27,7 +27,14 @@ export default function AdminUsersPage() {
     const [resetUserId, setResetUserId] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!authLoading && !user) router.push('/admin');
+        if (!authLoading) {
+            if (!user) {
+                router.push('/admin');
+            } else if (user.role !== 'ADMIN') {
+                // Non-admins redirected back to dashboard
+                router.push('/admin/dashboard');
+            }
+        }
     }, [authLoading, user, router]);
 
     useEffect(() => {
@@ -79,7 +86,7 @@ export default function AdminUsersPage() {
 
     const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
-    if (authLoading || !user) {
+    if (authLoading || !user || user.role !== 'ADMIN') {
         return (
             <div className="min-h-screen bg-accent-50 flex items-center justify-center">
                 <div className="text-center">
