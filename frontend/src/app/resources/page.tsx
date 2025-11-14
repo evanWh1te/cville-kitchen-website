@@ -246,7 +246,7 @@ export default function ResourcesPage() {
         },
         {
             id: 'municipality',
-            title: 'City of Charlottesville & Albermarle County Food Resources',
+            title: 'City of Charlottesville & Albemarle County Food Resources',
             description:
                 'Links to emergency food, delivered food, and public meal resources',
             category: 'ADDITIONAL_RESOURCES',
