@@ -22,17 +22,10 @@ import { useEffect, useState } from 'react';
 import { resourcesAPI, Resource, ResourceCategory } from '@/lib/api';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import TranslationBanner from '@/components/TranslationBanner';
+import { useTranslations } from 'next-intl';
 
-const categoryLabels: Record<ResourceCategory, string> = {
-    PUBLIC_MEALS: 'Public Meals',
-    FREE_FRIDGES_PANTRIES: 'Free Fridges & Pantries',
-    EMERGENCY_FOOD: 'Emergency Food',
-    STUDENT_MEALS: 'Student Meal Services',
-    CHURCH_PANTRIES: 'Church-Based Food Pantries',
-    FOOD_DELIVERY: 'Food Delivery Services',
-    LOCAL_EFFORTS: 'Additional Local Efforts & Ways to Help',
-    ADDITIONAL_RESOURCES: 'Additional Resources'
-};
+// Labels will come from translations
 
 const categoryOrder: ResourceCategory[] = [
     'PUBLIC_MEALS',
@@ -46,79 +39,94 @@ const categoryOrder: ResourceCategory[] = [
 ];
 
 function ResourceCard({ resource }: { resource: Resource }) {
+    const t = useTranslations('ResourcesPage');
     return (
         <div>
             <h3 className="text-xl font-semibold text-revolutionary-600 mb-2">
-                {resource.title}
+                <span lang="en">{resource.title}</span>
 
                 {resource.lastUpdated && (
                     <div className="mt-0 mb-4 text-xs text-gray-500">
-                        Last updated:{' '}
+                        {t('labels.lastUpdated')}{' '}
                         {new Date(resource.lastUpdated).toLocaleDateString()}
                     </div>
                 )}
             </h3>
 
             {resource.description && (
-                <p className="text-accent-800 mb-3">{resource.description}</p>
+                <p className="text-accent-800 mb-3" lang="en">
+                    {resource.description}
+                </p>
             )}
 
             <div className="space-y-2 text-sm text-accent-700">
                 {resource.location && (
                     <div>
-                        <strong className="text-accent-900">Location:</strong>{' '}
-                        {resource.location}
+                        <strong className="text-accent-900">
+                            {t('labels.location')}
+                        </strong>{' '}
+                        <span lang="en">{resource.location}</span>
                     </div>
                 )}
 
                 {resource.address && (
                     <div>
-                        <strong className="text-accent-900">Address:</strong>{' '}
-                        {resource.address}
+                        <strong className="text-accent-900">
+                            {t('labels.address')}
+                        </strong>{' '}
+                        <span lang="en">{resource.address}</span>
                     </div>
                 )}
 
                 {resource.hours && (
                     <div>
-                        <strong className="text-accent-900">Hours:</strong>{' '}
-                        {resource.hours}
+                        <strong className="text-accent-900">
+                            {t('labels.hours')}
+                        </strong>{' '}
+                        <span lang="en">{resource.hours}</span>
                     </div>
                 )}
 
                 {resource.phone && (
                     <div>
-                        <strong className="text-accent-900">Phone:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.phone')}
+                        </strong>{' '}
                         <a
                             href={`tel:${resource.phone}`}
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {resource.phone}
+                            <span lang="en">{resource.phone}</span>
                         </a>
                     </div>
                 )}
 
                 {resource.email && (
                     <div>
-                        <strong className="text-accent-900">Email:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.email')}
+                        </strong>{' '}
                         <a
                             href={`mailto:${resource.email}`}
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {resource.email}
+                            <span lang="en">{resource.email}</span>
                         </a>
                     </div>
                 )}
 
                 {resource.website && (
                     <div>
-                        <strong className="text-accent-900">Website:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.website')}
+                        </strong>{' '}
                         <a
                             href={resource.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {resource.website}
+                            <span lang="en">{resource.website}</span>
                         </a>
                     </div>
                 )}
@@ -126,25 +134,27 @@ function ResourceCard({ resource }: { resource: Resource }) {
                 {resource.requirements && (
                     <div>
                         <strong className="text-accent-900">
-                            Requirements:
+                            {t('labels.requirements')}
                         </strong>{' '}
-                        {resource.requirements}
+                        <span lang="en">{resource.requirements}</span>
                     </div>
                 )}
 
                 {resource.notes && (
                     <div>
-                        <strong className="text-accent-900">Notes:</strong>{' '}
-                        {resource.notes}
+                        <strong className="text-accent-900">
+                            {t('labels.notes')}
+                        </strong>{' '}
+                        <span lang="en">{resource.notes}</span>
                     </div>
                 )}
 
                 {resource.contactInfo && (
                     <div>
                         <strong className="text-accent-900">
-                            Contact Info:
+                            {t('labels.contactInfo')}
                         </strong>{' '}
-                        {resource.contactInfo}
+                        <span lang="en">{resource.contactInfo}</span>
                     </div>
                 )}
             </div>
@@ -153,6 +163,7 @@ function ResourceCard({ resource }: { resource: Resource }) {
 }
 
 export default function ResourcesPage() {
+    const t = useTranslations('ResourcesPage');
     const [resources, setResources] = useState<Resource[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -267,7 +278,7 @@ export default function ResourcesPage() {
                 <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                     <div className="flex justify-center items-center min-h-64">
                         <div className="text-lg text-gray-600">
-                            Loading resources...
+                            {t('loading')}
                         </div>
                     </div>
                 </div>
@@ -282,9 +293,9 @@ export default function ResourcesPage() {
                 <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                     <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                         <h2 className="text-lg font-semibold text-red-800 mb-2">
-                            Error Loading Resources
+                            {t('errorTitle')}
                         </h2>
-                        <p className="text-red-700">{error}</p>
+                        <p className="text-red-700">{t('errorText')}</p>
                     </div>
                 </div>
                 <Footer />
@@ -295,11 +306,12 @@ export default function ResourcesPage() {
     return (
         <div className="bg-accent-50">
             <Header />
+            <TranslationBanner />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="prose prose-lg max-w-none">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold tracking-tight text-primary-700 mb-8">
-                            Community Food Resources
+                            {t('title')}
                         </h1>
                     </div>
 
@@ -324,7 +336,7 @@ export default function ResourcesPage() {
                     {/* Table of Contents */}
                     <div className="mb-10">
                         <h2 className="text-2xl font-bold text-center text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
-                            Quick Navigation
+                            {t('quickNav')}
                         </h2>
 
                         <div className="space-y-3 max-w-2xl mx-auto">
@@ -360,7 +372,7 @@ export default function ResourcesPage() {
                                                     });
                                             }}
                                         >
-                                            {categoryLabels[category]}
+                                            {t(`categories.${category}`)}
                                             {category === 'PUBLIC_MEALS' && (
                                                 <span className="text-sm text-accent-600 ml-2">
                                                     (Breakfast, Lunch & Dinner)
@@ -368,7 +380,9 @@ export default function ResourcesPage() {
                                             )}
                                         </a>
                                         <span className="text-sm text-accent-700 bg-accent-100/60 px-2 py-1 rounded-full">
-                                            {categoryResources.length}
+                                            {t('count', {
+                                                count: categoryResources.length
+                                            })}
                                         </span>
                                     </div>
                                 );
@@ -378,20 +392,10 @@ export default function ResourcesPage() {
 
                     <div>
                         <h2 className="text-xl font-semibold text-red-800 mb-4">
-                            How to Help
+                            {t('howToHelp')}
                         </h2>
                         <p className="text-accent-800 mb-4">
-                            <strong>
-                                Please check the websites of food banks and
-                                churches that provide food for ways to
-                                contribute.
-                            </strong>{' '}
-                            Keep in mind that monetary donations are typically
-                            preferred by food banks and many organizations
-                            because they can make the money go further with
-                            wholesale/discount pricing and can ensure they meet
-                            specific community needs and wants. Donating your
-                            time is also a very valuable contribution!
+                            {t('howToHelpDesc')}
                         </p>
                         <p className="text-accent-800">
                             <strong>Community free fridges and pantries</strong>{' '}
@@ -411,14 +415,10 @@ export default function ResourcesPage() {
 
                     <div className="my-8 border-t border-accent-300 pt-6">
                         <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
-                            External Resources
+                            {t('externalResources')}
                         </h2>
                         <p className="text-accent-700 mb-4">
-                            These projects are put together by other
-                            organizations and community members. These projects
-                            provide comprehensive information to find resources
-                            spanning food scarecity, substance use support,
-                            mental health, housing, and more.
+                            {t('externalDesc')}
                         </p>
                         <div className="space-y-4">
                             {staticResources.map((resource) => (
@@ -457,7 +457,7 @@ export default function ResourcesPage() {
                                         className="mb-12 scroll-mt-24"
                                     >
                                         <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
-                                            {categoryLabels[category]}
+                                            {t(`categories.${category}`)}
                                         </h2>
 
                                         {category === 'PUBLIC_MEALS' ? (
@@ -483,11 +483,19 @@ export default function ResourcesPage() {
                                                         return null;
 
                                                     const mealTypeLabels = {
-                                                        BREAKFAST: 'Breakfast',
-                                                        LUNCH: 'Lunch',
-                                                        DINNER: 'Dinner',
-                                                        OTHER: 'Other Public Meals'
-                                                    };
+                                                        BREAKFAST: t(
+                                                            'mealTypes.BREAKFAST'
+                                                        ),
+                                                        LUNCH: t(
+                                                            'mealTypes.LUNCH'
+                                                        ),
+                                                        DINNER: t(
+                                                            'mealTypes.DINNER'
+                                                        ),
+                                                        OTHER: t(
+                                                            'mealTypes.OTHER'
+                                                        )
+                                                    } as const;
 
                                                     return (
                                                         <div

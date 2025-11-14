@@ -1,23 +1,5 @@
 'use client';
 
-/*
- * Das Kitchen - Mutual Aid Organization Website
- * Copyright (C) 2025 Evan White
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
- */
-
 import { useEffect, useState } from 'react';
 import {
     volunteersAPI,
@@ -26,19 +8,8 @@ import {
 } from '@/lib/api';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-
-const categoryLabels: Record<VolunteerCategory, string> = {
-    FOOD_PREPARATION: 'Food Preparation',
-    FOOD_DISTRIBUTION: 'Food Distribution',
-    COMMUNITY_GARDENS: 'Community Gardens',
-    ADMINISTRATIVE: 'Administrative Support',
-    FUNDRAISING: 'Fundraising',
-    OUTREACH: 'Outreach & Advocacy',
-    EDUCATION: 'Education & Workshops',
-    TRANSPORTATION: 'Transportation',
-    EVENT_COORDINATION: 'Event Coordination',
-    OTHER: 'Other Opportunities'
-};
+import TranslationBanner from '@/components/TranslationBanner';
+import { useTranslations } from 'next-intl';
 
 const categoryOrder: VolunteerCategory[] = [
     'ADMINISTRATIVE',
@@ -54,99 +25,114 @@ const categoryOrder: VolunteerCategory[] = [
 ];
 
 function VolunteerCard({ volunteer }: { volunteer: VolunteerOpportunity }) {
+    const t = useTranslations('VolunteerPage');
     return (
         <div>
             <h3 className="text-xl font-semibold text-revolutionary-600 mb-2">
-                {volunteer.title}
+                <span lang="en">{volunteer.title}</span>
             </h3>
 
             {volunteer.description && (
-                <p className="text-accent-800 mb-3">{volunteer.description}</p>
+                <p className="text-accent-800 mb-3" lang="en">
+                    {volunteer.description}
+                </p>
             )}
 
             <div className="space-y-2 text-sm text-accent-700">
                 {volunteer.location && (
                     <div>
-                        <strong className="text-accent-900">Location:</strong>{' '}
-                        {volunteer.location}
+                        <strong className="text-accent-900">
+                            {t('labels.location')}
+                        </strong>{' '}
+                        <span lang="en">{volunteer.location}</span>
                     </div>
                 )}
 
                 {volunteer.address && (
                     <div>
-                        <strong className="text-accent-900">Address:</strong>{' '}
-                        {volunteer.address}
+                        <strong className="text-accent-900">
+                            {t('labels.address')}
+                        </strong>{' '}
+                        <span lang="en">{volunteer.address}</span>
                     </div>
                 )}
 
                 {volunteer.hours && (
                     <div>
-                        <strong className="text-accent-900">Hours:</strong>{' '}
-                        {volunteer.hours}
+                        <strong className="text-accent-900">
+                            {t('labels.hours')}
+                        </strong>{' '}
+                        <span lang="en">{volunteer.hours}</span>
                     </div>
                 )}
 
                 {volunteer.timeCommitment && (
                     <div>
                         <strong className="text-accent-900">
-                            Time Commitment:
+                            {t('labels.timeCommitment')}
                         </strong>{' '}
-                        {volunteer.timeCommitment}
+                        <span lang="en">{volunteer.timeCommitment}</span>
                     </div>
                 )}
 
                 {volunteer.skills && (
                     <div>
                         <strong className="text-accent-900">
-                            Skills Needed:
+                            {t('labels.skills')}
                         </strong>{' '}
-                        {volunteer.skills}
+                        <span lang="en">{volunteer.skills}</span>
                     </div>
                 )}
 
                 {volunteer.requirements && (
                     <div>
                         <strong className="text-accent-900">
-                            Requirements:
+                            {t('labels.requirements')}
                         </strong>{' '}
-                        {volunteer.requirements}
+                        <span lang="en">{volunteer.requirements}</span>
                     </div>
                 )}
 
                 {volunteer.phone && (
                     <div>
-                        <strong className="text-accent-900">Phone:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.phone')}
+                        </strong>{' '}
                         <a
                             href={`tel:${volunteer.phone}`}
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {volunteer.phone}
+                            <span lang="en">{volunteer.phone}</span>
                         </a>
                     </div>
                 )}
 
                 {volunteer.email && (
                     <div>
-                        <strong className="text-accent-900">Email:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.email')}
+                        </strong>{' '}
                         <a
                             href={`mailto:${volunteer.email}`}
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {volunteer.email}
+                            <span lang="en">{volunteer.email}</span>
                         </a>
                     </div>
                 )}
 
                 {volunteer.website && (
                     <div>
-                        <strong className="text-accent-900">Website:</strong>{' '}
+                        <strong className="text-accent-900">
+                            {t('labels.website')}
+                        </strong>{' '}
                         <a
                             href={volunteer.website}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-primary-600 hover:text-primary-700"
                         >
-                            {volunteer.website}
+                            <span lang="en">{volunteer.website}</span>
                         </a>
                     </div>
                 )}
@@ -154,18 +140,18 @@ function VolunteerCard({ volunteer }: { volunteer: VolunteerOpportunity }) {
                 {volunteer.contactInfo && (
                     <div>
                         <strong className="text-accent-900">
-                            Additional Contact Info:
+                            {t('labels.contactInfo')}
                         </strong>{' '}
-                        {volunteer.contactInfo}
+                        <span lang="en">{volunteer.contactInfo}</span>
                     </div>
                 )}
 
                 {volunteer.notes && (
                     <div>
                         <strong className="text-accent-900">
-                            Additional Notes:
+                            {t('labels.notes')}
                         </strong>{' '}
-                        {volunteer.notes}
+                        <span lang="en">{volunteer.notes}</span>
                     </div>
                 )}
             </div>
@@ -180,12 +166,13 @@ function VolunteerSection({
     category: VolunteerCategory;
     volunteers: VolunteerOpportunity[];
 }) {
+    const t = useTranslations('VolunteerPage');
     if (volunteers.length === 0) return null;
 
     return (
         <section className="mb-12">
             <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
-                {categoryLabels[category]}
+                {t(`categories.${category}`)}
             </h2>
             <div className="space-y-4">
                 {volunteers.map((volunteer) => (
@@ -197,6 +184,7 @@ function VolunteerSection({
 }
 
 export default function Volunteer() {
+    const t = useTranslations('VolunteerPage');
     const [volunteers, setVolunteers] = useState<VolunteerOpportunity[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -209,9 +197,7 @@ export default function Volunteer() {
                 setVolunteers(response.volunteers);
             } catch (err) {
                 console.error('Failed to fetch volunteer opportunities:', err);
-                setError(
-                    'Failed to load volunteer opportunities. Please try again later.'
-                );
+                setError('error');
             } finally {
                 setLoading(false);
             }
@@ -220,7 +206,6 @@ export default function Volunteer() {
         fetchVolunteers();
     }, []);
 
-    // Group volunteers by category
     const volunteersByCategory = volunteers.reduce((acc, volunteer) => {
         if (!acc[volunteer.category]) {
             acc[volunteer.category] = [];
@@ -237,9 +222,7 @@ export default function Volunteer() {
                     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                         <div className="text-center">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                            <p className="mt-4 text-gray-600">
-                                Loading volunteer opportunities...
-                            </p>
+                            <p className="mt-4 text-gray-600">{t('loading')}</p>
                         </div>
                     </div>
                 </main>
@@ -256,9 +239,9 @@ export default function Volunteer() {
                     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
                             <h2 className="text-lg font-semibold text-red-800 mb-2">
-                                Error Loading Volunteer Opportunities
+                                {t('errorTitle')}
                             </h2>
-                            <p className="text-red-700">{error}</p>
+                            <p className="text-red-700">{t('errorText')}</p>
                         </div>
                     </div>
                     <Footer />
@@ -270,16 +253,15 @@ export default function Volunteer() {
     return (
         <div className="bg-accent-50">
             <Header />
+            <TranslationBanner />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="prose prose-lg max-w-none">
                     <div className="text-center mb-12">
                         <h1 className="text-4xl font-bold tracking-tight text-primary-700 mb-8">
-                            Volunteer Opportunities
+                            {t('title')}
                         </h1>
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                            Join our mission to fight food insecurity in
-                            Charlottesville. Find ways to get involved and make
-                            a difference in your community.
+                            {t('subtitle')}
                         </p>
                     </div>
 
@@ -289,13 +271,9 @@ export default function Volunteer() {
                                 🤝
                             </div>
                             <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                                No Volunteer Opportunities Available
+                                {t('emptyTitle')}
                             </h2>
-                            <p className="text-gray-600">
-                                Check back soon for new volunteer opportunities,
-                                or contact us if you&apos;re interested in
-                                helping out!
-                            </p>
+                            <p className="text-gray-600">{t('emptyText')}</p>
                         </div>
                     ) : (
                         <div>

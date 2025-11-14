@@ -17,8 +17,13 @@
  */
 
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function Footer() {
+    const t = useTranslations('Footer');
+    const tNav = useTranslations('Navigation');
+    const locale = useLocale();
+    const prefix = locale === 'en' ? '' : `/${locale}`;
     return (
         <footer className="bg-accent-900 border-t-4 border-primary-600">
             <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -26,19 +31,18 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="md:col-span-1">
                         <Link
-                            href="/"
+                            href={prefix || '/'}
                             className="group flex items-center space-x-1 hover:opacity-90 transition-opacity"
                         >
                             <span className="text-xl font-light text-white tracking-wide">
-                                Charlottesville
+                                {useTranslations('Header')('brandCity')}
                             </span>
                             <span className="text-2xl font-bold text-white tracking-tight">
-                                Kitchen
+                                {useTranslations('Header')('brandName')}
                             </span>
                         </Link>
                         <p className="mt-4 text-accent-300 text-sm">
-                            Building revolutionary community through mutual aid,
-                            solidarity, and collective liberation.
+                            {t('mission')}
                         </p>
                     </div>
                 </div>
@@ -47,21 +51,20 @@ export default function Footer() {
                     <div className="md:flex md:items-center md:justify-between">
                         <div className="flex space-x-6 md:order-2">
                             <Link
-                                href="/privacy"
+                                href={`${prefix}/privacy`}
                                 className="text-accent-400 hover:text-secondary-300 text-sm transition-colors"
                             >
-                                Privacy Policy
+                                {tNav('privacy')}
                             </Link>
                             <Link
-                                href="/terms"
+                                href={`${prefix}/terms`}
                                 className="text-accent-400 hover:text-secondary-300 text-sm transition-colors"
                             >
-                                Terms of Service
+                                {tNav('terms')}
                             </Link>
                         </div>
                         <p className="mt-4 md:mt-0 md:order-1 text-gray-400 text-sm">
-                            &copy; 2025 Charlottesville Kitchen. Built with ❤️
-                            for community.
+                            {t('copyright')}
                         </p>
                     </div>
                 </div>

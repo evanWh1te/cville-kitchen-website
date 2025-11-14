@@ -1,0 +1,227 @@
+{
+    "Common": {
+        "appTitle": "Charlottesville Kitchen",
+        "openMenu": "Open main menu",
+        "loading": "Loading...",
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "update": "Update",
+        "create": "Create",
+        "errorGeneric": "An error occurred",
+        "notranslateBanner": "Resource content (names, descriptions) is in English. Your browser can automatically translate this page for your convenience.",
+        "active": "Active",
+        "inactive": "Inactive"
+    },
+    "Navigation": {
+        "home": "Home",
+        "resources": "Community Resources",
+        "volunteer": "Volunteer Opportunities",
+        "education": "Political Education",
+        "contact": "Contact",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "admin": "Admin"
+    },
+    "Header": {
+        "brandCity": "Charlottesville",
+        "brandName": "Kitchen"
+    },
+    "Footer": {
+        "mission": "Building revolutionary community through mutual aid, solidarity, and collective liberation.",
+        "copyright": "\u00a9 2025 Charlottesville Kitchen. Built with ❤️ for community."
+    },
+    "HomePage": {
+        "title": "Charlottesville Kitchen",
+        "tagline": "Community mutual aid and solidarity",
+        "p1": "Building revolutionary community through mutual aid, direct action, and solidarity. We believe in collective power, workers' rights, and creating systems of care that serve the people, not profit. Join us in building a more just and equitable world through grassroots organizing and community support.",
+        "p2": "We have compiled community resources for you and for all in solidarity as fellow members of the working class of Charlottesville. Food is a human right. Scarcity is a capitalist construct intended to oppress us. Together we will win a socialist future – a future that provides to each according to their needs.",
+        "p3": "Venceremos.",
+        "ctaResources": "Community Resources",
+        "ctaEducation": "Political Education"
+    },
+    "Features": {
+        "title": "How We Support Our Community",
+        "subtitle": "Through direct action and mutual aid, we address immediate needs while building long-term community power.",
+        "items": {
+            "foodSecurity": {
+                "title": "Food Security",
+                "desc": "Community kitchens, food pantries, and nutrition education programs ensuring no one goes hungry."
+            },
+            "housingSupport": {
+                "title": "Housing Support",
+                "desc": "Tenant organizing, eviction prevention, and emergency housing assistance for community members."
+            },
+            "emergencyAid": {
+                "title": "Emergency Aid",
+                "desc": "Rapid response network for crisis situations, connecting people with immediate resources."
+            },
+            "communityBuilding": {
+                "title": "Community Building",
+                "desc": "Regular events, workshops, and gatherings that strengthen neighborhood connections."
+            },
+            "resourceSharing": {
+                "title": "Resource Sharing",
+                "desc": "Tool libraries, skill shares, and resource exchanges that build community resilience."
+            },
+            "advocacy": {
+                "title": "Advocacy & Organizing",
+                "desc": "Policy advocacy and grassroots organizing for systemic change in our community."
+            }
+        },
+        "impact": {
+            "title": "Our Impact",
+            "families": "Families Supported",
+            "volunteers": "Volunteers",
+            "programs": "Programs Running"
+        }
+    },
+    "CallToAction": {
+        "title": "Ready to Build Community Together?",
+        "desc": "Every person has something valuable to contribute. Whether you can volunteer time, share resources, or simply spread the word – your participation makes a difference.",
+        "join": "Join Our Network",
+        "learnMore": "Learn More"
+    },
+    "ResourcesPage": {
+        "title": "Community Food Resources",
+        "quickNav": "Quick Navigation",
+        "externalResources": "External Resources",
+        "externalDesc": "These projects are put together by other organizations and community members. These projects provide comprehensive information to find resources spanning food scarecity, substance use support, mental health, housing, and more.",
+        "howToHelp": "How to Help",
+        "howToHelpDesc": "Please check the websites of food banks and churches that provide food for ways to contribute. Keep in mind that monetary donations are typically preferred by food banks and many organizations because they can make the money go further with wholesale/discount pricing and can ensure they meet specific community needs and wants. Donating your time is also a very valuable contribution!",
+        "noResources": "No resources available at this time.",
+        "loading": "Loading resources...",
+        "errorTitle": "Error Loading Resources",
+        "errorText": "Unable to load resources at this time. Please try again later.",
+        "count": "{count}",
+        "mealTypes": {
+            "BREAKFAST": "Breakfast",
+            "LUNCH": "Lunch",
+            "DINNER": "Dinner",
+            "OTHER": "Other Public Meals"
+        },
+        "labels": {
+            "lastUpdated": "Last updated:",
+            "location": "Location:",
+            "address": "Address:",
+            "hours": "Hours:",
+            "phone": "Phone:",
+            "email": "Email:",
+            "website": "Website:",
+            "requirements": "Requirements:",
+            "notes": "Notes:",
+            "contactInfo": "Contact Info:"
+        },
+        "categories": {
+            "PUBLIC_MEALS": "Public Meals",
+            "FREE_FRIDGES_PANTRIES": "Free Fridges & Pantries",
+            "EMERGENCY_FOOD": "Emergency Food",
+            "STUDENT_MEALS": "Student Meal Services",
+            "CHURCH_PANTRIES": "Church-Based Food Pantries",
+            "FOOD_DELIVERY": "Food Delivery Services",
+            "LOCAL_EFFORTS": "Additional Local Efforts & Ways to Help",
+            "ADDITIONAL_RESOURCES": "Additional Resources"
+        }
+    },
+    "VolunteerPage": {
+        "title": "Volunteer Opportunities",
+        "subtitle": "Join our mission to fight food insecurity in Charlottesville. Find ways to get involved and make a difference in your community.",
+        "loading": "Loading volunteer opportunities...",
+        "errorTitle": "Error Loading Volunteer Opportunities",
+        "errorText": "Failed to load volunteer opportunities. Please try again later.",
+        "emptyTitle": "No Volunteer Opportunities Available",
+        "emptyText": "Check back soon for new volunteer opportunities, or contact us if you're interested in helping out!",
+        "categories": {
+            "FOOD_PREPARATION": "Food Preparation",
+            "FOOD_DISTRIBUTION": "Food Distribution",
+            "COMMUNITY_GARDENS": "Community Gardens",
+            "ADMINISTRATIVE": "Administrative Support",
+            "FUNDRAISING": "Fundraising",
+            "OUTREACH": "Outreach & Advocacy",
+            "EDUCATION": "Education & Workshops",
+            "TRANSPORTATION": "Transportation",
+            "EVENT_COORDINATION": "Event Coordination",
+            "OTHER": "Other Opportunities"
+        },
+        "labels": {
+            "location": "Location:",
+            "address": "Address:",
+            "hours": "Hours:",
+            "timeCommitment": "Time Commitment:",
+            "skills": "Skills Needed:",
+            "requirements": "Requirements:",
+            "phone": "Phone:",
+            "email": "Email:",
+            "website": "Website:",
+            "contactInfo": "Additional Contact Info:",
+            "notes": "Additional Notes:"
+        }
+    },
+    "ContactPage": {
+        "title": "Contact Charlottesville Kitchen",
+        "subtitle": "Ready to get involved or need support? We'd love to hear from you.",
+        "form": {
+            "sendUs": "Send Us a Message",
+            "name": "Name *",
+            "email": "Email *",
+            "subject": "Subject *",
+            "subjectPlaceholder": "Select a subject",
+            "subjectOptions": {
+                "support": "I need support/assistance",
+                "donation": "Donation/resources",
+                "general": "General inquiry"
+            },
+            "message": "Message *",
+            "success": "Thank you! Your message has been sent successfully.",
+            "error": "Sorry, there was an error sending your message. Please try again.",
+            "send": "Send Message",
+            "sending": "Sending..."
+        },
+        "info": {
+            "getInTouch": "Get In Touch",
+            "events": "Community Events",
+            "eventsDesc": "We host special community events from time to time. Stay tuned and check back here for announcements about our next gathering!"
+        }
+    },
+    "AboutPage": {
+        "title": "About Das Kitchen",
+        "subtitle": "Building revolutionary community through mutual aid, solidarity, and collective liberation.",
+        "mission": "Our Mission",
+        "missionP1": "Das Kitchen exists to strengthen our community through direct action, mutual aid, and revolutionary solidarity. We believe in the power of collective care and the importance of building networks of support that center the working class and most oppressed among us.",
+        "missionP2": "Our work is rooted in the understanding that true security comes not from individual wealth or capitalist institutions, but from strong communities where everyone has what they need to thrive.",
+        "values": "Our Values",
+        "valuesList": {
+            "solidarity": "Solidarity: We stand together in struggle and celebration",
+            "equity": "Equity: Everyone deserves dignity and access to resources",
+            "community": "Community: Collective care strengthens us all",
+            "justice": "Justice: We work toward systemic change"
+        },
+        "join": "Join Our Movement",
+        "joinDesc": "Mutual aid is most powerful when we work together. Whether you can volunteer time, donate resources, or simply spread the word, every contribution matters.",
+        "cta": "Get Involved"
+    },
+    "PrivacyPage": {
+        "title": "Privacy Policy",
+        "updated": "Last updated: {date}",
+        "contactLabel": "Contact Us",
+        "org": "Charlottesville Kitchen",
+        "email": "Email: contact@cville.kitchen",
+        "subject": "Subject: Privacy Policy Inquiry"
+    },
+    "TermsPage": {
+        "title": "Terms of Service",
+        "updated": "Last updated: {date}",
+        "welcome": "Welcome to Charlottesville Kitchen Mutual Aid"
+    },
+    "AdminLogin": {
+        "title": "Admin Login",
+        "subtitle": "Sign in to access the admin dashboard",
+        "emailLabel": "Email address",
+        "emailPlaceholder": "Enter your email",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "signin": "Sign in",
+        "signingIn": "Signing in...",
+        "help": "Need help? Contact the system administrator."
+    }
+}

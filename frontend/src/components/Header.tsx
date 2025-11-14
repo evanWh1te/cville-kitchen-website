@@ -23,38 +23,47 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const locale = useLocale();
+    const tNav = useTranslations('Navigation');
+    const tHdr = useTranslations('Header');
 
-    const navigation = [
-        { name: 'Home', href: '/' },
-        // { name: 'About', href: '/about' },
-        { name: 'Community Resources', href: '/resources' },
-        { name: 'Volunteer Opportunities', href: '/volunteer' },
-        { name: 'Political Education', href: '/education' },
-        { name: 'Contact', href: '/contact' }
-    ];
+    const prefix = locale === 'en' ? '' : `/${locale}`;
+
+    const navigation = useMemo(
+        () => [
+            { name: tNav('home'), href: `${prefix}/` || '/' },
+            { name: tNav('resources'), href: `${prefix}/resources` },
+            { name: tNav('volunteer'), href: `${prefix}/volunteer` },
+            { name: tNav('education'), href: `${prefix}/education` },
+            { name: tNav('contact'), href: `${prefix}/contact` }
+        ],
+        [tNav, prefix]
+    );
 
     return (
         <header className="bg-white border-b border-gray-200">
             <nav className="mx-auto max-w-6xl px-4 sm:px-6">
                 <div className="flex h-16 items-center justify-between">
                     <Link
-                        href="/"
+                        href={prefix || '/'}
                         className="group flex items-center space-x-1 hover:opacity-90 transition-opacity"
                     >
                         <span className="text-xl font-light text-black tracking-wide">
-                            Charlottesville
+                            {tHdr('brandCity')}
                         </span>
                         <span className="text-2xl font-bold text-black tracking-tight">
-                            Kitchen
+                            {tHdr('brandName')}
                         </span>
                     </Link>
 
-                    <div className="hidden md:flex md:space-x-8">
+                    <div className="hidden md:flex md:space-x-8 items-center">
                         {navigation.map((item) => (
                             <Link
                                 key={item.name}
@@ -64,6 +73,7 @@ export default function Header() {
                                 {item.name}
                             </Link>
                         ))}
+                        <LanguageSwitcher />
                     </div>
 
                     <div className="md:hidden">
@@ -72,7 +82,9 @@ export default function Header() {
                             className="text-gray-600 hover:text-gray-900"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                         >
-                            <span className="sr-only">Open main menu</span>
+                            <span className="sr-only">
+                                {useTranslations('Common')('openMenu')}
+                            </span>
                             {mobileMenuOpen ? (
                                 <svg
                                     className="block h-6 w-6"
@@ -119,6 +131,9 @@ export default function Header() {
                                     {item.name}
                                 </Link>
                             ))}
+                            <div className="px-3 py-2">
+                                <LanguageSwitcher />
+                            </div>
                         </div>
                     </div>
                 )}

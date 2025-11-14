@@ -1,0 +1,227 @@
+{
+    "Common": {
+        "appTitle": "夏洛茨维尔厨房",
+        "openMenu": "打开主菜单",
+        "loading": "加载中...",
+        "save": "保存",
+        "saving": "正在保存...",
+        "cancel": "取消",
+        "update": "更新",
+        "create": "创建",
+        "errorGeneric": "发生错误",
+        "notranslateBanner": "资源内容（名称、描述）为英文。您的浏览器可以自动翻译此页面以方便使用。",
+        "active": "启用",
+        "inactive": "停用"
+    },
+    "Navigation": {
+        "home": "首页",
+        "resources": "社区资源",
+        "volunteer": "志愿者机会",
+        "education": "政治教育",
+        "contact": "联系",
+        "privacy": "隐私政策",
+        "terms": "服务条款",
+        "admin": "管理"
+    },
+    "Header": {
+        "brandCity": "夏洛茨维尔",
+        "brandName": "厨房"
+    },
+    "Footer": {
+        "mission": "通过互助、团结和集体解放建设革命性社区。",
+        "copyright": "© 2025 夏洛茨维尔厨房。用 ❤️ 为社区打造。"
+    },
+    "HomePage": {
+        "title": "夏洛茨维尔厨房",
+        "tagline": "社区互助与团结",
+        "p1": "通过互助、直接行动和团结建设革命性社区。我们相信集体力量、工人权益，以及构建服务于人民而非利润的关怀体系。",
+        "p2": "我们为夏洛茨维尔的工人阶级成员整理了社区资源。食物是人权。稀缺是用于压迫的资本主义构造。",
+        "p3": "我们一定会胜利。",
+        "ctaResources": "社区资源",
+        "ctaEducation": "政治教育"
+    },
+    "Features": {
+        "title": "我们如何支持社区",
+        "subtitle": "通过直接行动与互助，满足当下需求并构建长期的社区力量。",
+        "items": {
+            "foodSecurity": {
+                "title": "食品安全",
+                "desc": "社区厨房、粮食发放与营养教育，确保无人挨饿。"
+            },
+            "housingSupport": {
+                "title": "住房支持",
+                "desc": "租客组织、预防驱逐与紧急住房援助。"
+            },
+            "emergencyAid": {
+                "title": "紧急援助",
+                "desc": "危机情况下的快速响应网络，连接即时资源。"
+            },
+            "communityBuilding": {
+                "title": "社区建设",
+                "desc": "定期活动、讲座与聚会，增强邻里联系。"
+            },
+            "resourceSharing": {
+                "title": "资源共享",
+                "desc": "工具图书馆、技能分享与资源交换，提升韧性。"
+            },
+            "advocacy": {
+                "title": "倡导与组织",
+                "desc": "为系统性改变进行政策倡导与草根组织。"
+            }
+        },
+        "impact": {
+            "title": "我们的影响",
+            "families": "受助家庭",
+            "volunteers": "志愿者",
+            "programs": "运行中的项目"
+        }
+    },
+    "CallToAction": {
+        "title": "准备好一起建设社区了吗？",
+        "desc": "每个人都有宝贵的贡献。志愿时间、分享资源或传播信息——你的参与很重要。",
+        "join": "加入我们的网络",
+        "learnMore": "了解更多"
+    },
+    "ResourcesPage": {
+        "title": "社区食物资源",
+        "quickNav": "快速导航",
+        "externalResources": "外部资源",
+        "externalDesc": "这些项目由其他组织和社区成员整理，涵盖食品、物质使用支持、心理健康、住房等资源。",
+        "howToHelp": "如何帮助",
+        "howToHelpDesc": "请查看食品银行和提供食物的教会网站了解捐助方式。通常更偏向货币捐助，因为他们可以更有效地采购并满足具体需求。捐出你的时间同样宝贵！",
+        "noResources": "当前暂无资源。",
+        "loading": "正在加载资源...",
+        "errorTitle": "资源加载出错",
+        "errorText": "目前无法加载资源，请稍后重试。",
+        "count": "{count}",
+        "mealTypes": {
+            "BREAKFAST": "早餐",
+            "LUNCH": "午餐",
+            "DINNER": "晚餐",
+            "OTHER": "其他公共餐食"
+        },
+        "labels": {
+            "lastUpdated": "最近更新：",
+            "location": "地点：",
+            "address": "地址：",
+            "hours": "时间：",
+            "phone": "电话：",
+            "email": "邮箱：",
+            "website": "网站：",
+            "requirements": "要求：",
+            "notes": "备注：",
+            "contactInfo": "联系信息："
+        },
+        "categories": {
+            "PUBLIC_MEALS": "公共餐食",
+            "FREE_FRIDGES_PANTRIES": "免费冰箱和食品柜",
+            "EMERGENCY_FOOD": "紧急食物",
+            "STUDENT_MEALS": "学生餐服务",
+            "CHURCH_PANTRIES": "教会食品柜",
+            "FOOD_DELIVERY": "食物配送服务",
+            "LOCAL_EFFORTS": "本地努力与帮助方式",
+            "ADDITIONAL_RESOURCES": "更多资源"
+        }
+    },
+    "VolunteerPage": {
+        "title": "志愿者机会",
+        "subtitle": "加入我们的使命，共同抗击食物不安全。",
+        "loading": "正在加载志愿者机会...",
+        "errorTitle": "加载志愿者机会出错",
+        "errorText": "加载失败，请稍后重试。",
+        "emptyTitle": "暂无志愿者机会",
+        "emptyText": "请稍后再来查看，或联系我们表达你的意愿！",
+        "categories": {
+            "FOOD_PREPARATION": "食物准备",
+            "FOOD_DISTRIBUTION": "食物分发",
+            "COMMUNITY_GARDENS": "社区花园",
+            "ADMINISTRATIVE": "行政支持",
+            "FUNDRAISING": "筹款",
+            "OUTREACH": "外联与倡导",
+            "EDUCATION": "教育与工作坊",
+            "TRANSPORTATION": "交通",
+            "EVENT_COORDINATION": "活动协调",
+            "OTHER": "其他机会"
+        },
+        "labels": {
+            "location": "地点：",
+            "address": "地址：",
+            "hours": "时间：",
+            "timeCommitment": "时间投入：",
+            "skills": "需要的技能：",
+            "requirements": "要求：",
+            "phone": "电话：",
+            "email": "邮箱：",
+            "website": "网站：",
+            "contactInfo": "额外联系信息：",
+            "notes": "额外备注："
+        }
+    },
+    "ContactPage": {
+        "title": "联系夏洛茨维尔厨房",
+        "subtitle": "想参与或需要支持？欢迎联系。",
+        "form": {
+            "sendUs": "发送消息",
+            "name": "姓名 *",
+            "email": "邮箱 *",
+            "subject": "主题 *",
+            "subjectPlaceholder": "选择主题",
+            "subjectOptions": {
+                "support": "我需要支持/帮助",
+                "donation": "捐赠/资源",
+                "general": "一般咨询"
+            },
+            "message": "消息 *",
+            "success": "谢谢！您的消息已成功发送。",
+            "error": "抱歉，发送失败，请重试。",
+            "send": "发送消息",
+            "sending": "发送中..."
+        },
+        "info": {
+            "getInTouch": "取得联系",
+            "events": "社区活动",
+            "eventsDesc": "我们不定期举办社区活动，敬请关注后续公告！"
+        }
+    },
+    "AboutPage": {
+        "title": "关于 Das Kitchen",
+        "subtitle": "通过互助、团结与集体解放建设革命性社区。",
+        "mission": "我们的使命",
+        "missionP1": "通过直接行动、互助和革命性团结加强我们的社区。",
+        "missionP2": "真正的安全来自强大的社区，而非个人财富。",
+        "values": "我们的价值观",
+        "valuesList": {
+            "solidarity": "团结：在斗争与庆祝中彼此相伴",
+            "equity": "公平：人人值得拥有尊严与资源",
+            "community": "社区：集体关怀让我们更强大",
+            "justice": "正义：致力于系统性变革"
+        },
+        "join": "加入我们的运动",
+        "joinDesc": "当我们一起行动，互助更有力量。",
+        "cta": "参与进来"
+    },
+    "PrivacyPage": {
+        "title": "隐私政策",
+        "updated": "最近更新：{date}",
+        "contactLabel": "联系我们",
+        "org": "夏洛茨维尔厨房",
+        "email": "邮箱：contact@cville.kitchen",
+        "subject": "主题：隐私政策咨询"
+    },
+    "TermsPage": {
+        "title": "服务条款",
+        "updated": "最近更新：{date}",
+        "welcome": "欢迎来到夏洛茨维尔厨房互助平台"
+    },
+    "AdminLogin": {
+        "title": "管理员登录",
+        "subtitle": "登录以访问管理面板",
+        "emailLabel": "邮箱地址",
+        "emailPlaceholder": "请输入邮箱",
+        "passwordLabel": "密码",
+        "passwordPlaceholder": "请输入密码",
+        "signin": "登录",
+        "signingIn": "登录中...",
+        "help": "需要帮助？请联系系统管理员。"
+    }
+}

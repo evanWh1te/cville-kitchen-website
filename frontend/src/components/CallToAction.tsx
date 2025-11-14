@@ -17,31 +17,33 @@
  */
 
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function CallToAction() {
+    const t = useTranslations('CallToAction');
+    const locale = useLocale();
+    const prefix = locale === 'en' ? '' : `/${locale}`;
     return (
         <section className="py-16 bg-primary-600">
             <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl sm:text-4xl font-bold text-white font-heading mb-4">
-                    Ready to Build Community Together?
+                    {t('title')}
                 </h2>
                 <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-                    Every person has something valuable to contribute. Whether
-                    you can volunteer time, share resources, or simply spread
-                    the word – your participation makes a difference.
+                    {t('desc')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
                     <Link
-                        href="/contact"
+                        href={`${prefix}/contact`}
                         className="bg-secondary-500 hover:bg-secondary-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center"
                     >
-                        Join Our Network
+                        {t('join')}
                     </Link>
                     <Link
-                        href="/about"
+                        href={`${prefix}/about`}
                         className="border-2 border-white text-white hover:bg-white hover:text-primary-700 font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-center"
                     >
-                        Learn More
+                        {t('learnMore')}
                     </Link>
                 </div>
             </div>

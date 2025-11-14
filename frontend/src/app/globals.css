@@ -30,3 +30,27 @@
         @apply border-2 border-primary-600 text-primary-600 hover:bg-primary-600 hover:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
     }
 }
+
+/* RTL adjustments */
+html[dir='rtl'] body {
+    direction: rtl;
+}
+html[dir='rtl'] .text-left {
+    text-align: right;
+}
+html[dir='rtl'] .ml-4 {
+    margin-left: 0;
+    margin-right: 1rem;
+}
+html[dir='rtl'] .mr-4 {
+    margin-right: 0;
+    margin-left: 1rem;
+}
+html[dir='rtl'] .pl-4 {
+    padding-left: 0;
+    padding-right: 1rem;
+}
+html[dir='rtl'] .pr-4 {
+    padding-right: 0;
+    padding-left: 1rem;
+}

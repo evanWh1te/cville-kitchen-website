@@ -1,0 +1,227 @@
+{
+    "Common": {
+        "appTitle": "Charlottesville Kitchen",
+        "openMenu": "Abrir menú principal",
+        "loading": "Cargando...",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "cancel": "Cancelar",
+        "update": "Actualizar",
+        "create": "Crear",
+        "errorGeneric": "Ocurrió un error",
+        "notranslateBanner": "El contenido de los recursos (nombres, descripciones) está en inglés. Su navegador puede traducir automáticamente esta página para su conveniencia.",
+        "active": "Activo",
+        "inactive": "Inactivo"
+    },
+    "Navigation": {
+        "home": "Inicio",
+        "resources": "Recursos Comunitarios",
+        "volunteer": "Oportunidades de Voluntariado",
+        "education": "Educación Política",
+        "contact": "Contacto",
+        "privacy": "Política de Privacidad",
+        "terms": "Términos de Servicio",
+        "admin": "Admin"
+    },
+    "Header": {
+        "brandCity": "Charlottesville",
+        "brandName": "Kitchen"
+    },
+    "Footer": {
+        "mission": "Construyendo comunidad revolucionaria a través de la ayuda mutua, la solidaridad y la liberación colectiva.",
+        "copyright": "\u00a9 2025 Charlottesville Kitchen. Construido con ❤️ para la comunidad."
+    },
+    "HomePage": {
+        "title": "Charlottesville Kitchen",
+        "tagline": "Ayuda mutua y solidaridad comunitaria",
+        "p1": "Construyendo comunidad revolucionaria mediante ayuda mutua, acción directa y solidaridad. Creemos en el poder colectivo, los derechos de las y los trabajadores, y en crear sistemas de cuidado que sirvan al pueblo, no a las ganancias. Únete a construir un mundo más justo y equitativo a través de la organización de base y el apoyo comunitario.",
+        "p2": "Hemos compilado recursos comunitarios para ti y para todos en solidaridad como miembros de la clase trabajadora de Charlottesville. La comida es un derecho humano. La escasez es una construcción capitalista destinada a oprimirnos. Juntas y juntos venceremos hacia un futuro socialista – un futuro que provea a cada quien según sus necesidades.",
+        "p3": "Venceremos.",
+        "ctaResources": "Recursos Comunitarios",
+        "ctaEducation": "Educación Política"
+    },
+    "Features": {
+        "title": "Cómo Apoyamos a Nuestra Comunidad",
+        "subtitle": "Mediante acción directa y ayuda mutua, atendemos necesidades inmediatas mientras construimos poder comunitario a largo plazo.",
+        "items": {
+            "foodSecurity": {
+                "title": "Seguridad Alimentaria",
+                "desc": "Cocinas comunitarias, despensas y educación nutricional para que nadie pase hambre."
+            },
+            "housingSupport": {
+                "title": "Apoyo de Vivienda",
+                "desc": "Organización de inquilinos, prevención de desalojos y asistencia de vivienda de emergencia."
+            },
+            "emergencyAid": {
+                "title": "Ayuda de Emergencia",
+                "desc": "Red de respuesta rápida para crisis, conectando a personas con recursos inmediatos."
+            },
+            "communityBuilding": {
+                "title": "Construcción Comunitaria",
+                "desc": "Eventos, talleres y reuniones que fortalecen lazos vecinales."
+            },
+            "resourceSharing": {
+                "title": "Intercambio de Recursos",
+                "desc": "Bibliotecas de herramientas, intercambio de habilidades y recursos que fortalecen la resiliencia."
+            },
+            "advocacy": {
+                "title": "Incidencia y Organización",
+                "desc": "Incidencia política y organización de base por cambios sistémicos."
+            }
+        },
+        "impact": {
+            "title": "Nuestro Impacto",
+            "families": "Familias Apoyadas",
+            "volunteers": "Voluntarias/os",
+            "programs": "Programas en Marcha"
+        }
+    },
+    "CallToAction": {
+        "title": "¿Listas/os para Construir Comunidad Juntas/os?",
+        "desc": "Cada persona tiene algo valioso que aportar. Ya sea tiempo como voluntaria/o, compartir recursos o difundir el mensaje, tu participación hace la diferencia.",
+        "join": "Únete a Nuestra Red",
+        "learnMore": "Saber Más"
+    },
+    "ResourcesPage": {
+        "title": "Recursos Alimentarios Comunitarios",
+        "quickNav": "Navegación Rápida",
+        "externalResources": "Recursos Externos",
+        "externalDesc": "Estos proyectos son realizados por otras organizaciones y miembros de la comunidad. Proveen información integral sobre recursos en alimentación, apoyo por consumo de sustancias, salud mental, vivienda y más.",
+        "howToHelp": "Cómo Ayudar",
+        "howToHelpDesc": "Consulta los sitios web de bancos de alimentos e iglesias que brindan comida para conocer maneras de contribuir. Ten en cuenta que las donaciones monetarias suelen ser preferidas porque permiten comprar con descuentos mayoristas y responder a necesidades específicas. ¡Donar tu tiempo también es valioso!",
+        "noResources": "No hay recursos disponibles por el momento.",
+        "loading": "Cargando recursos...",
+        "errorTitle": "Error al Cargar Recursos",
+        "errorText": "No se pueden cargar los recursos en este momento. Intenta nuevamente más tarde.",
+        "count": "{count}",
+        "mealTypes": {
+            "BREAKFAST": "Desayuno",
+            "LUNCH": "Almuerzo",
+            "DINNER": "Cena",
+            "OTHER": "Otras Comidas Públicas"
+        },
+        "labels": {
+            "lastUpdated": "Última actualización:",
+            "location": "Ubicación:",
+            "address": "Dirección:",
+            "hours": "Horario:",
+            "phone": "Teléfono:",
+            "email": "Correo:",
+            "website": "Sitio web:",
+            "requirements": "Requisitos:",
+            "notes": "Notas:",
+            "contactInfo": "Información de Contacto:"
+        },
+        "categories": {
+            "PUBLIC_MEALS": "Comidas Públicas",
+            "FREE_FRIDGES_PANTRIES": "Neveras y Despensas Gratuitas",
+            "EMERGENCY_FOOD": "Alimentos de Emergencia",
+            "STUDENT_MEALS": "Servicios de Comidas para Estudiantes",
+            "CHURCH_PANTRIES": "Despensas de Iglesias",
+            "FOOD_DELIVERY": "Servicios de Entrega de Alimentos",
+            "LOCAL_EFFORTS": "Esfuerzos Locales y Formas de Ayudar",
+            "ADDITIONAL_RESOURCES": "Recursos Adicionales"
+        }
+    },
+    "VolunteerPage": {
+        "title": "Oportunidades de Voluntariado",
+        "subtitle": "Únete a nuestra misión contra la inseguridad alimentaria en Charlottesville. Encuentra maneras de involucrarte y marcar la diferencia.",
+        "loading": "Cargando oportunidades de voluntariado...",
+        "errorTitle": "Error al Cargar Oportunidades",
+        "errorText": "No se pudieron cargar las oportunidades. Intenta nuevamente más tarde.",
+        "emptyTitle": "No hay Oportunidades Disponibles",
+        "emptyText": "Vuelve pronto para ver nuevas oportunidades o contáctanos si te interesa ayudar.",
+        "categories": {
+            "FOOD_PREPARATION": "Preparación de Alimentos",
+            "FOOD_DISTRIBUTION": "Distribución de Alimentos",
+            "COMMUNITY_GARDENS": "Huertos Comunitarios",
+            "ADMINISTRATIVE": "Apoyo Administrativo",
+            "FUNDRAISING": "Recaudación de Fondos",
+            "OUTREACH": "Alcance y Incidencia",
+            "EDUCATION": "Educación y Talleres",
+            "TRANSPORTATION": "Transporte",
+            "EVENT_COORDINATION": "Coordinación de Eventos",
+            "OTHER": "Otras Oportunidades"
+        },
+        "labels": {
+            "location": "Ubicación:",
+            "address": "Dirección:",
+            "hours": "Horario:",
+            "timeCommitment": "Compromiso de Tiempo:",
+            "skills": "Habilidades Necesarias:",
+            "requirements": "Requisitos:",
+            "phone": "Teléfono:",
+            "email": "Correo:",
+            "website": "Sitio web:",
+            "contactInfo": "Información Adicional de Contacto:",
+            "notes": "Notas Adicionales:"
+        }
+    },
+    "ContactPage": {
+        "title": "Contacta a Charlottesville Kitchen",
+        "subtitle": "¿Quieres involucrarte o necesitas apoyo? Nos encantaría saber de ti.",
+        "form": {
+            "sendUs": "Envíanos un Mensaje",
+            "name": "Nombre *",
+            "email": "Correo *",
+            "subject": "Asunto *",
+            "subjectPlaceholder": "Selecciona un asunto",
+            "subjectOptions": {
+                "support": "Necesito apoyo/asistencia",
+                "donation": "Donación/recursos",
+                "general": "Consulta general"
+            },
+            "message": "Mensaje *",
+            "success": "¡Gracias! Tu mensaje se envió correctamente.",
+            "error": "Hubo un error al enviar tu mensaje. Inténtalo de nuevo.",
+            "send": "Enviar Mensaje",
+            "sending": "Enviando..."
+        },
+        "info": {
+            "getInTouch": "Ponte en Contacto",
+            "events": "Eventos Comunitarios",
+            "eventsDesc": "Realizamos eventos comunitarios ocasionales. ¡Vuelve pronto para próximos anuncios!"
+        }
+    },
+    "AboutPage": {
+        "title": "Sobre Das Kitchen",
+        "subtitle": "Construyendo comunidad revolucionaria mediante ayuda mutua, solidaridad y liberación colectiva.",
+        "mission": "Nuestra Misión",
+        "missionP1": "Das Kitchen fortalece a nuestra comunidad mediante acción directa, ayuda mutua y solidaridad revolucionaria. Creemos en el cuidado colectivo y en construir redes que centren a la clase trabajadora y a quienes más sufren opresión.",
+        "missionP2": "La verdadera seguridad proviene de comunidades fuertes, no de la riqueza individual ni de instituciones capitalistas.",
+        "values": "Nuestros Valores",
+        "valuesList": {
+            "solidarity": "Solidaridad: Estamos juntas/os en la lucha y la celebración",
+            "equity": "Equidad: Todas/os merecen dignidad y acceso a recursos",
+            "community": "Comunidad: El cuidado colectivo nos fortalece",
+            "justice": "Justicia: Trabajamos por un cambio sistémico"
+        },
+        "join": "Únete a Nuestro Movimiento",
+        "joinDesc": "La ayuda mutua es más poderosa cuando trabajamos juntas/os. Donar tiempo, recursos o difundir el mensaje, todo suma.",
+        "cta": "Involúcrate"
+    },
+    "PrivacyPage": {
+        "title": "Política de Privacidad",
+        "updated": "Última actualización: {date}",
+        "contactLabel": "Contáctanos",
+        "org": "Charlottesville Kitchen",
+        "email": "Correo: contact@cville.kitchen",
+        "subject": "Asunto: Consulta sobre Privacidad"
+    },
+    "TermsPage": {
+        "title": "Términos de Servicio",
+        "updated": "Última actualización: {date}",
+        "welcome": "Bienvenida/o a Charlottesville Kitchen Mutual Aid"
+    },
+    "AdminLogin": {
+        "title": "Acceso de Administración",
+        "subtitle": "Inicia sesión para acceder al panel de administración",
+        "emailLabel": "Correo electrónico",
+        "emailPlaceholder": "Ingresa tu correo",
+        "passwordLabel": "Contraseña",
+        "passwordPlaceholder": "Ingresa tu contraseña",
+        "signin": "Iniciar sesión",
+        "signingIn": "Ingresando...",
+        "help": "¿Necesitas ayuda? Contacta a la persona administradora."
+    }
+}

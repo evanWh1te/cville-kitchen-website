@@ -16,42 +16,39 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { useTranslations } from 'next-intl';
+
 export default function Features() {
+    const t = useTranslations('Features');
     const features = [
         {
-            title: 'Food Security',
-            description:
-                'Community kitchens, food pantries, and nutrition education programs ensuring no one goes hungry.',
+            title: t('items.foodSecurity.title'),
+            description: t('items.foodSecurity.desc'),
             icon: '🍽️'
         },
         {
-            title: 'Housing Support',
-            description:
-                'Tenant organizing, eviction prevention, and emergency housing assistance for community members.',
+            title: t('items.housingSupport.title'),
+            description: t('items.housingSupport.desc'),
             icon: '🏠'
         },
         {
-            title: 'Emergency Aid',
-            description:
-                'Rapid response network for crisis situations, connecting people with immediate resources.',
+            title: t('items.emergencyAid.title'),
+            description: t('items.emergencyAid.desc'),
             icon: '🚨'
         },
         {
-            title: 'Community Building',
-            description:
-                'Regular events, workshops, and gatherings that strengthen neighborhood connections.',
+            title: t('items.communityBuilding.title'),
+            description: t('items.communityBuilding.desc'),
             icon: '🤝'
         },
         {
-            title: 'Resource Sharing',
-            description:
-                'Tool libraries, skill shares, and resource exchanges that build community resilience.',
+            title: t('items.resourceSharing.title'),
+            description: t('items.resourceSharing.desc'),
             icon: '📚'
         },
         {
-            title: 'Advocacy & Organizing',
-            description:
-                'Policy advocacy and grassroots organizing for systemic change in our community.',
+            title: t('items.advocacy.title'),
+            description: t('items.advocacy.desc'),
             icon: '📢'
         }
     ];
@@ -61,12 +58,10 @@ export default function Features() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 font-heading mb-4">
-                        How We Support Our Community
+                        {t('title')}
                     </h2>
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Through direct action and mutual aid, we address
-                        immediate needs while building long-term community
-                        power.
+                        {t('subtitle')}
                     </p>
                 </div>
 
@@ -90,7 +85,7 @@ export default function Features() {
                 <div className="mt-16 bg-white rounded-lg p-8 shadow-sm">
                     <div className="text-center">
                         <h3 className="text-2xl font-semibold text-gray-900 font-heading mb-4">
-                            Our Impact
+                            {t('impact.title')}
                         </h3>
                         <div className="grid md:grid-cols-3 gap-8">
                             <div>
@@ -98,21 +93,23 @@ export default function Features() {
                                     500+
                                 </div>
                                 <div className="text-gray-700">
-                                    Families Supported
+                                    {t('impact.families')}
                                 </div>
                             </div>
                             <div>
                                 <div className="text-3xl font-bold text-primary-600 mb-2">
                                     50+
                                 </div>
-                                <div className="text-gray-700">Volunteers</div>
+                                <div className="text-gray-700">
+                                    {t('impact.volunteers')}
+                                </div>
                             </div>
                             <div>
                                 <div className="text-3xl font-bold text-primary-600 mb-2">
                                     12
                                 </div>
                                 <div className="text-gray-700">
-                                    Programs Running
+                                    {t('impact.programs')}
                                 </div>
                             </div>
                         </div>
