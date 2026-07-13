@@ -27,7 +27,7 @@
         "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
     },
     "devDependencies": {
-        "concurrently": "^8.2.2"
+        "concurrently": "^10.0.0"
     },
     "engines": {
         "node": ">=18.0.0",
