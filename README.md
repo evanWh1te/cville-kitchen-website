@@ -1,343 +1,176 @@
-# ✊ Charlottesville Kitchen - Revolutionary Mutual Aid Website
+# Charlottesville Kitchen
 
-A modern, accessible website for Charlottesville Kitchen, a leftist mutual aid
-organization focused on building revolutionary community through solidarity,
-direct action, and collective liberation.
+A website for Charlottesville Kitchen, a local mutual aid organization. It helps
+people find community food resources and volunteer opportunities, and gives
+organizers a small admin panel to keep that information up to date.
 
-## 🚩 About This Project
+## Overview
 
-This website serves as a digital hub for socialist organizing and mutual aid in
-the Charlottesville area. Built with revolutionary principles in mind, it
-provides:
+The project is a pnpm monorepo with two apps:
 
--   **Community Resources**: Comprehensive food resources and mutual aid
-    networks
--   **Political Education**: Socialist theory and organizing materials
--   **Direct Action**: Tools for community organizing and solidarity work
--   **Workers' Solidarity**: Platform for collective action and support
+- **frontend** — a Next.js (App Router) site with the public pages, an admin
+  panel, and thin API route handlers that proxy requests to the backend.
+- **backend** — an Express API backed by SQLite (via Prisma) that owns
+  authentication, resources, volunteer opportunities, users, and the contact
+  form.
 
-## 🏗️ Project Structure
+The browser only ever talks to the Next.js app. Requests to `/api/*` are proxied
+server-side to the backend, which keeps the backend off the public network and
+lets the auth cookie stay `HttpOnly`.
 
-This is a full-stack monorepo with socialist-themed design:
+## Tech stack
+
+| Area       | Details                                                         |
+| ---------- | --------------------------------------------------------------- |
+| Frontend   | Next.js 16, React 19, TypeScript, Tailwind CSS, React Hook Form |
+| Backend    | Express, TypeScript, Prisma, SQLite                             |
+| Auth       | JWT in an `HttpOnly` cookie, bcrypt password hashing            |
+| Email      | Nodemailer (contact form)                                       |
+| Tooling    | pnpm workspaces, ESLint 9 (flat config), Prettier               |
+| Deployment | Docker (multi-stage), pm2, GitHub Actions → GHCR                |
+
+## Project structure
 
 ```
 cville-kitchen-website/
-├── frontend/                 # Next.js 14 with socialist color scheme
-│   ├── src/
-│   │   ├── app/             # App Router pages
-│   │   │   ├── resources/   # Community resource listings (markdown-driven)
-│   │   │   ├── education/   # Political education materials
-│   │   │   ├── about/       # Organization mission
-│   │   │   └── contact/     # Contact and organizing
-│   │   ├── components/      # Revolutionary-themed components
-│   │   ├── lib/            # Markdown processing utilities
-│   │   └── resources/      # Community resource data (markdown)
-│   ├── tailwind.config.js  # Socialist color palette
-│   └── next.config.js      # Docker-optimized build
-├── backend/                 # Express.js API
-│   ├── src/
-│   │   ├── routes/         # API endpoints
-│   │   └── middleware/     # Security middleware
-│   └── package.json
-├── Dockerfile              # Multi-stage production build
-├── docker-compose.yml      # Container orchestration
-├── nginx.conf             # Reverse proxy configuration
-├── deploy.sh              # Production deployment script
-└── README.md
+├── frontend/                # Next.js app
+│   └── src/
+│       ├── app/             # App Router pages + /api proxy route handlers
+│       ├── components/      # UI components and forms
+│       ├── contexts/        # Auth context
+│       ├── lib/             # API client and markdown helpers
+│       └── resources/       # Static markdown resource content
+├── backend/                 # Express API
+│   ├── prisma/              # Schema, migrations, seed script
+│   └── src/
+│       ├── routes/          # auth, resources, volunteers, users, contact
+│       └── middleware/      # auth guards, error handling
+├── Dockerfile               # Multi-stage production image
+├── compose.yaml             # Container run configuration
+└── pnpm-workspace.yaml
 ```
 
-## 🚀 Getting Started
+## Prerequisites
 
-### Prerequisites
+- Node.js 20.9+
+- pnpm 9+ (`corepack enable` or `npm install -g pnpm`)
+- Docker (only for building/running the production image)
 
--   Node.js 18+ and npm 8+
--   Git
--   Docker & Docker Compose (for production deployment)
+## Getting started
 
-### Local Development
+```bash
+git clone https://github.com/evanWh1te/cville-kitchen-website.git
+cd cville-kitchen-website
+pnpm install
+```
 
-1. **Clone the repository**
+Create the backend environment file and a local database:
 
-    ```bash
-    git clone https://github.com/evanWh1te/cville-kitchen-website.git
-    cd cville-kitchen-website
-    ```
+```bash
+cp backend/.env.example backend/.env
+# edit backend/.env — at minimum set JWT_SECRET
 
-2. **Install dependencies**
+pnpm --filter @das-kitchen/backend exec prisma migrate dev
+pnpm --filter @das-kitchen/backend db:seed
+```
 
-    ```bash
-    # Frontend
-    cd frontend && npm install
+Run both apps together from the repo root:
 
-    # Backend
-    cd ../backend && npm install
-    ```
+```bash
+pnpm dev
+```
 
-3. **Start development servers**
+- Frontend: http://localhost:3000
+- Backend: http://localhost:3001
 
-    ```bash
-    # From frontend directory
-    npm run dev  # Runs on http://localhost:3000
+## Environment variables
 
-    # From backend directory (in separate terminal)
-    npm run dev  # Runs on http://localhost:3001
-    ```
+Backend (`backend/.env`):
 
-### Production Deployment (Digital Ocean)
+| Variable                                                            | Purpose                                    |
+| ------------------------------------------------------------------- | ------------------------------------------ |
+| `JWT_SECRET`                                                        | Signing key for auth tokens (required)     |
+| `DATABASE_URL`                                                      | SQLite connection string                   |
+| `BACKEND_PORT`                                                      | API port (default 3001)                    |
+| `FRONTEND_URL`                                                      | Allowed CORS origin                        |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Contact-form email delivery                |
+| `CONTACT_EMAIL`                                                     | Where contact submissions are sent         |
+| `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`                          | Optional initial admin created by the seed |
 
-1. **Install Docker on your droplet**
+The frontend uses `BACKEND_INTERNAL_URL` (defaults to
+`http://127.0.0.1:3001/api`) to reach the backend when proxying, and
+`COOKIE_INSECURE=true` to allow cookies over plain HTTP in local/container runs.
 
-    ```bash
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    sudo sh get-docker.sh
-    sudo curl -L "https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-    ```
+## Creating the first admin
 
-2. **Install and configure nginx**
+Either set `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` before running the seed,
+or `POST /api/auth/create-admin` with an email and password — that endpoint only
+works while no users exist.
 
-    ```bash
-    sudo apt update && sudo apt install nginx
-    sudo cp nginx.conf /etc/nginx/sites-available/cville-kitchen
-    sudo ln -s /etc/nginx/sites-available/cville-kitchen /etc/nginx/sites-enabled/
-    sudo rm /etc/nginx/sites-enabled/default
-    sudo nginx -t && sudo systemctl reload nginx
-    ```
+## Scripts
 
-3. **Deploy the application**
-    ```bash
-    ./deploy.sh
-    ```
+Run from the repo root:
 
-## 📦 Available Scripts
+| Command           | Description                        |
+| ----------------- | ---------------------------------- |
+| `pnpm dev`        | Run backend and frontend together  |
+| `pnpm build`      | Build both apps                    |
+| `pnpm start`      | Start both apps in production mode |
+| `pnpm lint`       | Lint both workspaces               |
+| `pnpm type-check` | Type-check both workspaces         |
 
-### Frontend Scripts (cd frontend/)
+Add `:frontend` or `:backend` to target a single workspace (e.g.
+`pnpm build:backend`). Backend-specific database scripts live in
+`backend/package.json` (`db:seed`, `db:reset`).
 
--   `npm run dev` - Start Next.js development server
--   `npm run build` - Build for production (standalone Docker build)
--   `npm run start` - Start production server
--   `npm run lint` - Run ESLint
--   `npm run type-check` - TypeScript type checking
+## API endpoints
 
-### Backend Scripts (cd backend/)
+| Method | Path                     | Notes                        |
+| ------ | ------------------------ | ---------------------------- |
+| GET    | `/health`                | Health check                 |
+| POST   | `/api/contact`           | Contact form (rate limited)  |
+| POST   | `/api/auth/login`        | Log in, sets auth cookie     |
+| POST   | `/api/auth/logout`       | Clear auth cookie            |
+| GET    | `/api/auth/me`           | Current user                 |
+| POST   | `/api/auth/create-admin` | First admin bootstrap        |
+| GET    | `/api/resources`         | Public resource listing      |
+| —      | `/api/resources/*`       | Admin CRUD (auth required)   |
+| GET    | `/api/volunteers`        | Public volunteer listing     |
+| —      | `/api/volunteers/*`      | Admin CRUD (auth required)   |
+| —      | `/api/users/*`           | User management (admin only) |
 
--   `npm run dev` - Start Express server with nodemon
--   `npm run build` - Compile TypeScript to JavaScript
--   `npm run start` - Start production server
--   `npm run lint` - Run ESLint on backend code
+The backend applies Helmet, CORS, request logging, and rate limiting (a global
+limit plus tighter limits on the contact form and authentication endpoints).
 
-### Docker/Deployment Scripts
+## Content
 
--   `./deploy.sh` - Full production deployment script
--   `docker-compose build` - Build Docker images
--   `docker-compose up -d` - Start containers in background
--   `docker-compose logs -f` - View container logs
+Public food resources are stored in the database and can be managed through the
+admin panel. Some longer-form resource content also lives as markdown in
+`frontend/src/resources/` and is rendered on the resources page.
 
-## 🎨 Socialist Design System
+## Deployment
 
-### Revolutionary Color Palette
+The `Dockerfile` produces a single multi-stage image that runs both apps under
+pm2. GitHub Actions builds and pushes the image to GHCR on pushes to `main` and
+version tags.
 
--   **Primary Red** (`#dc2626`) - Classic socialist/communist red
--   **Secondary Gold** (`#eab308`) - Soviet-inspired gold/yellow
--   **Revolutionary Red** (`#e11d48`) - Deep action red
--   **Solidarity Brown** (`#78716c`) - Working class earth tones
--   **Accent Grays** - Industrial worker aesthetics
+Build and run locally with Compose:
 
-### Pages & Features
+```bash
+docker compose up --build
+```
 
--   **Homepage** - Revolutionary hero with gradient backgrounds and solidarity
-    symbolism
--   **Community Resources** - Dynamic markdown-driven resource listings
--   **Political Education** - Socialist theory and organizing materials
--   **About** - Revolutionary mission and anti-capitalist values
--   **Contact** - Organizing and solidarity contact forms
+The container expects the SQLite database to be mounted at `/app/backend/data/`.
+Set `PRISMA_MIGRATE=true` to run `prisma migrate deploy` on startup.
 
-### Components
+## Contributing
 
--   `Header` - Socialist-themed navigation with solidarity fist (✊)
--   `Hero` - Revolutionary messaging with leftist color gradients
--   `Footer` - "Workers of the world, unite!" messaging
--   **Logo Design** - Stylized "Charlottesville Kitchen" with thin/bold contrast
+Issues and pull requests are welcome. Before opening a PR, run `pnpm lint` and
+`pnpm type-check`.
 
-### Key Features
+## License
 
--   **Dynamic Content** - Markdown-powered resource pages
--   **Accessibility First** - WCAG compliant for community access
--   **Mobile Responsive** - Optimized for organizing on-the-go
--   **Socialist Aesthetics** - Consistent revolutionary branding
-
-## 🔧 Backend Features
-
--   **Express.js** with TypeScript
--   **Security Hardened** - Helmet, CORS, rate limiting for activist protection
--   **Input Validation** - express-validator for secure form processing
--   **Error Handling** - Custom middleware for robust operation
--   **Request Logging** - Morgan for monitoring and security
-
-### API Endpoints
-
--   `GET /health` - Health check for monitoring
--   `POST /api/contact` - Secure contact form processing
-
-### Security Features
-
--   **Rate Limiting** - Protects against DoS attacks
--   **CORS Protection** - Secure cross-origin requests
--   **Input Sanitization** - Prevents injection attacks
--   **Security Headers** - Helmet.js protection
-
-## 🎯 Tech Stack
-
-### Frontend
-
--   **Next.js 14** - React framework with App Router
--   **React 18** - Modern component architecture
--   **TypeScript** - Type safety for reliable organizing tools
--   **Tailwind CSS** - Revolutionary design system
--   **Remark/Markdown** - Dynamic content management
--   **Heroicons** - Consistent iconography
-
-### Backend
-
--   **Express.js** - Node.js web framework
--   **TypeScript** - Server-side type safety
--   **Security Stack** - Helmet, CORS, rate limiting
--   **Validation** - express-validator for secure inputs
--   **Logging** - Morgan for request monitoring
-
-### Deployment & DevOps
-
--   **Docker** - Multi-stage containerization
--   **nginx** - Reverse proxy and static serving
--   **Digital Ocean** - Production hosting
--   **Docker Compose** - Container orchestration
-
-### Development Tools
-
--   **ESLint** - Code quality enforcement
--   **Prettier** - Code formatting
--   **Nodemon** - Development hot reloading
-
-## 🌱 Development Guide
-
-### Adding Community Resources
-
-1. Edit `frontend/src/resources/foodResources.md` with new resources
-2. Content automatically appears on `/resources` page
-3. Markdown supports full formatting, links, and structure
-
-### Adding New Pages
-
-1. Create page: `frontend/src/app/[page-name]/page.tsx`
-2. Update navigation: `frontend/src/components/Header.tsx`
-3. Add API endpoints: `backend/src/routes/` (if needed)
-
-### Socialist Design Guidelines
-
--   **Colors**: Use revolutionary palette (primary red, secondary gold)
--   **Typography**: Bold headers, accessible body text
--   **Symbols**: Incorporate solidarity imagery (✊, etc.)
--   **Messaging**: Anti-capitalist, pro-worker language
--   **Accessibility**: Ensure community access for all
-
-### Code Standards
-
--   **TypeScript** - Mandatory for type safety
--   **ESLint** - Enforce code quality
--   **Revolutionary Naming** - Use meaningful, activist-oriented naming
--   **Security First** - Protect organizers and community data
-
-## 📚 Revolutionary Principles
-
-### Mutual Aid as Revolutionary Practice
-
-This platform embodies leftist organizing principles:
-
--   **Solidarity over Charity** - Building power, not dependency
--   **Direct Action** - Community solutions without state/corporate mediation
--   **Anti-Capitalist** - Rejecting profit-driven resource distribution
--   **Collective Care** - Supporting the most vulnerable community members
--   **Workers' Power** - Centering working-class struggle and liberation
-
-### Digital Security for Activists
-
--   **Rate Limiting** - Protects against coordinated attacks
--   **Input Sanitization** - Prevents infiltration attempts
--   **CORS Protection** - Secure cross-origin communication
--   **Docker Isolation** - Containerized security boundaries
--   **AGPL-3.0 License** - Ensures revolutionary tools remain free
-
-### Community-Centered Design
-
--   **Accessibility First** - No barriers to community participation
--   **Mobile Optimized** - Organizing tools work anywhere
--   **Multi-language Ready** - Prepared for internationalization
--   **Resource Focused** - Practical tools over performative content
-
-## ✊ Contributing to the Revolution
-
-We welcome contributions from fellow organizers and activists!
-
-### How to Contribute
-
-1. **Fork the repository** - Make it yours, comrade
-2. **Create a feature branch** - `git checkout -b feature/revolutionary-feature`
-3. **Follow socialist principles** - Code for the people, not profit
-4. **Test your changes** - Ensure reliability for the community
-5. **Submit a Pull Request** - Share your contributions with the collective
-
-### Contribution Areas
-
--   **Community Resources** - Add local mutual aid networks
--   **Political Education** - Expand socialist theory content
--   **Accessibility** - Improve community access
--   **Security** - Strengthen activist protections
--   **Translation** - Make tools available in multiple languages
-
-### Code of Conduct
-
--   **Solidarity First** - Support fellow contributors
--   **Anti-Oppression** - Challenge all forms of domination
--   **Collective Decision Making** - Major changes discussed collectively
--   **Security Conscious** - Protect community members and activists
-
-## 📄 License
-
-This project is licensed under the **GNU Affero General Public License v3.0** -
-see the [LICENSE](LICENSE) file for details.
-
-**Why AGPL-3.0?** This copyleft license ensures that revolutionary organizing
-tools remain free and accessible to all communities. Any modifications, even
-when used over a network, must be shared back with the community. This prevents
-corporate co-optation of mutual aid technologies.
-
-## 🔗 Resources & Links
-
-### Project Links
-
--   **Repository**:
-    [GitHub](https://github.com/evanWh1te/cville-kitchen-website)
--   **Issues**:
-    [Bug Reports & Feature Requests](https://github.com/evanWh1te/cville-kitchen-website/issues)
--   **Live Site**: _[Coming Soon - Post-Deployment]_
-
-### Community Resources
-
--   **Charlottesville Access Project** - Resource compilation source
--   **Local Mutual Aid Networks** - Connected through the platform
--   **Socialist Organizations** - Building revolutionary community
-
-### Technical Documentation
-
--   **Docker Hub** - Container images
--   **Deployment Guides** - Production setup instructions
--   **API Documentation** - Backend endpoint details
-
----
-
-## 🚩 Join the Revolution
-
-**This platform is built by organizers, for organizers.**
-
-**Built with ✊ for revolutionary community organizing and collective
-liberation.**
+Licensed under the GNU Affero General Public License v3.0. See
+[LICENSE](LICENSE). The AGPL's network clause means anyone running a modified
+version as a networked service must make their changes available under the same
+terms.
