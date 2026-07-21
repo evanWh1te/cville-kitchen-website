@@ -10,12 +10,42 @@ on:
             - '.editorconfig'
             - '.gitignore'
             - '.prettierrc'
-            - 'deploy.sh'
-            - 'docker-compose.yml'
+            - 'compose.yaml'
             - 'docs/**'
+    pull_request:
+        branches: [main]
 
 jobs:
+    verify:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install pnpm
+              uses: pnpm/action-setup@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'pnpm'
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Generate Prisma client
+              run: pnpm --filter @das-kitchen/backend exec prisma generate
+
+            - name: Type-check
+              run: pnpm type-check
+
+            - name: Lint
+              run: pnpm lint
+
     build:
+        needs: verify
+        # Only publish images for pushes to main / version tags, not for PRs.
+        if: github.event_name == 'push'
         runs-on: ubuntu-latest
         permissions:
             contents: read
