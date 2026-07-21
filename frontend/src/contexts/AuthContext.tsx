@@ -23,6 +23,7 @@ import React, {
     useContext,
     useEffect,
     useState,
+    useCallback,
     ReactNode
 } from 'react';
 import { authAPI, User } from '@/lib/api';
@@ -53,16 +54,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const refreshUser = async () => {
+    const refreshUser = useCallback(async () => {
         try {
             const { user } = await authAPI.getCurrentUser();
             setUser(user);
-        } catch (error) {
+        } catch {
             setUser(null);
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const login = async (email: string, password: string) => {
         setLoading(true);
@@ -89,8 +90,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     useEffect(() => {
+        // Fetch the current session once on mount (standard fetch-on-mount).
         refreshUser();
-    }, []);
+    }, [refreshUser]);
 
     const value = {
         user,
