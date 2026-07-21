@@ -18,15 +18,14 @@
 
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import {
     authenticateToken,
     requireAdmin,
     AuthRequest
 } from '../middleware/auth';
 
-const router = express.Router();
-const prisma = new PrismaClient();
+const router: express.Router = express.Router();
 
 // Get all resources (public endpoint)
 router.get('/', async (req: Request, res: Response): Promise<void> => {
@@ -224,13 +223,10 @@ router.put(
                 // Get current resource to check category if not provided in update
                 let currentCategory = category;
                 if (!currentCategory) {
-                    const { PrismaClient } = await import('@prisma/client');
-                    const prisma = new PrismaClient();
                     const resource = await prisma.resource.findUnique({
                         where: { id }
                     });
                     currentCategory = resource?.category;
-                    await prisma.$disconnect();
                 }
 
                 // If it's a meal type, it must be PUBLIC_MEALS category

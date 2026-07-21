@@ -18,15 +18,14 @@
 
 import express, { Request, Response } from 'express';
 import { body, validationResult } from 'express-validator';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import {
     authenticateToken,
     requireAdmin,
     AuthRequest
 } from '../middleware/auth';
 
-const router = express.Router();
-const prisma = new PrismaClient();
+const router: express.Router = express.Router();
 
 // Get all volunteer opportunities (public endpoint)
 router.get('/', async (req: Request, res: Response): Promise<void> => {

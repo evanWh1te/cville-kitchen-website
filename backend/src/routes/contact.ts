@@ -21,7 +21,7 @@ import { body, validationResult } from 'express-validator';
 import rateLimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 
-const router = express.Router();
+const router: express.Router = express.Router();
 
 // SMTP Configuration for Proton Mail
 const createTransporter = () => {
