@@ -6,11 +6,11 @@
         "dev": "nodemon src/index.ts",
         "build": "tsc",
         "start": "node dist/index.js",
-        "lint": "eslint src/**/*.ts",
-        "lint:fix": "eslint src/**/*.ts --fix",
+        "lint": "eslint src",
+        "lint:fix": "eslint src --fix",
         "type-check": "tsc --noEmit",
         "db:seed": "ts-node prisma/seed.ts",
-        "db:reset": "prisma migrate reset --force && npm run db:seed"
+        "db:reset": "prisma migrate reset --force && pnpm db:seed"
     },
     "prisma": {
         "seed": "ts-node prisma/seed.ts"
@@ -39,14 +39,13 @@
         "@types/jsonwebtoken": "^9.0.10",
         "@types/morgan": "^1.9.4",
         "@types/node": "^20.14.12",
-        "@typescript-eslint/eslint-plugin": "^6.2.1",
-        "@typescript-eslint/parser": "^6.2.1",
-        "eslint": "^9",
+        "eslint": "^9.0.0",
         "nodemon": "^3.0.1",
         "ts-node": "^10.9.1",
-        "typescript": "^5.5.4"
+        "typescript": "^5.5.4",
+        "typescript-eslint": "^8.0.0"
     },
     "engines": {
-        "node": ">=18.0.0"
+        "node": ">=20.9.0"
     }
 }

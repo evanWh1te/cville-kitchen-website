@@ -3,32 +3,36 @@ import { proxyRequest } from '../../_utils/proxy';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
-    const suffix = '/' + params.path.join('/');
+    const { path } = await params;
+    const suffix = '/' + path.join('/');
     return proxyRequest(req, `/resources${suffix}`);
 }
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
-    const suffix = '/' + params.path.join('/');
+    const { path } = await params;
+    const suffix = '/' + path.join('/');
     return proxyRequest(req, `/resources${suffix}`);
 }
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
-    const suffix = '/' + params.path.join('/');
+    const { path } = await params;
+    const suffix = '/' + path.join('/');
     return proxyRequest(req, `/resources${suffix}`);
 }
 
 export async function POST(
     req: NextRequest,
-    { params }: { params: { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
-    const suffix = '/' + params.path.join('/');
+    const { path } = await params;
+    const suffix = '/' + path.join('/');
     return proxyRequest(req, `/resources${suffix}`);
 }
