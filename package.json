@@ -3,41 +3,37 @@
     "version": "1.0.0",
     "description": "Das Kitchen - Mutual Aid Organization Website",
     "private": true,
-    "workspaces": [
-        "frontend",
-        "backend"
-    ],
+    "packageManager": "pnpm@11.10.0",
     "scripts": {
-        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-        "dev:frontend": "cd frontend && npm run dev",
-        "dev:backend": "cd backend && npm run dev",
-        "build": "npm run build:frontend && npm run build:backend",
-        "build:frontend": "cd frontend && npm run build",
-        "build:backend": "cd backend && npm run build",
-        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
-        "start:frontend": "cd frontend && npm run start",
-        "start:backend": "cd backend && npm run start",
-        "lint": "npm run lint:frontend && npm run lint:backend",
-        "lint:frontend": "cd frontend && npm run lint",
-        "lint:backend": "cd backend && npm run lint",
-        "type-check": "npm run type-check:frontend && npm run type-check:backend",
-        "type-check:frontend": "cd frontend && npm run type-check",
-        "type-check:backend": "cd backend && npm run type-check",
-        "clean": "rm -rf frontend/.next backend/dist frontend/node_modules backend/node_modules node_modules",
-        "install:all": "npm install && cd frontend && npm install && cd ../backend && npm install"
+        "dev": "concurrently \"pnpm dev:backend\" \"pnpm dev:frontend\"",
+        "dev:frontend": "pnpm --filter @das-kitchen/frontend dev",
+        "dev:backend": "pnpm --filter @das-kitchen/backend dev",
+        "build": "pnpm build:backend && pnpm build:frontend",
+        "build:frontend": "pnpm --filter @das-kitchen/frontend build",
+        "build:backend": "pnpm --filter @das-kitchen/backend build",
+        "start": "concurrently \"pnpm start:backend\" \"pnpm start:frontend\"",
+        "start:frontend": "pnpm --filter @das-kitchen/frontend start",
+        "start:backend": "pnpm --filter @das-kitchen/backend start",
+        "lint": "pnpm --filter @das-kitchen/frontend lint && pnpm --filter @das-kitchen/backend lint",
+        "lint:frontend": "pnpm --filter @das-kitchen/frontend lint",
+        "lint:backend": "pnpm --filter @das-kitchen/backend lint",
+        "type-check": "pnpm --filter @das-kitchen/frontend type-check && pnpm --filter @das-kitchen/backend type-check",
+        "type-check:frontend": "pnpm --filter @das-kitchen/frontend type-check",
+        "type-check:backend": "pnpm --filter @das-kitchen/backend type-check",
+        "clean": "rm -rf frontend/.next backend/dist frontend/node_modules backend/node_modules node_modules"
     },
     "devDependencies": {
         "concurrently": "^8.2.2"
     },
     "engines": {
-        "node": ">=18.0.0",
-        "npm": ">=8.0.0"
+        "node": ">=20.9.0",
+        "pnpm": ">=9.0.0"
     },
     "author": "Evan White",
     "license": "AGPL-3.0-or-later",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/your-org/das-kitchen.git"
+        "url": "git+https://github.com/evanWh1te/cville-kitchen-website.git"
     },
     "keywords": [
         "mutual-aid",

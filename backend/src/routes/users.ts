@@ -2,7 +2,8 @@
  * Charlottesville Kitchen - User Management Routes
  */
 import express, { Request, Response } from 'express';
-import { PrismaClient, Role, AuditAction } from '@prisma/client';
+import { Role, AuditAction } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import { body, param, query, validationResult } from 'express-validator';
 import bcrypt from 'bcryptjs';
 import {
@@ -11,8 +12,7 @@ import {
     AuthRequest
 } from '../middleware/auth';
 
-const prisma = new PrismaClient();
-const router = express.Router();
+const router: express.Router = express.Router();
 
 // Helper to sanitize user objects
 function sanitizeUser(user: {

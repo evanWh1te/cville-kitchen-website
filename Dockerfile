@@ -1,46 +1,48 @@
 # Multi-stage build for production optimization
 FROM node:24-alpine AS base
-
-# Deps stage
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# Pin pnpm to match the repo's packageManager field
+RUN npm install -g pnpm@11.10.0
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Deps stage — install all workspace dependencies from the frozen lockfile
+FROM base AS deps
+# python3/make/g++ are required to compile better-sqlite3 (the Prisma driver
+# adapter's native dependency); Alpine/musl has no prebuilt binary for it.
+RUN apk add --no-cache libc6-compat python3 make g++
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json ./frontend/
 COPY backend/package.json ./backend/
-
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # Builder stage
 FROM base AS builder
-WORKDIR /app
-
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json ./
-COPY frontend ./frontend
-COPY backend ./backend
+COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
+COPY --from=deps /app/backend/node_modules ./backend/node_modules
+COPY . .
 
-# Build backend
-WORKDIR /app/backend
-# Copy Prisma schema for client generation
-COPY backend/prisma ./prisma
-# Generate Prisma client
-RUN npx prisma generate
-RUN npm run build
-
-# Build frontend
-WORKDIR /app/frontend
-# Set environment variables to treat warnings as warnings, not errors
+# Generate the Prisma client into the shared store, then build both apps
+RUN pnpm --filter @das-kitchen/backend exec prisma generate
+RUN pnpm --filter @das-kitchen/backend build
+# Treat lint/type warnings as warnings, not build errors
 ENV CI=false
-RUN npm run build
+RUN pnpm --filter @das-kitchen/frontend build
+
+# Drop devDependencies to slim the runtime image (build artifacts already
+# emitted). CI=true keeps pnpm from prompting before it purges node_modules,
+# which it cannot do without a TTY. The purge also discards the generated
+# Prisma client, so regenerate it against the pruned dependency tree.
+RUN CI=true pnpm prune --prod
+RUN pnpm --filter @das-kitchen/backend exec prisma generate
 
 # Runner stage
 FROM base AS runner
-WORKDIR /app
-
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Default DB location, matching the volume mount and ecosystem.config.js. The
+# startup migration runs outside pm2, so it needs this in the image env.
+# Override at run time to point elsewhere.
+ENV DATABASE_URL=file:/app/backend/data/database.db
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 appuser && \
@@ -48,17 +50,21 @@ RUN addgroup --system --gid 1001 nodejs && \
     mkdir -p /app/backend/data && \
     chown -R appuser:nodejs /app/backend/data
 
-# Copy standalone Next.js - it contains a 'frontend' folder, so we extract it
+# --- Frontend: the Next.js standalone output is self-contained (bundles its
+# own node_modules), so it does not depend on the shared pnpm store. ---
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone/frontend ./frontend
 COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./frontend/.next/static
 
-# Copy backend
+# --- Backend: compiled output plus its production dependencies. Under pnpm the
+# backend's deps live as symlinks in backend/node_modules that resolve into the
+# shared store at the root node_modules/.pnpm, so both are required. The
+# generated Prisma client lives inside that store. ---
 COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
 COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
-# Copy Prisma schema and generated client
 COPY --from=builder --chown=appuser:nodejs /app/backend/prisma ./backend/prisma
-
-# Copy root node_modules
+# Prisma 7 reads the Migrate datasource from prisma.config.ts at startup
+COPY --from=builder --chown=appuser:nodejs /app/backend/prisma.config.ts ./backend/
+COPY --from=builder --chown=appuser:nodejs /app/backend/node_modules ./backend/node_modules
 COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
 
 # Create startup script for database setup
@@ -75,11 +81,13 @@ if [ ! -f "/app/backend/data/database.db" ]; then
   echo "Skipping migrations - no database file found"
 else
   echo "Database file found at /app/backend/data/database.db"
-  
+
   # Only run migrations if PRISMA_MIGRATE environment variable is set to true
   if [ "$PRISMA_MIGRATE" = "true" ]; then
     echo "PRISMA_MIGRATE=true detected. Running database migrations..."
-    cd /app/backend && npx prisma migrate deploy
+    # Call the binary directly: `pnpm exec` runs a dependency status check
+    # first, which shells out to `pnpm install` and fails in the image.
+    cd /app/backend && ./node_modules/.bin/prisma migrate deploy
   else
     echo "Skipping migrations. Set PRISMA_MIGRATE=true to run migrations."
   fi

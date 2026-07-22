@@ -19,8 +19,9 @@
 import express, { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import { body, validationResult } from 'express-validator';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from '../lib/prisma';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
 
 // Centralized cookie options used for auth cookies
@@ -34,15 +35,25 @@ const authCookieOptions = {
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
 };
 
-const router = express.Router();
-const prisma = new PrismaClient();
+const router: express.Router = express.Router();
+
+// Throttle authentication attempts to slow brute-force / credential stuffing.
+// The global limiter (100/15min) is far too permissive for a login endpoint.
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10, // limit each IP to 10 auth attempts per window
+    message: 'Too many authentication attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
 
 // Login endpoint
 router.post(
     '/login',
+    authLimiter,
     [
         body('email').isEmail().normalizeEmail(),
-        body('password').isLength({ min: 6 })
+        body('password').isLength({ min: 8 })
     ],
     async (req: Request, res: Response): Promise<void> => {
         try {
@@ -126,6 +137,7 @@ router.get('/me', authenticateToken, (req: AuthRequest, res) => {
 // Create initial admin user (only if no users exist)
 router.post(
     '/create-admin',
+    authLimiter,
     [
         body('email').isEmail().normalizeEmail(),
         body('password').isLength({ min: 8 })

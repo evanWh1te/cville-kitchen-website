@@ -18,7 +18,7 @@
 
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -83,6 +83,258 @@ const volunteerTypeLabels: Record<VolunteerType, string> = {
 
 type ActiveTab = 'resources' | 'volunteers';
 
+// --- Pure filtering helpers (module scope: stable across renders) ---
+
+const normalize = (s?: string) => (s || '').toLowerCase();
+
+const resourceMatches = (r: Resource, q: string) => {
+    if (!q) return true;
+    const query = normalize(q);
+    return (
+        normalize(r.title).includes(query) ||
+        normalize(r.description).includes(query) ||
+        normalize(r.location).includes(query) ||
+        normalize(r.address).includes(query) ||
+        normalize(r.notes).includes(query) ||
+        normalize(r.requirements).includes(query) ||
+        normalize(r.contactInfo).includes(query) ||
+        normalize(r.email).includes(query) ||
+        normalize(r.website).includes(query) ||
+        normalize(resourceCategoryLabels[r.category]).includes(query) ||
+        normalize(resourceTypeLabels[r.type]).includes(query)
+    );
+};
+
+const volunteerMatches = (v: VolunteerOpportunity, q: string) => {
+    if (!q) return true;
+    const query = normalize(q);
+    return (
+        normalize(v.title).includes(query) ||
+        normalize(v.description).includes(query) ||
+        normalize(v.location).includes(query) ||
+        normalize(v.address).includes(query) ||
+        normalize(v.notes).includes(query) ||
+        normalize(v.requirements).includes(query) ||
+        normalize(v.contactInfo).includes(query) ||
+        normalize(v.email).includes(query) ||
+        normalize(v.website).includes(query) ||
+        normalize(v.timeCommitment).includes(query) ||
+        normalize(v.skills).includes(query) ||
+        normalize(volunteerCategoryLabels[v.category]).includes(query) ||
+        normalize(volunteerTypeLabels[v.type]).includes(query)
+    );
+};
+
+// --- Presentational components (module scope so React keeps their identity
+// stable across renders; state and callbacks are passed in as props) ---
+
+function TabButton({
+    tabKey,
+    label,
+    activeTab,
+    onSelect
+}: {
+    tabKey: ActiveTab;
+    label: string;
+    activeTab: ActiveTab;
+    onSelect: (tab: ActiveTab) => void;
+}) {
+    return (
+        <button
+            onClick={() => onSelect(tabKey)}
+            className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 ${
+                activeTab === tabKey
+                    ? 'text-blue-600 border-blue-600 bg-blue-50'
+                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
+            }`}
+        >
+            {label}
+        </button>
+    );
+}
+
+function ResourcesTable({
+    resources,
+    onEdit,
+    onDelete
+}: {
+    resources: Resource[];
+    onEdit: (resource: Resource) => void;
+    onDelete: (id: string) => void;
+}) {
+    return (
+        <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                    <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Title
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Category
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Last Updated
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    {resources.map((resource) => (
+                        <tr key={resource.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-medium text-gray-900">
+                                    {resource.title}
+                                </div>
+                                {resource.location && (
+                                    <div className="text-sm text-gray-500">
+                                        {resource.location}
+                                    </div>
+                                )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {resourceCategoryLabels[resource.category]}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {resourceTypeLabels[resource.type]}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                        resource.isActive
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                    }`}
+                                >
+                                    {resource.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(
+                                    resource.lastUpdated
+                                ).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button
+                                    onClick={() => onEdit(resource)}
+                                    className="text-blue-600 hover:text-blue-900 mr-4"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => onDelete(resource.id)}
+                                    className="text-red-600 hover:text-red-900"
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function VolunteersTable({
+    volunteers,
+    onEdit,
+    onDelete
+}: {
+    volunteers: VolunteerOpportunity[];
+    onEdit: (volunteer: VolunteerOpportunity) => void;
+    onDelete: (id: string) => void;
+}) {
+    return (
+        <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                    <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Title
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Category
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Last Updated
+                        </th>
+                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    {volunteers.map((volunteer) => (
+                        <tr key={volunteer.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="text-sm font-medium text-gray-900">
+                                    {volunteer.title}
+                                </div>
+                                {volunteer.location && (
+                                    <div className="text-sm text-gray-500">
+                                        {volunteer.location}
+                                    </div>
+                                )}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {volunteerCategoryLabels[volunteer.category]}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {volunteerTypeLabels[volunteer.type]}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <span
+                                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                        volunteer.isActive
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'bg-red-100 text-red-800'
+                                    }`}
+                                >
+                                    {volunteer.isActive ? 'Active' : 'Inactive'}
+                                </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {new Date(
+                                    volunteer.lastUpdated
+                                ).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button
+                                    onClick={() => onEdit(volunteer)}
+                                    className="text-blue-600 hover:text-blue-900 mr-4"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={() => onDelete(volunteer.id)}
+                                    className="text-red-600 hover:text-red-900"
+                                >
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
 export default function AdminDashboard() {
     const { user, logout, loading: authLoading } = useAuth();
     const router = useRouter();
@@ -107,19 +359,7 @@ export default function AdminDashboard() {
     const [resourceSearch, setResourceSearch] = useState('');
     const [volunteerSearch, setVolunteerSearch] = useState('');
 
-    useEffect(() => {
-        if (!authLoading && !user) {
-            router.push('/admin');
-        }
-    }, [user, authLoading, router]);
-
-    useEffect(() => {
-        if (user) {
-            loadData();
-        }
-    }, [user]);
-
-    const loadData = async () => {
+    const loadData = useCallback(async () => {
         try {
             setLoading(true);
             const [resourcesResponse, volunteersResponse] = await Promise.all([
@@ -133,7 +373,19 @@ export default function AdminDashboard() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        if (!authLoading && !user) {
+            router.push('/admin');
+        }
+    }, [user, authLoading, router]);
+
+    useEffect(() => {
+        if (user) {
+            loadData();
+        }
+    }, [user, loadData]);
 
     const handleLogout = async () => {
         await logout();
@@ -197,45 +449,6 @@ export default function AdminDashboard() {
         await loadData();
     };
 
-    // Filtering helpers
-    const normalize = (s?: string) => (s || '').toLowerCase();
-    const resourceMatches = (r: Resource, q: string) => {
-        if (!q) return true;
-        const query = normalize(q);
-        return (
-            normalize(r.title).includes(query) ||
-            normalize(r.description).includes(query) ||
-            normalize(r.location).includes(query) ||
-            normalize(r.address).includes(query) ||
-            normalize(r.notes).includes(query) ||
-            normalize(r.requirements).includes(query) ||
-            normalize(r.contactInfo).includes(query) ||
-            normalize(r.email).includes(query) ||
-            normalize(r.website).includes(query) ||
-            normalize(resourceCategoryLabels[r.category]).includes(query) ||
-            normalize(resourceTypeLabels[r.type]).includes(query)
-        );
-    };
-    const volunteerMatches = (v: VolunteerOpportunity, q: string) => {
-        if (!q) return true;
-        const query = normalize(q);
-        return (
-            normalize(v.title).includes(query) ||
-            normalize(v.description).includes(query) ||
-            normalize(v.location).includes(query) ||
-            normalize(v.address).includes(query) ||
-            normalize(v.notes).includes(query) ||
-            normalize(v.requirements).includes(query) ||
-            normalize(v.contactInfo).includes(query) ||
-            normalize(v.email).includes(query) ||
-            normalize(v.website).includes(query) ||
-            normalize(v.timeCommitment).includes(query) ||
-            normalize(v.skills).includes(query) ||
-            normalize(volunteerCategoryLabels[v.category]).includes(query) ||
-            normalize(volunteerTypeLabels[v.type]).includes(query)
-        );
-    };
-
     const filteredResources = useMemo(
         () => resources.filter((r) => resourceMatches(r, resourceSearch)),
         [resources, resourceSearch]
@@ -255,193 +468,6 @@ export default function AdminDashboard() {
             </div>
         );
     }
-
-    const TabButton = ({
-        tabKey,
-        label
-    }: {
-        tabKey: ActiveTab;
-        label: string;
-    }) => (
-        <button
-            onClick={() => setActiveTab(tabKey)}
-            className={`px-4 py-2 text-sm font-medium rounded-t-lg border-b-2 ${
-                activeTab === tabKey
-                    ? 'text-blue-600 border-blue-600 bg-blue-50'
-                    : 'text-gray-500 border-transparent hover:text-gray-700 hover:border-gray-300'
-            }`}
-        >
-            {label}
-        </button>
-    );
-
-    const ResourcesTable = () => (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Category
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Type
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Last Updated
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredResources.map((resource) => (
-                        <tr key={resource.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900">
-                                    {resource.title}
-                                </div>
-                                {resource.location && (
-                                    <div className="text-sm text-gray-500">
-                                        {resource.location}
-                                    </div>
-                                )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {resourceCategoryLabels[resource.category]}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {resourceTypeLabels[resource.type]}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                        resource.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
-                                    }`}
-                                >
-                                    {resource.isActive ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {new Date(
-                                    resource.lastUpdated
-                                ).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button
-                                    onClick={() => handleEditResource(resource)}
-                                    className="text-blue-600 hover:text-blue-900 mr-4"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        setDeleteResourceConfirm(resource.id)
-                                    }
-                                    className="text-red-600 hover:text-red-900"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-
-    const VolunteersTable = () => (
-        <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                    <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Title
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Category
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Type
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Last Updated
-                        </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredVolunteers.map((volunteer) => (
-                        <tr key={volunteer.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900">
-                                    {volunteer.title}
-                                </div>
-                                {volunteer.location && (
-                                    <div className="text-sm text-gray-500">
-                                        {volunteer.location}
-                                    </div>
-                                )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {volunteerCategoryLabels[volunteer.category]}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {volunteerTypeLabels[volunteer.type]}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <span
-                                    className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                                        volunteer.isActive
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
-                                    }`}
-                                >
-                                    {volunteer.isActive ? 'Active' : 'Inactive'}
-                                </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {new Date(
-                                    volunteer.lastUpdated
-                                ).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <button
-                                    onClick={() =>
-                                        handleEditVolunteer(volunteer)
-                                    }
-                                    className="text-blue-600 hover:text-blue-900 mr-4"
-                                >
-                                    Edit
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        setDeleteVolunteerConfirm(volunteer.id)
-                                    }
-                                    className="text-red-600 hover:text-red-900"
-                                >
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -533,10 +559,14 @@ export default function AdminDashboard() {
                                 <TabButton
                                     tabKey="resources"
                                     label={`Food Resources (${resources.length})`}
+                                    activeTab={activeTab}
+                                    onSelect={setActiveTab}
                                 />
                                 <TabButton
                                     tabKey="volunteers"
                                     label={`Volunteer Opportunities (${volunteers.length})`}
+                                    activeTab={activeTab}
+                                    onSelect={setActiveTab}
                                 />
                             </div>
                         </div>
@@ -607,7 +637,11 @@ export default function AdminDashboard() {
                                             </button>
                                         </div>
                                     ) : (
-                                        <ResourcesTable />
+                                        <ResourcesTable
+                                            resources={filteredResources}
+                                            onEdit={handleEditResource}
+                                            onDelete={setDeleteResourceConfirm}
+                                        />
                                     )}
                                 </>
                             ) : (
@@ -676,7 +710,11 @@ export default function AdminDashboard() {
                                             </button>
                                         </div>
                                     ) : (
-                                        <VolunteersTable />
+                                        <VolunteersTable
+                                            volunteers={filteredVolunteers}
+                                            onEdit={handleEditVolunteer}
+                                            onDelete={setDeleteVolunteerConfirm}
+                                        />
                                     )}
                                 </>
                             )}
