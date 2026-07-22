@@ -42,6 +42,7 @@ cville-kitchen-website/
 │       └── resources/       # Static markdown resource content
 ├── backend/                 # Express API
 │   ├── prisma/              # Schema, migrations, seed script
+│   ├── prisma.config.ts     # Prisma 7 config (Migrate datasource, seed)
 │   └── src/
 │       ├── routes/          # auth, resources, volunteers, users, contact
 │       └── middleware/      # auth guards, error handling

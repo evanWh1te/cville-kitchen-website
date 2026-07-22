@@ -17,17 +17,25 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+
+// Prisma 7 connects through a driver adapter rather than a URL in the schema.
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error('DATABASE_URL environment variable is not set');
+}
+const adapter = new PrismaBetterSqlite3({ url: databaseUrl });
 
 // A single PrismaClient is shared across the whole app. Creating a client per
-// route or per request opens a new connection pool each time, which under
-// nodemon hot-reload (dev) or high traffic will exhaust connections and lock
-// the SQLite database. Caching on globalThis keeps a single instance alive
-// across module reloads in development.
+// route or per request opens a new connection each time, which under nodemon
+// hot-reload (dev) or high traffic will exhaust connections and lock the
+// SQLite database. Caching on globalThis keeps a single instance alive across
+// module reloads in development.
 const globalForPrisma = globalThis as unknown as {
     prisma?: PrismaClient;
 };
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = prisma;

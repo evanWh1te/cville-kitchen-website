@@ -6,7 +6,9 @@ WORKDIR /app
 
 # Deps stage — install all workspace dependencies from the frozen lockfile
 FROM base AS deps
-RUN apk add --no-cache libc6-compat
+# python3/make/g++ are required to compile better-sqlite3 (the Prisma driver
+# adapter's native dependency); Alpine/musl has no prebuilt binary for it.
+RUN apk add --no-cache libc6-compat python3 make g++
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json ./frontend/
 COPY backend/package.json ./backend/
@@ -52,6 +54,8 @@ COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./frontend
 COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
 COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
 COPY --from=builder --chown=appuser:nodejs /app/backend/prisma ./backend/prisma
+# Prisma 7 reads the Migrate datasource from prisma.config.ts at startup
+COPY --from=builder --chown=appuser:nodejs /app/backend/prisma.config.ts ./backend/
 COPY --from=builder --chown=appuser:nodejs /app/backend/node_modules ./backend/node_modules
 COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
 
