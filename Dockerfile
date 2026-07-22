@@ -28,13 +28,21 @@ RUN pnpm --filter @das-kitchen/backend build
 ENV CI=false
 RUN pnpm --filter @das-kitchen/frontend build
 
-# Drop devDependencies to slim the runtime image (build artifacts already emitted)
-RUN pnpm prune --prod
+# Drop devDependencies to slim the runtime image (build artifacts already
+# emitted). CI=true keeps pnpm from prompting before it purges node_modules,
+# which it cannot do without a TTY. The purge also discards the generated
+# Prisma client, so regenerate it against the pruned dependency tree.
+RUN CI=true pnpm prune --prod
+RUN pnpm --filter @das-kitchen/backend exec prisma generate
 
 # Runner stage
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+# Default DB location, matching the volume mount and ecosystem.config.js. The
+# startup migration runs outside pm2, so it needs this in the image env.
+# Override at run time to point elsewhere.
+ENV DATABASE_URL=file:/app/backend/data/database.db
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 appuser && \
@@ -77,7 +85,9 @@ else
   # Only run migrations if PRISMA_MIGRATE environment variable is set to true
   if [ "$PRISMA_MIGRATE" = "true" ]; then
     echo "PRISMA_MIGRATE=true detected. Running database migrations..."
-    cd /app/backend && pnpm exec prisma migrate deploy
+    # Call the binary directly: `pnpm exec` runs a dependency status check
+    # first, which shells out to `pnpm install` and fails in the image.
+    cd /app/backend && ./node_modules/.bin/prisma migrate deploy
   else
     echo "Skipping migrations. Set PRISMA_MIGRATE=true to run migrations."
   fi
