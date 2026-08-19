@@ -21,7 +21,8 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Political Education - Das Kitchen',
+    title: 'Political Education',
+    alternates: { canonical: '/education' },
     description:
         'Learn about socialist principles, mutual aid theory, and building community power through collective action.'
 };

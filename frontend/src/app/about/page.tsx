@@ -21,7 +21,8 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'About - Das Kitchen',
+    title: 'About',
+    alternates: { canonical: '/about' },
     description:
         "Learn about Das Kitchen's mission, values, and commitment to mutual aid and community solidarity."
 };

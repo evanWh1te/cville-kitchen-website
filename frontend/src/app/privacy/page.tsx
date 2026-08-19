@@ -21,7 +21,8 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Privacy Policy - Charlottesville Kitchen',
+    title: 'Privacy Policy',
+    alternates: { canonical: '/privacy' },
     description:
         'Charlottesville Kitchen privacy policy and data protection information.'
 };

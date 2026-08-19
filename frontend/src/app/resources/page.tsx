@@ -24,7 +24,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-    title: 'Community Food Resources in Charlottesville',
+    title: 'Free Food Resources',
+    alternates: { canonical: '/resources' },
     description:
         'A directory of free food resources in Charlottesville and Albemarle County: public meals, community fridges and pantries, emergency food, student meals, church pantries, and food delivery services.',
     keywords: [

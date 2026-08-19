@@ -24,7 +24,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-    title: 'Volunteer Opportunities in Charlottesville',
+    title: 'Volunteer Opportunities',
+    alternates: { canonical: '/volunteer' },
     description:
         'Volunteer to fight food insecurity in Charlottesville. Find opportunities in food preparation and distribution, community gardens, outreach, transportation, and event coordination.',
     keywords: [

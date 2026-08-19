@@ -21,7 +21,8 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terms of Service - Charlottesville Mutual Aid',
+    title: 'Terms of Service',
+    alternates: { canonical: '/terms' },
     description:
         'Charlottesville Mutual Aid terms of service and usage guidelines.'
 };

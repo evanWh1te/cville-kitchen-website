@@ -9,6 +9,10 @@ services:
     environment:
       - NODE_ENV=production
       - BACKEND_INTERNAL_URL=http://localhost:3001/api
+      # Base URL for canonical tags, Open Graph, sitemap.xml, and structured
+      # data. Statically prerendered pages bake this in at build time, so a
+      # different domain needs it set for the build, not just the container.
+      - SITE_URL=https://cville.kitchen
       - COOKIE_INSECURE=true
       - DATABASE_URL=file:/app/backend/data/database.db
     env_file:
