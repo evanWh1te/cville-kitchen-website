@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -221,13 +221,16 @@ export default async function Volunteer() {
     const { data: volunteers, error } = await getVolunteerOpportunities();
 
     // Group volunteers by category
-    const volunteersByCategory = volunteers.reduce((acc, volunteer) => {
-        if (!acc[volunteer.category]) {
-            acc[volunteer.category] = [];
-        }
-        acc[volunteer.category].push(volunteer);
-        return acc;
-    }, {} as Record<VolunteerCategory, VolunteerOpportunity[]>);
+    const volunteersByCategory = volunteers.reduce(
+        (acc, volunteer) => {
+            if (!acc[volunteer.category]) {
+                acc[volunteer.category] = [];
+            }
+            acc[volunteer.category].push(volunteer);
+            return acc;
+        },
+        {} as Record<VolunteerCategory, VolunteerOpportunity[]>
+    );
 
     if (error) {
         return (

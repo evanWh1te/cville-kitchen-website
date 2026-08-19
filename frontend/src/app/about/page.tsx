@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: 'About',
     alternates: { canonical: '/about' },
     description:
-        "Learn about Das Kitchen's mission, values, and commitment to mutual aid and community solidarity."
+        "Learn about Charlottesville Kitchen's mission, values, and commitment to mutual aid and community solidarity."
 };
 
 export default function AboutPage() {
@@ -36,7 +36,7 @@ export default function AboutPage() {
                     <div className="max-w-6xl mx-auto px-4 sm:px-6">
                         <div className="text-center mb-12">
                             <h1 className="text-4xl font-bold text-primary-700 font-heading mb-4">
-                                About Das Kitchen
+                                About Charlottesville Kitchen
                             </h1>
                             <p className="text-xl text-accent-700 max-w-3xl mx-auto">
                                 Building revolutionary community through mutual
@@ -51,13 +51,14 @@ export default function AboutPage() {
                                         Our Mission
                                     </h2>
                                     <p className="text-accent-800 mb-6">
-                                        Das Kitchen exists to strengthen our
-                                        community through direct action, mutual
-                                        aid, and revolutionary solidarity. We
-                                        believe in the power of collective care
-                                        and the importance of building networks
-                                        of support that center the working class
-                                        and most oppressed among us.
+                                        Charlottesville Kitchen exists to
+                                        strengthen our community through direct
+                                        action, mutual aid, and revolutionary
+                                        solidarity. We believe in the power of
+                                        collective care and the importance of
+                                        building networks of support that center
+                                        the working class and most oppressed
+                                        among us.
                                     </p>
                                     <p className="text-accent-800">
                                         Our work is rooted in the understanding

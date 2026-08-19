@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -194,13 +194,16 @@ function ResourceCard({ resource }: { resource: Resource }) {
 }
 
 function groupByCategory(resources: Resource[]) {
-    const grouped = resources.reduce((acc, resource) => {
-        if (!acc[resource.category]) {
-            acc[resource.category] = [];
-        }
-        acc[resource.category].push(resource);
-        return acc;
-    }, {} as Record<ResourceCategory, Resource[]>);
+    const grouped = resources.reduce(
+        (acc, resource) => {
+            if (!acc[resource.category]) {
+                acc[resource.category] = [];
+            }
+            acc[resource.category].push(resource);
+            return acc;
+        },
+        {} as Record<ResourceCategory, Resource[]>
+    );
 
     Object.keys(grouped).forEach((category) => {
         grouped[category as ResourceCategory].sort((a, b) => {

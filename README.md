@@ -71,8 +71,8 @@ Create the backend environment file and a local database:
 cp backend/.env.example backend/.env
 # edit backend/.env — at minimum set JWT_SECRET
 
-pnpm --filter @das-kitchen/backend exec prisma migrate dev
-pnpm --filter @das-kitchen/backend db:seed
+pnpm --filter @cville-kitchen/backend exec prisma migrate dev
+pnpm --filter @cville-kitchen/backend db:seed
 ```
 
 Run both apps together from the repo root:
@@ -172,11 +172,11 @@ Set `PRISMA_MIGRATE=true` to run `prisma migrate deploy` on startup.
 
 ## Backups
 
-The database is a single SQLite file on a bind mount, so nothing is backed up
-by default — losing the volume loses every resource and volunteer entry the
-admins have written. `scripts/backup-db.sh` takes a consistent snapshot using
-SQLite's online backup API, which is safe to run while the app is serving
-traffic (a plain `cp` is not).
+The database is a single SQLite file on a bind mount, so nothing is backed up by
+default — losing the volume loses every resource and volunteer entry the admins
+have written. `scripts/backup-db.sh` takes a consistent snapshot using SQLite's
+online backup API, which is safe to run while the app is serving traffic (a
+plain `cp` is not).
 
 ```bash
 # writes ./backups/database-YYYYmmdd-HHMMSS.db.gz
@@ -208,8 +208,8 @@ gunzip -c /var/backups/kitchen/database-20250101-031500.db.gz > /srv/kitchen/dat
 docker compose up -d
 ```
 
-Backups on the same disk as the database do not protect against disk loss.
-Copy them off the host periodically.
+Backups on the same disk as the database do not protect against disk loss. Copy
+them off the host periodically.
 
 ## Contributing
 

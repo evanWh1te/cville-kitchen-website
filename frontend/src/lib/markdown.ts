@@ -1,5 +1,5 @@
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify

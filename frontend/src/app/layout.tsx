@@ -53,7 +53,7 @@ export const metadata: Metadata = {
         'community',
         'solidarity',
         'social justice',
-        'das kitchen'
+        'charlottesville kitchen'
     ],
     authors: [{ name: 'Charlottesville Kitchen Organization' }],
     openGraph: {
