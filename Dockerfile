@@ -26,6 +26,10 @@ RUN pnpm --filter @cville-kitchen/backend exec prisma generate
 RUN pnpm --filter @cville-kitchen/backend build
 # Treat lint/type warnings as warnings, not build errors
 ENV CI=false
+# Statically prerendered pages bake canonical/Open Graph URLs in at build time,
+# so the site's base URL has to be present for the build, not just at run time.
+ARG SITE_URL=https://cville.kitchen
+ENV SITE_URL=$SITE_URL
 RUN pnpm --filter @cville-kitchen/frontend build
 
 # Drop devDependencies to slim the runtime image (build artifacts already
