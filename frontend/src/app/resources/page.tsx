@@ -20,8 +20,10 @@ import type { Metadata } from 'next';
 import { connection } from 'next/server';
 import type { Resource, ResourceCategory } from '@/lib/api';
 import { getResources } from '@/lib/server-api';
+import { resourceListSchema } from '@/lib/structured-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import JsonLd from '@/components/JsonLd';
 
 export const metadata: Metadata = {
     title: 'Free Food Resources',
@@ -302,6 +304,9 @@ export default async function ResourcesPage() {
 
     return (
         <div className="bg-accent-50">
+            {/* Only the database-backed entries; the hardcoded external links
+                below are other people's directories, not resources we list. */}
+            <JsonLd data={resourceListSchema(resources)} />
             <Header />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
                 <div className="prose prose-lg max-w-none">

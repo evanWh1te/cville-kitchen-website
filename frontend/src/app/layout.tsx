@@ -21,6 +21,8 @@ import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { SITE_NAME, SITE_URL } from '@/lib/site';
+import { siteSchema } from '@/lib/structured-data';
+import JsonLd from '@/components/JsonLd';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -81,6 +83,7 @@ export default function RootLayout({
             className={`scroll-smooth ${inter.variable} ${poppins.variable}`}
         >
             <body className="min-h-screen bg-white text-gray-900 antialiased flex flex-col">
+                <JsonLd data={siteSchema()} />
                 <AuthProvider>{children}</AuthProvider>
             </body>
         </html>
