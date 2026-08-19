@@ -39,6 +39,9 @@ testdata/*.db-journal
 testdata/*.db-wal
 testdata/*.db-shm
 
+# Database snapshots from scripts/backup-db.sh (default BACKUP_DIR)
+backups/
+
 # Scripts
 createUser.ts
 
