@@ -1,5 +1,3 @@
-'use client';
-
 /*
  * Das Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
@@ -18,10 +16,32 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useEffect, useState } from 'react';
-import { resourcesAPI, Resource, ResourceCategory } from '@/lib/api';
+import type { Metadata } from 'next';
+import { connection } from 'next/server';
+import type { Resource, ResourceCategory } from '@/lib/api';
+import { getResources } from '@/lib/server-api';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
+export const metadata: Metadata = {
+    title: 'Community Food Resources in Charlottesville',
+    description:
+        'A directory of free food resources in Charlottesville and Albemarle County: public meals, community fridges and pantries, emergency food, student meals, church pantries, and food delivery services.',
+    keywords: [
+        'charlottesville food resources',
+        'free food charlottesville',
+        'food pantry charlottesville',
+        'community fridge',
+        'emergency food',
+        'mutual aid'
+    ],
+    openGraph: {
+        title: 'Community Food Resources in Charlottesville',
+        description:
+            'Free meals, pantries, community fridges, and food delivery services in Charlottesville and Albemarle County.',
+        type: 'website'
+    }
+};
 
 const categoryLabels: Record<ResourceCategory, string> = {
     PUBLIC_MEALS: 'Public Meals',
@@ -44,6 +64,24 @@ const categoryOrder: ResourceCategory[] = [
     'LOCAL_EFFORTS',
     'ADDITIONAL_RESOURCES'
 ];
+
+const mealTypeOrder: Record<string, number> = {
+    BREAKFAST: 1,
+    LUNCH: 2,
+    DINNER: 3,
+    OTHER: 4
+};
+
+const mealTypeLabels: Record<string, string> = {
+    BREAKFAST: 'Breakfast',
+    LUNCH: 'Lunch',
+    DINNER: 'Dinner',
+    OTHER: 'Other Public Meals'
+};
+
+function sectionIdFor(category: ResourceCategory) {
+    return category.toLowerCase().replace(/_/g, '-');
+}
 
 function ResourceCard({ resource }: { resource: Resource }) {
     return (
@@ -152,33 +190,8 @@ function ResourceCard({ resource }: { resource: Resource }) {
     );
 }
 
-export default function ResourcesPage() {
-    const [resources, setResources] = useState<Resource[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchResources = async () => {
-            try {
-                setLoading(true);
-                const response = await resourcesAPI.getAll();
-                setResources(response.resources);
-                setError(null);
-            } catch (err) {
-                console.error('Failed to fetch resources:', err);
-                setError(
-                    'Unable to load resources at this time. Please try again later.'
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchResources();
-    }, []);
-
-    // Group resources by category
-    const resourcesByCategory = resources.reduce((acc, resource) => {
+function groupByCategory(resources: Resource[]) {
+    const grouped = resources.reduce((acc, resource) => {
         if (!acc[resource.category]) {
             acc[resource.category] = [];
         }
@@ -186,21 +199,12 @@ export default function ResourcesPage() {
         return acc;
     }, {} as Record<ResourceCategory, Resource[]>);
 
-    // Sort resources within each category
-    Object.keys(resourcesByCategory).forEach((category) => {
-        resourcesByCategory[category as ResourceCategory].sort((a, b) => {
+    Object.keys(grouped).forEach((category) => {
+        grouped[category as ResourceCategory].sort((a, b) => {
             // Special sorting for PUBLIC_MEALS: group by meal type first
             if (category === 'PUBLIC_MEALS') {
-                const mealTypeOrder = {
-                    BREAKFAST: 1,
-                    LUNCH: 2,
-                    DINNER: 3,
-                    OTHER: 4
-                };
-                const aOrder =
-                    mealTypeOrder[a.type as keyof typeof mealTypeOrder] || 5;
-                const bOrder =
-                    mealTypeOrder[b.type as keyof typeof mealTypeOrder] || 5;
+                const aOrder = mealTypeOrder[a.type] || 5;
+                const bOrder = mealTypeOrder[b.type] || 5;
 
                 if (aOrder !== bOrder) {
                     return aOrder - bOrder;
@@ -214,8 +218,14 @@ export default function ResourcesPage() {
         });
     });
 
-    // Hardcoded resources not stored in DB; displayed separately
-    const staticResources: Resource[] = [
+    return grouped;
+}
+
+// Hardcoded resources not stored in DB; displayed separately
+function buildStaticResources(): Resource[] {
+    const now = new Date().toISOString();
+
+    return [
         {
             id: 'street-sheet',
             title: 'Charlottesville Access Project - Street Sheet Resources',
@@ -224,12 +234,12 @@ export default function ResourcesPage() {
             category: 'ADDITIONAL_RESOURCES',
             type: 'OTHER',
             website:
-                'https://docs.google.document/d/1VQbcXQhIjkVTlDjaqh3swStDV8Qb_pau5owZaOmjhaw/edit?tab=t.0',
+                'https://jmrl.org/sites/default/files/2025-02/StreetSheet-Edition31.pdf',
             email: 'cvillestreetsheet@gmail.com',
-            lastUpdated: new Date().toISOString(),
+            lastUpdated: now,
             isActive: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: now,
+            updatedAt: now
         },
         {
             id: 'helpful-resource-by-city',
@@ -239,10 +249,10 @@ export default function ResourcesPage() {
             category: 'ADDITIONAL_RESOURCES',
             type: 'OTHER',
             website: 'https://linktr.ee/helpfulresourcesbycity',
-            lastUpdated: new Date().toISOString(),
+            lastUpdated: now,
             isActive: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: now,
+            updatedAt: now
         },
         {
             id: 'municipality',
@@ -253,27 +263,24 @@ export default function ResourcesPage() {
             type: 'OTHER',
             website:
                 'https://www.charlottesville.gov/377/Available-Food-Resources-in-the-Communit',
-            lastUpdated: new Date().toISOString(),
+            lastUpdated: now,
             isActive: true,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
+            createdAt: now,
+            updatedAt: now
         }
     ];
+}
 
-    if (loading) {
-        return (
-            <div className="bg-accent-50">
-                <Header />
-                <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                    <div className="flex justify-center items-center min-h-64">
-                        <div className="text-lg text-gray-600">
-                            Loading resources...
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+export default async function ResourcesPage() {
+    // Opt out of build-time prerendering: the backend is not running during
+    // `next build`. The fetch itself is still cached, so crawlers and visitors
+    // get fully rendered HTML without a per-request database read.
+    await connection();
+
+    const { data: resources, error } = await getResources();
+
+    const resourcesByCategory = groupByCategory(resources);
+    const staticResources = buildStaticResources();
 
     if (error) {
         return (
@@ -303,24 +310,6 @@ export default function ResourcesPage() {
                         </h1>
                     </div>
 
-                    {/* <div className="mb-8 p-4 bg-blue-50 rounded-lg">
-                        <p className="text-accent-800 mb-2">
-                            <em>
-                                Last updated:{' '}
-                                {new Date().toLocaleDateString('en-US', {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                })}
-                            </em>
-                        </p>
-                        <p className="text-accent-800">
-                            This information is compiled by the Charlottesville
-                            Access Project (cvillestreetsheet@gmail.com,
-                            412-415-6402).
-                        </p>
-                    </div> */}
-
                     {/* Table of Contents */}
                     <div className="mb-10">
                         <h2 className="text-2xl font-bold text-center text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
@@ -338,27 +327,14 @@ export default function ResourcesPage() {
                                     return null;
                                 }
 
-                                const sectionId = category
-                                    .toLowerCase()
-                                    .replace(/_/g, '-');
-
                                 return (
                                     <div
                                         key={category}
                                         className="flex items-center justify-between py-3 border-b border-dotted border-gray-300 last:border-b-0 hover:bg-primary-50/50 rounded px-2 transition-colors"
                                     >
                                         <a
-                                            href={`#${sectionId}`}
+                                            href={`#${sectionIdFor(category)}`}
                                             className="text-gray-700 hover:text-primary-700 transition-colors font-medium"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                document
-                                                    .getElementById(sectionId)
-                                                    ?.scrollIntoView({
-                                                        behavior: 'smooth',
-                                                        block: 'start'
-                                                    });
-                                            }}
                                         >
                                             {categoryLabels[category]}
                                             {category === 'PUBLIC_MEALS' && (
@@ -430,122 +406,95 @@ export default function ResourcesPage() {
                         </div>
                     </div>
 
-                    {error ? (
-                        <div className="rounded-md bg-red-50 p-4 mb-8">
-                            <div className="text-red-700">{error}</div>
-                        </div>
-                    ) : (
-                        <>
-                            {categoryOrder.map((category) => {
-                                const categoryResources =
-                                    resourcesByCategory[category];
-                                if (
-                                    !categoryResources ||
-                                    categoryResources.length === 0
-                                ) {
-                                    return null;
-                                }
+                    {categoryOrder.map((category) => {
+                        const categoryResources = resourcesByCategory[category];
+                        if (
+                            !categoryResources ||
+                            categoryResources.length === 0
+                        ) {
+                            return null;
+                        }
 
-                                const sectionId = category
-                                    .toLowerCase()
-                                    .replace(/_/g, '-');
+                        return (
+                            <section
+                                key={category}
+                                id={sectionIdFor(category)}
+                                className="mb-12 scroll-mt-24"
+                            >
+                                <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
+                                    {categoryLabels[category]}
+                                </h2>
 
-                                return (
-                                    <section
-                                        key={category}
-                                        id={sectionId}
-                                        className="mb-12 scroll-mt-24"
-                                    >
-                                        <h2 className="text-2xl font-bold text-white bg-gray-700 px-4 py-2 rounded-lg border-l-4 border-primary-500 mb-6">
-                                            {categoryLabels[category]}
-                                        </h2>
+                                {category === 'PUBLIC_MEALS' ? (
+                                    // Special handling for PUBLIC_MEALS - group by meal type
+                                    <div className="space-y-8">
+                                        {[
+                                            'BREAKFAST',
+                                            'LUNCH',
+                                            'DINNER',
+                                            'OTHER'
+                                        ].map((mealType) => {
+                                            const mealResources =
+                                                categoryResources.filter(
+                                                    (resource) =>
+                                                        resource.type ===
+                                                        mealType
+                                                );
 
-                                        {category === 'PUBLIC_MEALS' ? (
-                                            // Special handling for PUBLIC_MEALS - group by meal type
-                                            <div className="space-y-8">
-                                                {[
-                                                    'BREAKFAST',
-                                                    'LUNCH',
-                                                    'DINNER',
-                                                    'OTHER'
-                                                ].map((mealType) => {
-                                                    const mealResources =
-                                                        categoryResources.filter(
-                                                            (resource) =>
-                                                                resource.type ===
+                                            if (mealResources.length === 0)
+                                                return null;
+
+                                            return (
+                                                <div
+                                                    key={mealType}
+                                                    className="mb-6"
+                                                >
+                                                    <h3 className="text-xl font-semibold text-revolutionary-600 mb-4 pb-2 border-b-2 border-revolutionary-200">
+                                                        {
+                                                            mealTypeLabels[
                                                                 mealType
-                                                        );
-
-                                                    if (
-                                                        mealResources.length ===
-                                                        0
-                                                    )
-                                                        return null;
-
-                                                    const mealTypeLabels = {
-                                                        BREAKFAST: 'Breakfast',
-                                                        LUNCH: 'Lunch',
-                                                        DINNER: 'Dinner',
-                                                        OTHER: 'Other Public Meals'
-                                                    };
-
-                                                    return (
-                                                        <div
-                                                            key={mealType}
-                                                            className="mb-6"
-                                                        >
-                                                            <h3 className="text-xl font-semibold text-revolutionary-600 mb-4 pb-2 border-b-2 border-revolutionary-200">
-                                                                {
-                                                                    mealTypeLabels[
-                                                                        mealType as keyof typeof mealTypeLabels
-                                                                    ]
-                                                                }
-                                                            </h3>
-                                                            <div className="space-y-4">
-                                                                {mealResources.map(
-                                                                    (
+                                                            ]
+                                                        }
+                                                    </h3>
+                                                    <div className="space-y-4">
+                                                        {mealResources.map(
+                                                            (resource) => (
+                                                                <ResourceCard
+                                                                    key={
+                                                                        resource.id
+                                                                    }
+                                                                    resource={
                                                                         resource
-                                                                    ) => (
-                                                                        <ResourceCard
-                                                                            key={
-                                                                                resource.id
-                                                                            }
-                                                                            resource={
-                                                                                resource
-                                                                            }
-                                                                        />
-                                                                    )
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                            </div>
-                                        ) : (
-                                            // Standard handling for other categories
-                                            <div className="space-y-4">
-                                                {categoryResources.map(
-                                                    (resource) => (
-                                                        <ResourceCard
-                                                            key={resource.id}
-                                                            resource={resource}
-                                                        />
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
-                                    </section>
-                                );
-                            })}
+                                                                    }
+                                                                />
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    // Standard handling for other categories
+                                    <div className="space-y-4">
+                                        {categoryResources.map((resource) => (
+                                            <ResourceCard
+                                                key={resource.id}
+                                                resource={resource}
+                                            />
+                                        ))}
+                                    </div>
+                                )}
+                            </section>
+                        );
+                    })}
 
-                            {resources.length === 0 && !error && (
-                                <div className="text-center py-12">
-                                    <p className="text-accent-600">
-                                        No resources available at this time.
-                                    </p>
-                                </div>
-                            )}
-                        </>
+                    {resources.length === 0 && (
+                        <div className="text-center py-12">
+                            <p className="text-accent-600">
+                                No resources available at this time.
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>

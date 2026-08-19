@@ -64,7 +64,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+        <html
+            lang="en"
+            className={`scroll-smooth ${inter.variable} ${poppins.variable}`}
+        >
             <body className="min-h-screen bg-white text-gray-900 antialiased flex flex-col">
                 <AuthProvider>{children}</AuthProvider>
             </body>
