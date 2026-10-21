@@ -3,12 +3,13 @@
 # CI/CD for cville-kitchen-website.
 #
 # On pull requests to main:
-#   1. verify — type-check and lint only. Nothing is published.
+#   1. verify — type-check, lint, and build (validates the YAML content).
+#               Nothing is published.
 #
 # On every push to main:
 #   1. verify — as above, gating the build.
-#   2. build  — build the container with the runner's Docker daemon and push it
-#               to the Forgejo registry, tagged with the short commit SHA
+#   2. build  — build both containers with the runner's Docker daemon and push
+#               them to the Forgejo registry, tagged with the short commit SHA
 #               (+ :latest).
 #   3. deploy — clone talos-deployments, bump the pinned image tag in
 #               applications/cville-kitchen-website/overlays/production, and
@@ -33,14 +34,21 @@
 #   The registry stores by repo path (evan/cville-kitchen-website), so the :80
 #   push and the bare-name pull hit the same repository.
 #
-# THIS APP IS STATEFUL — unlike the homepage, it owns a SQLite database at
-# /app/backend/data/database.db. The deployment it feeds must therefore:
-#   * mount a PersistentVolumeClaim at /app/backend/data
-#   * run replicas: 1 with strategy Recreate — SQLite takes a single writer, and
-#     the Next.js cache invalidation is per-process, so a second pod would serve
-#     stale listings after an admin edit
-#   * set PRISMA_MIGRATE=true, or a fresh volume never gets a schema
-#   * expose only port 3000; 3001 is the backend the proxy reaches on localhost
+# THIS APP IS STATELESS — content lives in frontend/content/*.yaml and is baked
+# into a static site at build time. There is no database, no PVC, no
+# single-replica/Recreate requirement and no PRISMA_MIGRATE. The pipeline
+# builds TWO images from the one Dockerfile:
+#   * cville-kitchen-website (target `web`)   nginx serving the static site on
+#     port 8080. It proxies only POST /api/contact to $CONTACT_UPSTREAM; in k8s
+#     set that to the contact Service URL (e.g. http://cville-kitchen-contact:3001).
+#   * cville-kitchen-contact (target `contact`)  the Express contact-form API
+#     on port 3001 (SMTP_* / CONTACT_EMAIL / FRONTEND_URL / TRUST_PROXY env).
+#
+# NOTE: the talos-deployments overlay needs a matching change before the deploy
+# step below is useful: a second Deployment + Service for contact,
+# CONTACT_UPSTREAM on the web Deployment, the web container port moved to 8080,
+# and the PVC dropped. Until then `kustomize edit set image` for the contact
+# image only adds an unused entry to the overlay's images list.
 #
 # REQUIRED repo/org secrets (Forgejo → repo Settings → Actions → Secrets):
 #   REGISTRY_USER   Forgejo username that owns the package (e.g. evan)
@@ -61,10 +69,12 @@ env:
     # Bare name used in the k8s manifests / kustomize (Talos mirrors it to :80).
     REGISTRY_HOST: forgejo.whitehome.internal
     IMAGE: forgejo.whitehome.internal/evan/cville-kitchen-website
+    CONTACT_IMAGE: forgejo.whitehome.internal/evan/cville-kitchen-contact
     # HTTP-on-:80 endpoint used only by docker to log in / push.
     REGISTRY_PUSH: forgejo.whitehome.internal:80
     IMAGE_PUSH: forgejo.whitehome.internal:80/evan/cville-kitchen-website
-    # Baked into the image at build time; see the ARG in the Dockerfile.
+    CONTACT_IMAGE_PUSH: forgejo.whitehome.internal:80/evan/cville-kitchen-contact
+    # Baked into the web image at build time; see the ARG in the Dockerfile.
     SITE_URL: https://cville.kitchen
 
 jobs:
@@ -89,14 +99,19 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Generate Prisma client
-              run: pnpm --filter @cville-kitchen/backend exec prisma generate
-
             - name: Type-check
               run: pnpm type-check
 
             - name: Lint
               run: pnpm lint
+
+            # Building the site validates frontend/content/*.yaml, so a bad
+            # content edit fails the PR here.
+            - name: Build frontend
+              run: pnpm build:frontend
+
+            - name: Build backend
+              run: pnpm build:backend
 
     build:
         needs: verify
@@ -107,7 +122,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: Build and push image
+            - name: Build and push images
               env:
                   REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
                   REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
@@ -119,13 +134,22 @@ jobs:
                     -u "$REGISTRY_USER" --password-stdin
 
                   docker build \
+                    --target web \
                     --build-arg "SITE_URL=${SITE_URL}" \
                     -t "${IMAGE_PUSH}:${TAG}" \
                     -t "${IMAGE_PUSH}:latest" \
                     .
 
+                  docker build \
+                    --target contact \
+                    -t "${CONTACT_IMAGE_PUSH}:${TAG}" \
+                    -t "${CONTACT_IMAGE_PUSH}:latest" \
+                    .
+
                   docker push "${IMAGE_PUSH}:${TAG}"
                   docker push "${IMAGE_PUSH}:latest"
+                  docker push "${CONTACT_IMAGE_PUSH}:${TAG}"
+                  docker push "${CONTACT_IMAGE_PUSH}:latest"
 
                   docker logout "$REGISTRY_PUSH" || true
 
@@ -161,7 +185,9 @@ jobs:
 
                   cd "$WS/talos-deployments/applications/cville-kitchen-website/overlays/production"
                   # Manifests use the BARE name (no :80); Talos mirror handles HTTP.
-                  kustomize edit set image "${IMAGE}=${IMAGE}:${TAG}"
+                  kustomize edit set image \
+                    "${IMAGE}=${IMAGE}:${TAG}" \
+                    "${CONTACT_IMAGE}=${CONTACT_IMAGE}:${TAG}"
 
                   cd "$WS/talos-deployments"
                   if git diff --quiet; then

@@ -1,53 +1,52 @@
 # Charlottesville Kitchen
 
 A website for Charlottesville Kitchen, a local mutual aid organization. It helps
-people find community food resources and volunteer opportunities, and gives
-organizers a small admin panel to keep that information up to date.
+people find community food resources and volunteer opportunities. Organizers
+keep that information up to date by editing a couple of YAML files.
 
 ## Overview
 
 The project is a pnpm monorepo with two apps:
 
-- **frontend** — a Next.js (App Router) site with the public pages, an admin
-  panel, and thin API route handlers that proxy requests to the backend.
-- **backend** — an Express API backed by SQLite (via Prisma) that owns
-  authentication, resources, volunteer opportunities, users, and the contact
-  form.
+- **frontend** — a Next.js (App Router) site built as a fully static export
+  (`output: 'export'`). Resources and volunteer opportunities come from YAML
+  files in `frontend/content/`, validated and baked into the HTML at build time.
+- **backend** — a tiny Express API whose only job is to email contact-form
+  submissions.
 
-The browser only ever talks to the Next.js app. Requests to `/api/*` are proxied
-server-side to the backend, which keeps the backend off the public network and
-lets the auth cookie stay `HttpOnly`.
+In production, the static files are served by nginx. The same nginx proxies
+`POST /api/contact` to the contact API, so the browser only ever talks to one
+origin. There is no database and no server-side state.
 
 ## Tech stack
 
-| Area       | Details                                                         |
-| ---------- | --------------------------------------------------------------- |
-| Frontend   | Next.js 16, React 19, TypeScript, Tailwind CSS, React Hook Form |
-| Backend    | Express, TypeScript, Prisma, SQLite                             |
-| Auth       | JWT in an `HttpOnly` cookie, bcrypt password hashing            |
-| Email      | Nodemailer (contact form)                                       |
-| Tooling    | pnpm workspaces, ESLint 9 (flat config), Prettier               |
-| Deployment | Docker (multi-stage), pm2, GitHub Actions → GHCR                |
+| Area       | Details                                                    |
+| ---------- | ---------------------------------------------------------- |
+| Frontend   | Next.js 16 (static export), React 19, TypeScript, Tailwind |
+| Content    | YAML files validated with zod at build time                |
+| Backend    | Express, TypeScript, Nodemailer (contact form only)        |
+| Serving    | nginx (unprivileged image) in front of the contact API     |
+| Tooling    | pnpm workspaces, ESLint 9 (flat config), Prettier          |
+| Deployment | Docker (one multi-stage Dockerfile, two images), Forgejo CI |
 
 ## Project structure
 
 ```
 cville-kitchen-website/
-├── frontend/                # Next.js app
+├── frontend/                # Next.js static site
+│   ├── content/             # resources.yaml, volunteers.yaml (the site's data)
+│   ├── scripts/             # one-time database -> YAML export
 │   └── src/
-│       ├── app/             # App Router pages + /api proxy route handlers
+│       ├── app/             # App Router pages
 │       ├── components/      # UI components and forms
-│       ├── contexts/        # Auth context
-│       ├── lib/             # API client and markdown helpers
-│       └── resources/       # Static markdown resource content
-├── backend/                 # Express API
-│   ├── prisma/              # Schema, migrations, seed script
-│   ├── prisma.config.ts     # Prisma 7 config (Migrate datasource, seed)
+│       └── lib/             # content loader, helpers
+├── backend/                 # Express contact-form API
 │   └── src/
-│       ├── routes/          # auth, resources, volunteers, users, contact
-│       └── middleware/      # auth guards, error handling
-├── Dockerfile               # Multi-stage production image
-├── compose.yaml             # Container run configuration
+│       ├── routes/          # contact
+│       └── middleware/      # error handling
+├── docker/nginx/            # nginx config template for the web image
+├── Dockerfile               # Multi-stage build: `web` and `contact` targets
+├── compose.yaml             # Runs both containers
 └── pnpm-workspace.yaml
 ```
 
@@ -55,7 +54,7 @@ cville-kitchen-website/
 
 - Node.js 20.9+
 - pnpm 9+ (`corepack enable` or `npm install -g pnpm`)
-- Docker (only for building/running the production image)
+- Docker (only for building/running the production images)
 
 ## Getting started
 
@@ -63,158 +62,133 @@ cville-kitchen-website/
 git clone https://github.com/evanWh1te/cville-kitchen-website.git
 cd cville-kitchen-website
 pnpm install
-```
-
-Create the backend environment file and a local database:
-
-```bash
 cp backend/.env.example backend/.env
-# edit backend/.env — at minimum set JWT_SECRET
-
-pnpm --filter @cville-kitchen/backend exec prisma migrate dev
-pnpm --filter @cville-kitchen/backend db:seed
-```
-
-Run both apps together from the repo root:
-
-```bash
+# edit backend/.env — set the SMTP_* variables and CONTACT_EMAIL
 pnpm dev
 ```
 
 - Frontend: http://localhost:3000
-- Backend: http://localhost:3001
+- Contact API: http://localhost:3001
+
+In dev the frontend posts the contact form straight to the backend on port 3001
+(see `NEXT_PUBLIC_CONTACT_ENDPOINT` below); the backend's CORS default already
+allows `http://localhost:3000`.
+
+## Editing content
+
+The site's resources and volunteer opportunities live in
+`frontend/content/`:
+
+- `resources.yaml`
+- `volunteers.yaml`
+
+The comment header at the top of each file is the field reference. Edit the
+file, commit, and push.
+
+Content is validated whenever the site is built. A bad edit fails
+`pnpm build:frontend` (and the CI build) with the entry and field named, so a
+typo can't reach the live site. Run it locally to check your change:
+
+```bash
+pnpm build:frontend
+```
+
+Pushing to `main` makes CI rebuild the site and deploy it.
+
+### Migrating from the old database
+
+Earlier versions kept this content in a SQLite database. To convert one into
+the YAML files, run the one-time export:
+
+```bash
+node frontend/scripts/export-db-to-yaml.mjs <path-to-database.db> [outDir]
+```
 
 ## Environment variables
 
 Backend (`backend/.env`):
 
-| Variable                                                            | Purpose                                    |
-| ------------------------------------------------------------------- | ------------------------------------------ |
-| `JWT_SECRET`                                                        | Signing key for auth tokens (required)     |
-| `DATABASE_URL`                                                      | SQLite connection string                   |
-| `BACKEND_PORT`                                                      | API port (default 3001)                    |
-| `FRONTEND_URL`                                                      | Allowed CORS origin                        |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Contact-form email delivery                |
-| `CONTACT_EMAIL`                                                     | Where contact submissions are sent         |
-| `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`                          | Optional initial admin created by the seed |
+| Variable                                                            | Purpose                                                        |
+| ------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `BACKEND_PORT`                                                      | API port (default 3001)                                        |
+| `FRONTEND_URL`                                                      | Allowed CORS origin (default `http://localhost:3000`)          |
+| `NODE_ENV`                                                          | `production` in containers                                     |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Contact-form email delivery                                    |
+| `CONTACT_EMAIL`                                                     | Where contact submissions are sent                             |
+| `TRUST_PROXY`                                                       | Number of proxy hops in front of the API (default 1)           |
 
-The frontend uses `BACKEND_INTERNAL_URL` (defaults to
-`http://127.0.0.1:3001/api`) to reach the backend when proxying, and
-`COOKIE_INSECURE=true` to allow cookies over plain HTTP in local/container runs.
+`TRUST_PROXY` controls how the API finds the real client IP, which its rate
+limiter depends on. With just the nginx web container in front, `1` is right.
+Raise it to `2` when another proxy (for example a host reverse proxy) also sits
+in front of the web container; `compose.yaml` sets it to `2` for the droplet.
 
-`SITE_URL` (defaults to `https://cville.kitchen`) is the base for canonical
-tags, Open Graph URLs, `sitemap.xml`, and structured data. Statically
-prerendered pages bake it in at build time, so pointing a staging deploy at a
-different domain means setting it for the build, not only the container.
+Frontend and web container:
 
-## Creating the first admin
-
-Either set `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` before running the seed,
-or `POST /api/auth/create-admin` with an email and password — that endpoint only
-works while no users exist.
+- `SITE_URL` (build arg / build-time env, defaults to `https://cville.kitchen`)
+  is the base for canonical tags, Open Graph URLs, `sitemap.xml`, and structured
+  data. It is baked into the static pages, so pointing a staging deploy at a
+  different domain means setting it when building, not only when running.
+- `NEXT_PUBLIC_CONTACT_ENDPOINT` (build-time) is the URL the contact form posts
+  to. It defaults to `/api/contact` on the same origin, which is what production
+  wants. `pnpm dev` sets it to `http://localhost:3001/api/contact` unless you
+  override it.
+- `CONTACT_UPSTREAM` (run-time, web container) is where nginx proxies
+  `/api/contact`. It defaults to `http://contact:3001`; in Kubernetes, point it
+  at the contact Service.
 
 ## Scripts
 
 Run from the repo root:
 
-| Command           | Description                        |
-| ----------------- | ---------------------------------- |
-| `pnpm dev`        | Run backend and frontend together  |
-| `pnpm build`      | Build both apps                    |
-| `pnpm start`      | Start both apps in production mode |
-| `pnpm lint`       | Lint both workspaces               |
-| `pnpm type-check` | Type-check both workspaces         |
+| Command           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `pnpm dev`        | Run backend and frontend together        |
+| `pnpm build`      | Build both apps (static site in `frontend/out`) |
+| `pnpm lint`       | Lint both workspaces                     |
+| `pnpm type-check` | Type-check both workspaces               |
 
 Add `:frontend` or `:backend` to target a single workspace (e.g.
-`pnpm build:backend`). Backend-specific database scripts live in
-`backend/package.json` (`db:seed`, `db:reset`), and `scripts/backup-db.sh`
-snapshots the database (see [Backups](#backups)).
+`pnpm build:backend`). `pnpm start:backend` runs the compiled contact API. The
+frontend has no `start` script: it is a static export, so to preview the
+production setup use `docker compose up --build`.
 
 ## API endpoints
 
-| Method | Path                     | Notes                        |
-| ------ | ------------------------ | ---------------------------- |
-| GET    | `/health`                | Health check                 |
-| POST   | `/api/contact`           | Contact form (rate limited)  |
-| POST   | `/api/auth/login`        | Log in, sets auth cookie     |
-| POST   | `/api/auth/logout`       | Clear auth cookie            |
-| GET    | `/api/auth/me`           | Current user                 |
-| POST   | `/api/auth/create-admin` | First admin bootstrap        |
-| GET    | `/api/resources`         | Public resource listing      |
-| —      | `/api/resources/*`       | Admin CRUD (auth required)   |
-| GET    | `/api/volunteers`        | Public volunteer listing     |
-| —      | `/api/volunteers/*`      | Admin CRUD (auth required)   |
-| —      | `/api/users/*`           | User management (admin only) |
+| Method | Path           | Notes                       |
+| ------ | -------------- | --------------------------- |
+| GET    | `/health`      | Health check (contact API)  |
+| POST   | `/api/contact` | Contact form (rate limited) |
 
-The backend applies Helmet, CORS, request logging, and rate limiting (a global
-limit plus tighter limits on the contact form and authentication endpoints).
+The backend applies Helmet, CORS, request logging, and rate limiting. In the
+web container nginx exposes only `POST /api/contact`; every other `/api/*` path
+returns 404.
 
-## Content
+## Docker and deployment
 
-Public food resources are stored in the database and can be managed through the
-admin panel. Some longer-form resource content also lives as markdown in
-`frontend/src/resources/` and is rendered on the resources page.
+One `Dockerfile` builds two images:
 
-## Deployment
+- `web` — the static site served by an unprivileged nginx on port 8080. It
+  proxies `/api/contact` to `CONTACT_UPSTREAM`.
+- `contact` — the Express contact API on port 3001, running as a non-root user.
 
-The `Dockerfile` produces a single multi-stage image that runs both apps under
-pm2. GitHub Actions builds and pushes the image to GHCR on pushes to `main` and
-version tags.
-
-Build and run locally with Compose:
+Build and run both locally with Compose:
 
 ```bash
 docker compose up --build
 ```
 
-The container expects the SQLite database to be mounted at `/app/backend/data/`.
-Set `PRISMA_MIGRATE=true` to run `prisma migrate deploy` on startup.
+The site is then on http://localhost:3000 and the contact API is reachable only
+through it. The `contact` service reads its settings from `backend/.env`.
 
-## Backups
-
-The database is a single SQLite file on a bind mount, so nothing is backed up by
-default — losing the volume loses every resource and volunteer entry the admins
-have written. `scripts/backup-db.sh` takes a consistent snapshot using SQLite's
-online backup API, which is safe to run while the app is serving traffic (a
-plain `cp` is not).
-
-```bash
-# writes ./backups/database-YYYYmmdd-HHMMSS.db.gz
-./scripts/backup-db.sh
-
-# point it at the real deployment paths
-DB_PATH=/srv/kitchen/data/database.db \
-BACKUP_DIR=/var/backups/kitchen \
-RETENTION_DAYS=30 \
-    ./scripts/backup-db.sh
-```
-
-Each snapshot is verified with `PRAGMA integrity_check` and discarded if it
-fails, and old snapshots are pruned only after a verified success, so a run of
-failures can never leave you with nothing.
-
-Schedule it from the host crontab (`crontab -e`) — nightly at 3:15am:
-
-```cron
-15 3 * * * DB_PATH=/srv/kitchen/data/database.db BACKUP_DIR=/var/backups/kitchen /srv/kitchen/scripts/backup-db.sh >> /var/log/kitchen-backup.log 2>&1
-```
-
-Restore by stopping the stack, decompressing over the database file, and
-starting again:
-
-```bash
-docker compose down
-gunzip -c /var/backups/kitchen/database-20250101-031500.db.gz > /srv/kitchen/data/database.db
-docker compose up -d
-```
-
-Backups on the same disk as the database do not protect against disk loss. Copy
-them off the host periodically.
+Forgejo CI (`.forgejo/workflows/build-deploy.yml`) type-checks, lints, and
+builds on every push and pull request, then builds and pushes both images and
+bumps their tags in the deployment repository on pushes to `main`. The GitHub
+mirror (`.github/workflows/build.yml`) only runs the checks and the build.
 
 ## Contributing
 
-Issues and pull requests are welcome. Before opening a PR, run `pnpm lint` and
-`pnpm type-check`.
+Issues and pull requests are welcome. Before opening a PR, run `pnpm lint`,
+`pnpm type-check`, and `pnpm build:frontend`.
 
 ## License
 

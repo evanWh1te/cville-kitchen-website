@@ -1,0 +1,86 @@
+# Rendered by the nginx image's entrypoint (envsubst over /etc/nginx/templates).
+# Only the CONTACT_UPSTREAM variable is substituted; nginx's own $variables are
+# untouched (the Dockerfile sets NGINX_ENVSUBST_FILTER to enforce that).
+
+server {
+    listen 8080;
+    server_name _;
+    server_tokens off;
+    # Redirect with relative Locations: the container port (8080) is not the
+    # public one, and a proxy in front may terminate TLS.
+    absolute_redirect off;
+
+    root /usr/share/nginx/html;
+
+    # Cheap security headers. No Content-Security-Policy on purpose: Next's
+    # inline scripts and the JSON-LD would need careful hashing.
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+    add_header X-Frame-Options DENY always;
+
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 256;
+    gzip_types text/plain text/css text/xml application/xml application/json
+        application/javascript text/javascript image/svg+xml;
+
+    # Canonical URLs have no .html extension and no trailing slash; redirect
+    # the variants so each page has exactly one address.
+    location = /index.html {
+        return 301 /;
+    }
+    location ~ ^/(.+)\.html$ {
+        return 301 /$1;
+    }
+    location ~ ^/(.+)/$ {
+        return 301 /$1;
+    }
+
+    # Clean URLs: /resources is served from resources.html
+    location / {
+        try_files $uri $uri.html $uri/ =404;
+        # Short-lived so a deploy shows up immediately
+        add_header Cache-Control "no-cache" always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        add_header X-Frame-Options DENY always;
+    }
+
+    # Content-hashed filenames never change, so cache them forever
+    location /_next/static/ {
+        add_header Cache-Control "public, max-age=31536000, immutable" always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        add_header X-Frame-Options DENY always;
+        try_files $uri =404;
+    }
+
+    # The only dynamic endpoint: the contact form
+    location = /api/contact {
+        client_max_body_size 16k;
+        proxy_pass ${CONTACT_UPSTREAM};
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        # The API sends these too; drop its copies so they are not duplicated
+        proxy_hide_header X-Content-Type-Options;
+        proxy_hide_header Referrer-Policy;
+        proxy_hide_header X-Frame-Options;
+    }
+
+    # Nothing else under /api exists
+    location /api/ {
+        default_type application/json;
+        return 404 '{"error":"Not Found"}';
+    }
+
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+        add_header Cache-Control "no-cache" always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        add_header X-Frame-Options DENY always;
+    }
+}

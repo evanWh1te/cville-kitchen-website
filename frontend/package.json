@@ -3,9 +3,8 @@
     "version": "1.0.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "NEXT_PUBLIC_CONTACT_ENDPOINT=${NEXT_PUBLIC_CONTACT_ENDPOINT:-http://localhost:3001/api/contact} next dev",
         "build": "next build",
-        "start": "next start",
         "lint": "eslint .",
         "type-check": "tsc --noEmit"
     },

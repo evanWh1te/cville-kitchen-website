@@ -1,27 +1,32 @@
-node_modules
+**/node_modules
 npm-debug.log
 Dockerfile*
 docker-compose*
+compose*.yaml
 .dockerignore
 .git
 .gitignore
 README.md
-.env
+# Never let a local env file reach the build context (NEXT_PUBLIC_* values
+# would get inlined into the static site). The example files are not needed.
+**/.env*
 .nyc_output
 coverage
 .cache
-.next
-out
-dist
+**/.next
+frontend/out
+**/out
+**/dist
+backend/dist
 .vercel
 .DS_Store
 *.log
-frontend/.next
-backend/dist
-frontend/node_modules
-backend/node_modules
 *.db
 *.db-journal
 *.db-wal
 *.db-shm
 data/
+# Local-only helper scripts (gitignored) that depend on removed packages
+**/createUser.ts
+testdata
+backups
