@@ -17,9 +17,10 @@
  */
 
 import type { MetadataRoute } from 'next';
-import { connection } from 'next/server';
 import { absoluteUrl } from '@/lib/site';
-import { getResources, getVolunteerOpportunities } from '@/lib/server-api';
+import { getResources, getVolunteerOpportunities } from '@/lib/content';
+
+export const dynamic = 'force-static';
 
 // Most recent lastUpdated across a set of records. A lastmod is only worth
 // publishing if it is true, so this reports what the data actually says
@@ -32,15 +33,9 @@ function latestUpdate(items: { lastUpdated?: string }[]): Date | undefined {
     return times.length ? new Date(Math.max(...times)) : undefined;
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    // The backend is not reachable during `next build`, so resolve at request
-    // time. The underlying fetches are cached and tagged like the pages.
-    await connection();
-
-    const [resources, volunteers] = await Promise.all([
-        getResources(),
-        getVolunteerOpportunities()
-    ]);
+export default function sitemap(): MetadataRoute.Sitemap {
+    const resources = getResources();
+    const volunteers = getVolunteerOpportunities();
 
     return [
         {
@@ -50,13 +45,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
         {
             url: absoluteUrl('/resources'),
-            lastModified: latestUpdate(resources.data),
+            lastModified: latestUpdate(resources),
             changeFrequency: 'weekly',
             priority: 0.9
         },
         {
             url: absoluteUrl('/volunteer'),
-            lastModified: latestUpdate(volunteers.data),
+            lastModified: latestUpdate(volunteers),
             changeFrequency: 'weekly',
             priority: 0.8
         },

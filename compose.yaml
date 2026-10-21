@@ -1,33 +1,44 @@
 services:
   web:
-    # image: ghcr.io/evanwh1te/cville-kitchen-website:sha-29ba6db
-    build: .
+    # image: forgejo.whitehome.internal/evan/cville-kitchen-website:<tag>
+    build:
+      context: .
+      target: web
+      args:
+        # Base URL for canonical tags, Open Graph, sitemap.xml, and structured
+        # data. The static site bakes this in at build time, so a different
+        # domain needs it set here, at build time.
+        SITE_URL: https://cville.kitchen
     ports:
-      - '3000:3000'
-    volumes:
-      - ./testdata:/app/backend/data
+      # The host proxy on the droplet reaches the site on 3000
+      - '3000:8080'
     environment:
-      - NODE_ENV=production
-      - BACKEND_INTERNAL_URL=http://localhost:3001/api
-      # Base URL for canonical tags, Open Graph, sitemap.xml, and structured
-      # data. Statically prerendered pages bake this in at build time, so a
-      # different domain needs it set for the build, not just the container.
-      - SITE_URL=https://cville.kitchen
-      - COOKIE_INSECURE=true
-      - DATABASE_URL=file:/app/backend/data/database.db
-    env_file:
-      - ./backend/.env
+      # nginx proxies /api/contact here
+      - CONTACT_UPSTREAM=http://contact:3001
+    depends_on:
+      contact:
+        condition: service_healthy
     restart: unless-stopped
 
-    # Probe both the frontend (3000) and the backend API (3001) so the
-    # container is only healthy when both processes are actually serving.
+  contact:
+    # image: forgejo.whitehome.internal/evan/cville-kitchen-contact:<tag>
+    build:
+      context: .
+      target: contact
+    # No published port: only the web service can reach it
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      # Proxy hops between the client and this container: web's nginx is one,
+      # and the droplet's host reverse proxy is a second. Rate limiting then
+      # sees real client IPs. Use 1 if you publish web's port directly.
+      - TRUST_PROXY=2
+    restart: unless-stopped
     healthcheck:
       test:
-        [
-          'CMD-SHELL',
-          'wget --quiet --tries=1 --spider http://localhost:3000 && wget --quiet --tries=1 --spider http://localhost:3001/health',
-        ]
+        ['CMD-SHELL', 'wget --quiet --tries=1 --spider http://localhost:3001/health']
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 20s

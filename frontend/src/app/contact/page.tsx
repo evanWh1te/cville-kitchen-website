@@ -51,13 +51,18 @@ export default function ContactPage() {
         setSubmitStatus('idle');
 
         try {
-            const response = await fetch('/api/contact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            });
+            // Production: a reverse proxy routes same-origin /api/contact to the
+            // backend. Local dev: NEXT_PUBLIC_CONTACT_ENDPOINT points at it directly.
+            const response = await fetch(
+                process.env.NEXT_PUBLIC_CONTACT_ENDPOINT || '/api/contact',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                }
+            );
 
             if (response.ok) {
                 setSubmitStatus('success');
@@ -65,7 +70,7 @@ export default function ContactPage() {
             } else {
                 setSubmitStatus('error');
             }
-        } catch (error) {
+        } catch {
             setSubmitStatus('error');
         } finally {
             setIsSubmitting(false);

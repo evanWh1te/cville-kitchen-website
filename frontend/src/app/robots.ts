@@ -19,14 +19,16 @@
 import type { MetadataRoute } from 'next';
 import { absoluteUrl } from '@/lib/site';
 
+export const dynamic = 'force-static';
+
 export default function robots(): MetadataRoute.Robots {
     return {
         rules: {
             userAgent: '*',
             allow: '/',
-            // The admin UI and the proxy routes hold nothing a crawler should
-            // index, and the proxy in particular would be pointless load.
-            disallow: ['/admin', '/admin/', '/api/']
+            // /api/ is only the contact form endpoint, which a crawler has no
+            // reason to hit.
+            disallow: ['/api/']
         },
         sitemap: absoluteUrl('/sitemap.xml')
     };

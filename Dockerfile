@@ -1,146 +1,69 @@
-# Multi-stage build for production optimization
-FROM node:24-alpine AS base
+# Multi-stage build with two final targets:
+#   web     static site served by nginx (port 8080), proxies /api/contact
+#   contact the Express contact-form API (port 3001)
+#
+#   docker build --target web -t cville-kitchen-web .
+#   docker build --target contact -t cville-kitchen-contact .
+
 # Pin pnpm to match the repo's packageManager field
+FROM node:24.11.1-alpine3.22 AS base
 RUN npm install -g pnpm@11.10.0
 WORKDIR /app
 
-# Deps stage — install all workspace dependencies from the frozen lockfile
-FROM base AS deps
-# python3/make/g++ are required to compile better-sqlite3 (the Prisma driver
-# adapter's native dependency); Alpine/musl has no prebuilt binary for it.
-RUN apk add --no-cache libc6-compat python3 make g++
+# --- web: build the static site ---
+FROM base AS web-build
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY frontend/package.json ./frontend/
 COPY backend/package.json ./backend/
-RUN pnpm install --frozen-lockfile
-
-# Builder stage
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/frontend/node_modules ./frontend/node_modules
-COPY --from=deps /app/backend/node_modules ./backend/node_modules
-COPY . .
-
-# Generate the Prisma client into the shared store, then build both apps
-RUN pnpm --filter @cville-kitchen/backend exec prisma generate
-RUN pnpm --filter @cville-kitchen/backend build
-# Treat lint/type warnings as warnings, not build errors
-ENV CI=false
-# Statically prerendered pages bake canonical/Open Graph URLs in at build time,
-# so the site's base URL has to be present for the build, not just at run time.
+# Install only the frontend workspace; the backend's deps are not needed here
+RUN pnpm install --frozen-lockfile --filter @cville-kitchen/frontend...
+COPY frontend ./frontend
+# Statically prerendered pages bake canonical/Open Graph URLs and sitemap.xml
+# in at build time, so the site's base URL has to be present for the build.
 ARG SITE_URL=https://cville.kitchen
 ENV SITE_URL=$SITE_URL
+ENV NEXT_TELEMETRY_DISABLED=1
+# NEXT_PUBLIC_CONTACT_ENDPOINT is deliberately left unset: the contact form
+# then posts to the same origin (/api/contact), which nginx proxies.
+# The build also validates frontend/content/*.yaml and fails on a bad entry.
 RUN pnpm --filter @cville-kitchen/frontend build
 
-# Drop devDependencies to slim the runtime image (build artifacts already
-# emitted). CI=true keeps pnpm from prompting before it purges node_modules,
-# which it cannot do without a TTY. The purge also discards the generated
-# Prisma client, so regenerate it against the pruned dependency tree.
-RUN CI=true pnpm prune --prod
-RUN pnpm --filter @cville-kitchen/backend exec prisma generate
+# --- contact: compile the backend and prune it to production deps ---
+FROM base AS contact-build
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json ./frontend/
+COPY backend/package.json ./backend/
+RUN pnpm install --frozen-lockfile --filter @cville-kitchen/backend...
+COPY backend ./backend
+RUN pnpm --filter @cville-kitchen/backend build
+# `pnpm deploy` copies the package plus its production dependencies into a
+# standalone directory. pnpm 10+ refuses it unless workspace packages are
+# injected; the backend has no workspace dependencies, so --legacy (the old
+# behaviour) is the simplest way to opt out of that requirement.
+RUN pnpm --filter @cville-kitchen/backend deploy --legacy --prod /deploy \
+    && cp -r backend/dist /deploy/dist
 
-# Runner stage
-FROM base AS runner
+# --- Final target: contact ---
+FROM node:24.11.1-alpine3.22 AS contact
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
-# Default DB location, matching the volume mount and ecosystem.config.js. The
-# startup migration runs outside pm2, so it needs this in the image env.
-# Override at run time to point elsewhere.
-ENV DATABASE_URL=file:/app/backend/data/database.db
+WORKDIR /app
+COPY --from=contact-build --chown=node:node /deploy ./
+USER node
+EXPOSE 3001
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:${BACKEND_PORT:-3001}/health || exit 1
+CMD ["node", "dist/index.js"]
 
-RUN addgroup --system --gid 1001 nodejs && \
-    adduser --system --uid 1001 appuser && \
-    npm install -g pm2 && \
-    mkdir -p /app/backend/data && \
-    chown -R appuser:nodejs /app/backend/data
-
-# --- Frontend: the Next.js standalone output is self-contained (bundles its
-# own node_modules), so it does not depend on the shared pnpm store. ---
-COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/standalone/frontend ./frontend
-COPY --from=builder --chown=appuser:nodejs /app/frontend/.next/static ./frontend/.next/static
-
-# --- Backend: compiled output plus its production dependencies. Under pnpm the
-# backend's deps live as symlinks in backend/node_modules that resolve into the
-# shared store at the root node_modules/.pnpm, so both are required. The
-# generated Prisma client lives inside that store. ---
-COPY --from=builder --chown=appuser:nodejs /app/backend/dist ./backend/dist
-COPY --from=builder --chown=appuser:nodejs /app/backend/package.json ./backend/
-COPY --from=builder --chown=appuser:nodejs /app/backend/prisma ./backend/prisma
-# Prisma 7 reads the Migrate datasource from prisma.config.ts at startup
-COPY --from=builder --chown=appuser:nodejs /app/backend/prisma.config.ts ./backend/
-COPY --from=builder --chown=appuser:nodejs /app/backend/node_modules ./backend/node_modules
-COPY --from=builder --chown=appuser:nodejs /app/node_modules ./node_modules
-
-# Create startup script for database setup
-COPY --chown=appuser:nodejs <<'EOF' /app/start.sh
-#!/bin/sh
-set -e
-
-echo "Starting application..."
-
-# Check if database file exists
-if [ ! -f "/app/backend/data/database.db" ]; then
-  echo "Database file not found. This is expected if you're mounting an external database."
-  echo "For production, ensure your database.db file is mounted to /app/backend/data/"
-  echo "Skipping migrations - no database file found"
-else
-  echo "Database file found at /app/backend/data/database.db"
-
-  # Only run migrations if PRISMA_MIGRATE environment variable is set to true
-  if [ "$PRISMA_MIGRATE" = "true" ]; then
-    echo "PRISMA_MIGRATE=true detected. Running database migrations..."
-    # Call the binary directly: `pnpm exec` runs a dependency status check
-    # first, which shells out to `pnpm install` and fails in the image.
-    cd /app/backend && ./node_modules/.bin/prisma migrate deploy
-  else
-    echo "Skipping migrations. Set PRISMA_MIGRATE=true to run migrations."
-  fi
-fi
-
-# Start PM2
-echo "Starting PM2..."
-exec pm2-runtime start /app/ecosystem.config.js
-EOF
-
-RUN chmod +x /app/start.sh
-
-# PM2 ecosystem config
-COPY --chown=appuser:nodejs <<'EOF' /app/ecosystem.config.js
-module.exports = {
-  apps: [
-    {
-      name: 'backend',
-      script: '/app/backend/dist/index.js',
-      instances: 1,
-      autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      kill_timeout: 5000,
-      wait_ready: true,
-      listen_timeout: 10000,
-      env: {
-        NODE_ENV: 'production',
-        BACKEND_PORT: '3001',
-        DATABASE_URL: 'file:/app/backend/data/database.db'
-      }
-    },
-    {
-      name: 'frontend',
-      script: '/app/frontend/server.js',
-      instances: 1,
-      autorestart: true,
-      watch: false,
-      max_memory_restart: '1G',
-      env: {
-        NODE_ENV: 'production',
-        PORT: '3000'
-      }
-    }
-  ]
-};
-EOF
-
-USER appuser
-EXPOSE 3000 3001
-
-CMD ["/app/start.sh"]
+# --- Final target: web (the default when no --target is given is the last stage) ---
+# The unprivileged image runs as the nginx user on 8080, so it needs no root
+# and no extra capabilities in Kubernetes.
+FROM nginxinc/nginx-unprivileged:1.28.0-alpine AS web
+# Where /api/contact is proxied; override for Kubernetes (the contact Service).
+ENV CONTACT_UPSTREAM=http://contact:3001
+# Only substitute CONTACT_UPSTREAM so nginx's own $uri etc. survive envsubst
+ENV NGINX_ENVSUBST_FILTER=^CONTACT_UPSTREAM$
+COPY docker/nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=web-build /app/frontend/out /usr/share/nginx/html
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://127.0.0.1:8080/ || exit 1

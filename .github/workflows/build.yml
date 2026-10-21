@@ -33,14 +33,15 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Generate Prisma client
-              run: pnpm --filter @cville-kitchen/backend exec prisma generate
-
             - name: Type-check
               run: pnpm type-check
 
             - name: Lint
               run: pnpm lint
+
+            # Building the site also validates frontend/content/*.yaml
+            - name: Build frontend
+              run: pnpm build:frontend
 
     build:
         needs: verify
