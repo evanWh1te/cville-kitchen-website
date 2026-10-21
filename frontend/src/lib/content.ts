@@ -271,15 +271,13 @@ export function formatLastUpdated(date: string): string {
     return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
 }
 
-let resources: Resource[] | undefined;
-let volunteers: VolunteerOpportunity[] | undefined;
-
+// Deliberately not cached: `next dev` renders pages per request, so reading
+// the files each call makes YAML edits show up on a browser reload. The build
+// only calls these a handful of times.
 export function getResources(): Resource[] {
-    resources ??= loadResources();
-    return resources;
+    return loadResources();
 }
 
 export function getVolunteerOpportunities(): VolunteerOpportunity[] {
-    volunteers ??= loadList('volunteers.yaml', volunteerSchema);
-    return volunteers;
+    return loadList('volunteers.yaml', volunteerSchema);
 }
