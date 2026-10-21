@@ -68,10 +68,7 @@ const volunteerOrder = [
 ];
 
 // Field order in the output. Required fields first.
-const commonFields = [
-    'slug',
-    'title',
-    'category',
+const bodyFields = [
     'type',
     'description',
     'location',
@@ -84,9 +81,13 @@ const commonFields = [
     'notes',
     'contactInfo'
 ];
-const resourceFields = [...commonFields, 'lastUpdated'];
+// Resources have no category field: it is the key each entry is listed under.
+const resourceFields = ['slug', 'title', ...bodyFields, 'lastUpdated'];
 const volunteerFields = [
-    ...commonFields,
+    'slug',
+    'title',
+    'category',
+    ...bodyFields,
     'timeCommitment',
     'skills',
     'lastUpdated'
@@ -157,10 +158,12 @@ function toDateString(value) {
     return date.toISOString().slice(0, 10);
 }
 
+// Active rows as { category, entry } pairs, sorted by category order then
+// title. Inactive rows are skipped and counted.
 function readRows(db, table, categoryOrder, fields, used) {
-    const rows = db
-        .prepare(`SELECT * FROM ${table} WHERE isActive = 1`)
-        .all();
+    const all = db.prepare(`SELECT * FROM ${table}`).all();
+    const rows = all.filter((row) => row.isActive === 1);
+    const skipped = all.length - rows.length;
 
     const rank = (category) => {
         const i = categoryOrder.indexOf(category);
@@ -172,7 +175,7 @@ function readRows(db, table, categoryOrder, fields, used) {
             a.title.localeCompare(b.title)
     );
 
-    return rows.map((row) => {
+    const items = rows.map((row) => {
         const entry = {};
         for (const field of fields) {
             let value;
@@ -185,27 +188,28 @@ function readRows(db, table, categoryOrder, fields, used) {
             if (typeof value === 'string' && value.trim() === '') continue;
             entry[field] = value;
         }
-        return entry;
+        return { category: row.category, entry };
     });
+    return { items, skipped };
 }
 
 const enumList = (values) => values.map((v) => `#     ${v}`).join('\n');
 
-function header({ what, extraFields, categories, types }) {
+// structure: the paragraph describing how the file is laid out.
+// categoryField: the per-entry "category" field doc, or '' when the category
+// is a top-level key instead.
+function header({ what, structure, categoryField, extraFields, types }) {
     return `# ${what}
 #
 # This file is read and validated at build time (frontend/src/lib/content.ts).
 # A mistake here fails \`next build\` with a message naming the entry and field.
-# The file is a list; each entry is a block starting with \`- slug: ...\`.
-# To remove an entry, delete it or comment it out. Unknown fields are errors.
+${structure}
 #
 # Fields (R = required, O = optional; omit optional fields rather than leaving
 # them empty):
 #   slug            R  Unique kebab-case id: lowercase letters, digits, hyphens.
 #   title           R  Display name.
-#   category        R  One of:
-${enumList(categories)}
-#   type            R  One of:
+${categoryField}#   type            R  One of:
 ${enumList(types)}
 #   description     O  Short summary.
 #   location        O  Place name.
@@ -232,8 +236,18 @@ ${extraFields}#   lastUpdated     O  Date the entry was last verified, written Y
 
 const resourceHeader = header({
     what: 'Free food resources.',
+    structure: `# The file is a mapping: each top-level key is a category, and under it is the
+# list of entries in that category. Each entry is a block starting with
+# \`- slug: ...\`. The category of an entry is the key it is listed under, so
+# entries have no \`category\` field (writing one is an error).
+# To remove an entry, delete it or comment it out. A category with no entries
+# can be left out, or kept with nothing under it. Unknown categories and
+# unknown fields are errors.
+#
+# Valid category keys:
+${enumList(resourceOrder)}`,
+    categoryField: '',
     extraFields: '',
-    categories: resourceOrder,
     types: [
         'BREAKFAST',
         'LUNCH',
@@ -249,9 +263,13 @@ const resourceHeader = header({
 
 const volunteerHeader = header({
     what: 'Volunteer opportunities.',
+    structure: `# The file is a list; each entry is a block starting with \`- slug: ...\`.
+# To remove an entry, delete it or comment it out. Unknown fields are errors.`,
+    categoryField: `#   category        R  One of:
+${enumList(volunteerOrder)}
+`,
     extraFields:
         '#   timeCommitment  O  Expected time commitment.\n#   skills          O  Skills needed or helpful.\n',
-    categories: volunteerOrder,
     types: [
         'ONE_TIME',
         'RECURRING',
@@ -264,43 +282,85 @@ const volunteerHeader = header({
     ]
 });
 
-function toYaml(entries) {
-    return stringify(entries, { lineWidth: 100, indent: 2 });
+// Approximates the repo's Prettier settings (.prettierrc: 4-space indent,
+// single quotes, 80 columns) so format-on-save changes little.
+const toYaml = (data) =>
+    stringify(data, { lineWidth: 80, indent: 4, singleQuote: true });
+
+// Put a blank line before every entry and every category key (except the
+// first line, and an entry directly under its category key), matching how the
+// files are hand-formatted. entryStart matches the first line of an entry.
+function withBlankLines(yamlText, entryStart) {
+    const categoryKey = /^[A-Z][A-Z_]*:$/;
+    const lines = yamlText.split('\n');
+    const out = [];
+    lines.forEach((line, i) => {
+        const startsBlock = entryStart.test(line) || categoryKey.test(line);
+        const afterKey = i > 0 && categoryKey.test(lines[i - 1]);
+        if (i > 0 && startsBlock && !afterKey) out.push('');
+        out.push(line);
+    });
+    return out.join('\n');
 }
 
 const db = new DatabaseSync(path.resolve(dbPath), { readOnly: true });
 
 const resourceSlugs = new Set();
-const resources = readRows(
+const resourceRows = readRows(
     db,
     'resources',
     resourceOrder,
     resourceFields,
     resourceSlugs
 );
+const resourceItems = resourceRows.items;
 // Skip a static entry if the database already produced the same slug.
-for (const entry of staticResources) {
-    if (!resourceSlugs.has(entry.slug)) resources.push(entry);
+for (const { category, ...entry } of staticResources) {
+    if (!resourceSlugs.has(entry.slug)) resourceItems.push({ category, entry });
 }
 
-const volunteers = readRows(
+// Group by category in display order; categories with no entries are omitted.
+const resourcesByCategory = {};
+for (const category of resourceOrder) {
+    const entries = resourceItems
+        .filter((item) => item.category === category)
+        .map((item) => item.entry);
+    if (entries.length > 0) resourcesByCategory[category] = entries;
+}
+const unknownCategories = new Set(
+    resourceItems
+        .map((item) => item.category)
+        .filter((category) => !resourceOrder.includes(category))
+);
+if (unknownCategories.size > 0) {
+    console.error(
+        `Unknown resource categories in database: ${[...unknownCategories].join(', ')}`
+    );
+    process.exit(1);
+}
+
+const volunteerRows = readRows(
     db,
     'volunteer_opportunities',
     volunteerOrder,
     volunteerFields,
     new Set()
 );
+const volunteers = volunteerRows.items.map((item) => item.entry);
 
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(
     path.join(outDir, 'resources.yaml'),
-    resourceHeader + toYaml(resources)
+    resourceHeader + withBlankLines(toYaml(resourcesByCategory), /^ {4}- /)
 );
 fs.writeFileSync(
     path.join(outDir, 'volunteers.yaml'),
-    volunteerHeader + toYaml(volunteers)
+    volunteerHeader + withBlankLines(toYaml(volunteers), /^- /)
 );
 
 console.log(
-    `Wrote ${resources.length} resources and ${volunteers.length} volunteer opportunities to ${outDir}`
+    `Wrote ${resourceItems.length} resources and ${volunteers.length} volunteer opportunities to ${outDir}`
+);
+console.log(
+    `Skipped inactive rows: ${resourceRows.skipped} resources, ${volunteerRows.skipped} volunteer opportunities`
 );

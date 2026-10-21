@@ -85,10 +85,12 @@ const lastUpdated = z.iso.date();
 const text = z.string();
 
 // Strict objects: an unknown key (e.g. a typo like `adress`) is an error.
-const resourceSchema = z.strictObject({
+// A resource's category is the key it is listed under in resources.yaml, so
+// the entry schema omits it (and, being strict, rejects a `category:` field);
+// the loader adds it back.
+const resourceEntrySchema = z.strictObject({
     slug,
     title: text.min(1),
-    category: resourceCategory,
     type: resourceType,
     description: text.optional(),
     location: text.optional(),
@@ -123,27 +125,16 @@ const volunteerSchema = z.strictObject({
     lastUpdated: lastUpdated.optional()
 });
 
-export type Resource = z.infer<typeof resourceSchema>;
 export type ResourceCategory = z.infer<typeof resourceCategory>;
+export type Resource = z.infer<typeof resourceEntrySchema> & {
+    category: ResourceCategory;
+};
 export type ResourceType = z.infer<typeof resourceType>;
 export type VolunteerOpportunity = z.infer<typeof volunteerSchema>;
 export type VolunteerCategory = z.infer<typeof volunteerCategory>;
 export type VolunteerType = z.infer<typeof volunteerType>;
 
-function describeEntry(raw: unknown, index: number): string {
-    const parts = [`entry #${index + 1}`];
-    if (raw && typeof raw === 'object') {
-        const { slug: s, title: t } = raw as Record<string, unknown>;
-        if (typeof s === 'string') parts.push(`slug "${s}"`);
-        else if (typeof t === 'string') parts.push(`title "${t}"`);
-    }
-    return parts.join(', ');
-}
-
-function loadList<T extends { slug: string }>(
-    fileName: string,
-    schema: z.ZodType<T>
-): T[] {
+function readYaml(fileName: string): { label: string; data: unknown } {
     const filePath = path.join(process.cwd(), 'content', fileName);
     const label = `content/${fileName}`;
 
@@ -156,23 +147,39 @@ function loadList<T extends { slug: string }>(
         );
     }
 
-    let data: unknown;
     try {
-        data = parse(source);
+        return { label, data: parse(source) };
     } catch (error) {
         throw new Error(`${label}: invalid YAML: ${(error as Error).message}`);
     }
+}
 
-    // A file of only comments parses to null; treat it as an empty list.
-    if (data === null || data === undefined) return [];
-    if (!Array.isArray(data)) {
-        throw new Error(`${label}: top level must be a list of entries`);
+// Position of an entry in its file, e.g. `entry #3` or, for a file grouped by
+// category, `PUBLIC_MEALS entry #3`.
+function locate(index: number, group?: string): string {
+    return `${group ? `${group} ` : ''}entry #${index + 1}`;
+}
+
+function describeEntry(raw: unknown, index: number, group?: string): string {
+    const parts = [locate(index, group)];
+    if (raw && typeof raw === 'object') {
+        const { slug: s, title: t } = raw as Record<string, unknown>;
+        if (typeof s === 'string') parts.push(`slug "${s}"`);
+        else if (typeof t === 'string') parts.push(`title "${t}"`);
     }
+    return parts.join(', ');
+}
 
-    const entries: T[] = [];
-    const seen = new Map<string, number>();
-
-    data.forEach((raw, index) => {
+// Validate one list of raw entries. `seen` maps each slug to where it was
+// first used and is shared across lists so slugs stay unique file-wide.
+function validateEntries<T extends { slug: string }>(
+    label: string,
+    items: unknown[],
+    schema: z.ZodType<T>,
+    seen: Map<string, string>,
+    group?: string
+): T[] {
+    return items.map((raw, index) => {
         const result = schema.safeParse(raw);
         if (!result.success) {
             const issues = result.error.issues
@@ -184,7 +191,7 @@ function loadList<T extends { slug: string }>(
                 })
                 .join('\n');
             throw new Error(
-                `${label}: ${describeEntry(raw, index)} is invalid:\n${issues}`
+                `${label}: ${describeEntry(raw, index, group)} is invalid:\n${issues}`
             );
         }
 
@@ -192,14 +199,69 @@ function loadList<T extends { slug: string }>(
         const first = seen.get(entry.slug);
         if (first !== undefined) {
             throw new Error(
-                `${label}: entry #${index + 1}, slug "${entry.slug}" duplicates entry #${first + 1}; slugs must be unique`
+                `${label}: ${describeEntry(raw, index, group)} duplicates ${first}; slugs must be unique`
             );
         }
-        seen.set(entry.slug, index);
-        entries.push(entry);
+        seen.set(entry.slug, locate(index, group));
+        return entry;
     });
+}
 
-    return entries;
+// A flat list of entries (volunteers.yaml).
+function loadList<T extends { slug: string }>(
+    fileName: string,
+    schema: z.ZodType<T>
+): T[] {
+    const { label, data } = readYaml(fileName);
+
+    // A file of only comments parses to null; treat it as an empty list.
+    if (data === null || data === undefined) return [];
+    if (!Array.isArray(data)) {
+        throw new Error(`${label}: top level must be a list of entries`);
+    }
+    return validateEntries(label, data, schema, new Map());
+}
+
+// resources.yaml: a mapping from category to the list of entries under it.
+function loadResources(): Resource[] {
+    const { label, data } = readYaml('resources.yaml');
+
+    if (data === null || data === undefined) return [];
+    if (typeof data !== 'object' || Array.isArray(data)) {
+        throw new Error(
+            `${label}: top level must be a mapping from category to a list of entries (${resourceCategory.options.join(', ')})`
+        );
+    }
+
+    const resources: Resource[] = [];
+    const seen = new Map<string, string>();
+
+    for (const [key, items] of Object.entries(data)) {
+        const category = resourceCategory.safeParse(key);
+        if (!category.success) {
+            throw new Error(
+                `${label}: unknown category "${key}"; valid categories are ${resourceCategory.options.join(', ')}`
+            );
+        }
+
+        // `FOOD_DELIVERY:` with every entry commented out is an empty category.
+        if (items === null || items === undefined) continue;
+        if (!Array.isArray(items)) {
+            throw new Error(`${label}: ${key} must be a list of entries`);
+        }
+
+        for (const entry of validateEntries(
+            label,
+            items,
+            resourceEntrySchema,
+            seen,
+            key
+        )) {
+            resources.push({ ...entry, category: category.data });
+        }
+    }
+
+    return resources;
 }
 
 // Render a YYYY-MM-DD date the same way on every build machine: the bare date
@@ -213,7 +275,7 @@ let resources: Resource[] | undefined;
 let volunteers: VolunteerOpportunity[] | undefined;
 
 export function getResources(): Resource[] {
-    resources ??= loadList('resources.yaml', resourceSchema);
+    resources ??= loadResources();
     return resources;
 }
 
