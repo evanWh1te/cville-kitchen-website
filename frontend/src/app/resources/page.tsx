@@ -17,9 +17,12 @@
  */
 
 import type { Metadata } from 'next';
-import { connection } from 'next/server';
-import type { Resource, ResourceCategory } from '@/lib/api';
-import { getResources } from '@/lib/server-api';
+import {
+    formatLastUpdated,
+    getResources,
+    type Resource,
+    type ResourceCategory
+} from '@/lib/content';
 import { resourceListSchema } from '@/lib/structured-data';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -95,7 +98,7 @@ function ResourceCard({ resource }: { resource: Resource }) {
                 {resource.lastUpdated && (
                     <div className="mt-0 mb-4 text-xs text-gray-500">
                         Last updated:{' '}
-                        {new Date(resource.lastUpdated).toLocaleDateString()}
+                        {formatLastUpdated(resource.lastUpdated)}
                     </div>
                 )}
             </h3>
@@ -227,88 +230,25 @@ function groupByCategory(resources: Resource[]) {
     return grouped;
 }
 
-// Hardcoded resources not stored in DB; displayed separately
-function buildStaticResources(): Resource[] {
-    const now = new Date().toISOString();
+export default function ResourcesPage() {
+    const allResources = getResources();
 
-    return [
-        {
-            id: 'street-sheet',
-            title: 'Charlottesville Access Project - Street Sheet Resources',
-            description:
-                'Contains information on public meals, emergency food, church based pantries, kids/student meals, and food delivery services.',
-            category: 'ADDITIONAL_RESOURCES',
-            type: 'OTHER',
-            website:
-                'https://jmrl.org/sites/default/files/2025-02/StreetSheet-Edition31.pdf',
-            email: 'cvillestreetsheet@gmail.com',
-            lastUpdated: now,
-            isActive: true,
-            createdAt: now,
-            updatedAt: now
-        },
-        {
-            id: 'helpful-resource-by-city',
-            title: '@helpfulresourcesbycity',
-            description:
-                'Available resources to reduce violence, poverty, drug overdoses, etc. by city.',
-            category: 'ADDITIONAL_RESOURCES',
-            type: 'OTHER',
-            website: 'https://linktr.ee/helpfulresourcesbycity',
-            lastUpdated: now,
-            isActive: true,
-            createdAt: now,
-            updatedAt: now
-        },
-        {
-            id: 'municipality',
-            title: 'City of Charlottesville & Albemarle County Food Resources',
-            description:
-                'Links to emergency food, delivered food, and public meal resources',
-            category: 'ADDITIONAL_RESOURCES',
-            type: 'OTHER',
-            website:
-                'https://www.charlottesville.gov/377/Available-Food-Resources-in-the-Communit',
-            lastUpdated: now,
-            isActive: true,
-            createdAt: now,
-            updatedAt: now
-        }
-    ];
-}
-
-export default async function ResourcesPage() {
-    // Opt out of build-time prerendering: the backend is not running during
-    // `next build`. The fetch itself is still cached, so crawlers and visitors
-    // get fully rendered HTML without a per-request database read.
-    await connection();
-
-    const { data: resources, error } = await getResources();
+    // ADDITIONAL_RESOURCES are other people's directories, rendered in their
+    // own "External Resources" block (in YAML order) rather than as a
+    // category section, and left out of the table of contents.
+    const externalResources = allResources.filter(
+        (resource) => resource.category === 'ADDITIONAL_RESOURCES'
+    );
+    const resources = allResources.filter(
+        (resource) => resource.category !== 'ADDITIONAL_RESOURCES'
+    );
 
     const resourcesByCategory = groupByCategory(resources);
-    const staticResources = buildStaticResources();
-
-    if (error) {
-        return (
-            <div className="min-h-screen bg-accent-50">
-                <Header />
-                <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                        <h2 className="text-lg font-semibold text-red-800 mb-2">
-                            Error Loading Resources
-                        </h2>
-                        <p className="text-red-700">{error}</p>
-                    </div>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
 
     return (
         <div className="bg-accent-50">
-            {/* Only the database-backed entries; the hardcoded external links
-                below are other people's directories, not resources we list. */}
+            {/* Only the resources we list; the external directories below are
+                other people's listings. */}
             <JsonLd data={resourceListSchema(resources)} />
             <Header />
             <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
@@ -406,9 +346,9 @@ export default async function ResourcesPage() {
                             mental health, housing, and more.
                         </p>
                         <div className="space-y-4">
-                            {staticResources.map((resource) => (
+                            {externalResources.map((resource) => (
                                 <ResourceCard
-                                    key={resource.id}
+                                    key={resource.slug}
                                     resource={resource}
                                 />
                             ))}
@@ -470,7 +410,7 @@ export default async function ResourcesPage() {
                                                             (resource) => (
                                                                 <ResourceCard
                                                                     key={
-                                                                        resource.id
+                                                                        resource.slug
                                                                     }
                                                                     resource={
                                                                         resource
@@ -488,7 +428,7 @@ export default async function ResourcesPage() {
                                     <div className="space-y-4">
                                         {categoryResources.map((resource) => (
                                             <ResourceCard
-                                                key={resource.id}
+                                                key={resource.slug}
                                                 resource={resource}
                                             />
                                         ))}

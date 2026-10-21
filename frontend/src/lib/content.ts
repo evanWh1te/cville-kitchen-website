@@ -202,6 +202,13 @@ function loadList<T extends { slug: string }>(
     return entries;
 }
 
+// Render a YYYY-MM-DD date the same way on every build machine: the bare date
+// is read as UTC midnight and formatted in UTC, so neither the build host's
+// locale nor its timezone can shift it.
+export function formatLastUpdated(date: string): string {
+    return new Date(date).toLocaleDateString('en-US', { timeZone: 'UTC' });
+}
+
 let resources: Resource[] | undefined;
 let volunteers: VolunteerOpportunity[] | undefined;
 

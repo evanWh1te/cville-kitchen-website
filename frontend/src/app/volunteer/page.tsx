@@ -17,9 +17,11 @@
  */
 
 import type { Metadata } from 'next';
-import { connection } from 'next/server';
-import type { VolunteerOpportunity, VolunteerCategory } from '@/lib/api';
-import { getVolunteerOpportunities } from '@/lib/server-api';
+import {
+    getVolunteerOpportunities,
+    type VolunteerOpportunity,
+    type VolunteerCategory
+} from '@/lib/content';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -205,20 +207,15 @@ function VolunteerSection({
             </h2>
             <div className="space-y-4">
                 {volunteers.map((volunteer) => (
-                    <VolunteerCard key={volunteer.id} volunteer={volunteer} />
+                    <VolunteerCard key={volunteer.slug} volunteer={volunteer} />
                 ))}
             </div>
         </section>
     );
 }
 
-export default async function Volunteer() {
-    // Opt out of build-time prerendering: the backend is not running during
-    // `next build`. The fetch itself is still cached, so crawlers and visitors
-    // get fully rendered HTML without a per-request database read.
-    await connection();
-
-    const { data: volunteers, error } = await getVolunteerOpportunities();
+export default function Volunteer() {
+    const volunteers = getVolunteerOpportunities();
 
     // Group volunteers by category
     const volunteersByCategory = volunteers.reduce(
@@ -231,23 +228,6 @@ export default async function Volunteer() {
         },
         {} as Record<VolunteerCategory, VolunteerOpportunity[]>
     );
-
-    if (error) {
-        return (
-            <div className="min-h-screen bg-accent-50">
-                <Header />
-                <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                        <h2 className="text-lg font-semibold text-red-800 mb-2">
-                            Error Loading Volunteer Opportunities
-                        </h2>
-                        <p className="text-red-700">{error}</p>
-                    </div>
-                </div>
-                <Footer />
-            </div>
-        );
-    }
 
     return (
         <div className="bg-accent-50">

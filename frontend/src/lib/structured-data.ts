@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import type { Resource } from '@/lib/api';
+import type { Resource } from '@/lib/content';
 import { SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/site';
 
 // Drop keys whose value is absent so optional database columns never turn into

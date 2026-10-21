@@ -12,6 +12,7 @@ yarn-error.log*
 dist/
 build/
 .next/
+frontend/out/
 
 # Environment variables
 .env
