@@ -1,6 +1,6 @@
 {
     "name": "cville-kitchen",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Charlottesville Kitchen - Mutual Aid Organization Website",
     "private": true,
     "packageManager": "pnpm@11.10.0",
