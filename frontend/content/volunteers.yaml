@@ -1,0 +1,124 @@
+# Volunteer opportunities.
+#
+# This file is read and validated at build time (frontend/src/lib/content.ts).
+# A mistake here fails `next build` with a message naming the entry and field.
+# The file is a list; each entry is a block starting with `- slug: ...`.
+# To remove an entry, delete it or comment it out. Unknown fields are errors.
+#
+# Fields (R = required, O = optional; omit optional fields rather than leaving
+# them empty):
+#   slug            R  Unique kebab-case id: lowercase letters, digits, hyphens.
+#   title           R  Display name.
+#   category        R  One of:
+#     ADMINISTRATIVE
+#     COMMUNITY_GARDENS
+#     EDUCATION
+#     EVENT_COORDINATION
+#     FOOD_DISTRIBUTION
+#     FOOD_PREPARATION
+#     FUNDRAISING
+#     OUTREACH
+#     TRANSPORTATION
+#     OTHER
+#   type            R  One of:
+#     ONE_TIME
+#     RECURRING
+#     SEASONAL
+#     FLEXIBLE
+#     REMOTE
+#     ON_SITE
+#     LEADERSHIP
+#     TRAINING_PROVIDED
+#   description     O  Short summary.
+#   location        O  Place name.
+#   address         O  Street address.
+#   phone           O  Phone number (rendered as a tel: link).
+#   email           O  Email address (rendered as a mailto: link).
+#   website         O  Full URL including https:// (rendered as a link).
+#   hours           O  When it is open or available.
+#   requirements    O  Eligibility or what to bring.
+#   notes           O  Anything else worth knowing.
+#   contactInfo     O  Free-text contact details.
+#   timeCommitment  O  Expected time commitment.
+#   skills          O  Skills needed or helpful.
+#   lastUpdated     O  Date the entry was last verified, written YYYY-MM-DD
+#                      (for example 2025-11-13). Leave out for external links.
+#
+# Long text: use a block scalar (`description: >-` or `|-`) and indent the
+# following lines. Quote values containing ": " or starting with special
+# characters such as @, &, *, # or %.
+#
+# Display order on the site follows the page code, not this file; entries are
+# listed here by category, then title, for easy scanning.
+
+- slug: community-potluck-at-visible-records-volunteer
+  title: Community Potluck at Visible/Records - Volunteer
+  category: EVENT_COORDINATION
+  type: RECURRING
+  description: Help organize monthly community potluck. Bringing a dish is not required to attend or volunteer
+  location: Visible/Records
+  address: 1740 Broadway Street
+  hours: 1st Sunday monthly, 12:30-3:30pm
+  notes: Great opportunity for event coordination and community building
+  contactInfo: Instagram @communitypotluck.cville
+  timeCommitment: Monthly, first Sunday
+  lastUpdated: 2025-11-13
+- slug: bread-across-borders-sorting-volunteer
+  title: Bread Across Borders - Sorting Volunteer
+  category: FOOD_DISTRIBUTION
+  type: RECURRING
+  description: Help sort and distribute food on Sunday afternoons
+  email: breadacrossborders@gmail.com
+  hours: "Sunday afternoons. Sorting: 11:30am-1pm"
+  contactInfo: "Email: breadacrossborders@gmail.com"
+  timeCommitment: Weekly, Sunday afternoons
+  lastUpdated: 2025-11-13
+- slug: charlottesville-food-not-bombs-volunteer
+  title: Charlottesville Food Not Bombs - Volunteer
+  category: FOOD_DISTRIBUTION
+  type: RECURRING
+  description: Help with food distribution and community potluck. A grassroots movement providing free
+    vegan meals and mutual aid.
+  location: IX Art Park
+  address: 522 2nd Street SE D
+  hours: Every Wednesday at 6:15pm
+  notes: Volunteers welcome to help with food prep, distribution, and cleanup
+  timeCommitment: Weekly, Wednesday evenings
+  lastUpdated: 2025-11-13
+- slug: food-sharing-is-caring-distribution-volunteer
+  title: Food Sharing is Caring - Distribution Volunteer
+  category: FOOD_DISTRIBUTION
+  type: RECURRING
+  description: Food distribution - bring two bags. Volunteer 9:30am-12:30pm on distribution days
+  location: Tonsler Park
+  email: edisa@foodsharingiscaring.org
+  hours: Every Sunday at 10am
+  notes: Can donate money at website or in-kind donations via email
+  contactInfo: "Email: edisa@foodsharingiscaring.org"
+  timeCommitment: Weekly, Sunday mornings (9:30am-12:30pm)
+  lastUpdated: 2025-11-13
+- slug: cville-care-bears-street-outreach
+  title: Cville Care Bears - Street Outreach
+  category: OUTREACH
+  type: RECURRING
+  description: Provide food, drink, harm reduction, and other necessities on the downtown mall. Also
+    organize Free Farmers Market & Potluck
+  location: Downtown Mall
+  email: CvilleFreeFarmersMarket@proton.me
+  hours: Every weekend
+  contactInfo: "Instagram @cvillecarebears, Email: CvilleFreeFarmersMarket@proton.me"
+  timeCommitment: Weekly, weekend availability
+  skills: Compassion, non-judgmental approach, harm reduction knowledge helpful but not required
+  lastUpdated: 2025-11-13
+- slug: virginia-fresh-match-program-market-support
+  title: Virginia Fresh Match Program - Market Support
+  category: OUTREACH
+  type: SEASONAL
+  description: Help connect SNAP recipients with the Fresh Match program at farmers markets. Program
+    doubles SNAP for fruits and vegetables plus provides extra tokens
+  location: Farmers Markets
+  address: Farmers Market at IX Art Park and Charlottesville City Farmers Market (100 Water Street)
+  hours: Saturdays 9am-1pm
+  timeCommitment: Weekly during farmers market season, Saturday mornings
+  skills: Customer service, familiarity with SNAP benefits helpful
+  lastUpdated: 2025-11-13
