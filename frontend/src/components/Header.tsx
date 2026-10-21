@@ -1,10 +1,5 @@
 /*
- * Das Kitchen - Mutual    const navigation = [
-        { name: 'Home', href: '/' },
-        { name: 'About', href: '/about' },
-        { name: 'Education', href: '/education' },
-        { name: 'Contact', href: '/contact' },
-    ];rganization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify

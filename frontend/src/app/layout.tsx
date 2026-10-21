@@ -20,6 +20,9 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Poppins } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { SITE_NAME, SITE_URL } from '@/lib/site';
+import { siteSchema } from '@/lib/structured-data';
+import JsonLd from '@/components/JsonLd';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -33,15 +36,24 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-    title: 'Charlottesville Kitchen - Community Mutual Aid',
+    // Lets Next resolve canonical and Open Graph URLs to absolute ones, which
+    // both the sitemap and social previews depend on.
+    metadataBase: new URL(SITE_URL),
+    title: {
+        default: 'Charlottesville Kitchen - Community Mutual Aid',
+        template: `%s | ${SITE_NAME}`
+    },
     description:
         'Building community resilience through mutual aid and solidarity. Join us in creating a more equitable world.',
+    alternates: {
+        canonical: '/'
+    },
     keywords: [
         'mutual aid',
         'community',
         'solidarity',
         'social justice',
-        'das kitchen'
+        'charlottesville kitchen'
     ],
     authors: [{ name: 'Charlottesville Kitchen Organization' }],
     openGraph: {
@@ -49,7 +61,9 @@ export const metadata: Metadata = {
         description:
             'Building community resilience through mutual aid and solidarity.',
         type: 'website',
-        locale: 'en_US'
+        locale: 'en_US',
+        siteName: SITE_NAME,
+        url: '/'
     },
     icons: {
         icon: '/favicon.ico',
@@ -64,8 +78,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
+        <html
+            lang="en"
+            className={`scroll-smooth ${inter.variable} ${poppins.variable}`}
+        >
             <body className="min-h-screen bg-white text-gray-900 antialiased flex flex-col">
+                <JsonLd data={siteSchema()} />
                 <AuthProvider>{children}</AuthProvider>
             </body>
         </html>

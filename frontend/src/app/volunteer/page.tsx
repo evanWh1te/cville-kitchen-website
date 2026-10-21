@@ -1,7 +1,5 @@
-'use client';
-
 /*
- * Das Kitchen - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,14 +16,32 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { useEffect, useState } from 'react';
-import {
-    volunteersAPI,
-    VolunteerOpportunity,
-    VolunteerCategory
-} from '@/lib/api';
+import type { Metadata } from 'next';
+import { connection } from 'next/server';
+import type { VolunteerOpportunity, VolunteerCategory } from '@/lib/api';
+import { getVolunteerOpportunities } from '@/lib/server-api';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
+export const metadata: Metadata = {
+    title: 'Volunteer Opportunities',
+    alternates: { canonical: '/volunteer' },
+    description:
+        'Volunteer to fight food insecurity in Charlottesville. Find opportunities in food preparation and distribution, community gardens, outreach, transportation, and event coordination.',
+    keywords: [
+        'volunteer charlottesville',
+        'food bank volunteer',
+        'community garden volunteer',
+        'mutual aid volunteer',
+        'food insecurity'
+    ],
+    openGraph: {
+        title: 'Volunteer Opportunities in Charlottesville',
+        description:
+            'Find ways to get involved fighting food insecurity in Charlottesville.',
+        type: 'website'
+    }
+};
 
 const categoryLabels: Record<VolunteerCategory, string> = {
     FOOD_PREPARATION: 'Food Preparation',
@@ -196,74 +212,40 @@ function VolunteerSection({
     );
 }
 
-export default function Volunteer() {
-    const [volunteers, setVolunteers] = useState<VolunteerOpportunity[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+export default async function Volunteer() {
+    // Opt out of build-time prerendering: the backend is not running during
+    // `next build`. The fetch itself is still cached, so crawlers and visitors
+    // get fully rendered HTML without a per-request database read.
+    await connection();
 
-    useEffect(() => {
-        const fetchVolunteers = async () => {
-            try {
-                setLoading(true);
-                const response = await volunteersAPI.getAll();
-                setVolunteers(response.volunteers);
-            } catch (err) {
-                console.error('Failed to fetch volunteer opportunities:', err);
-                setError(
-                    'Failed to load volunteer opportunities. Please try again later.'
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchVolunteers();
-    }, []);
+    const { data: volunteers, error } = await getVolunteerOpportunities();
 
     // Group volunteers by category
-    const volunteersByCategory = volunteers.reduce((acc, volunteer) => {
-        if (!acc[volunteer.category]) {
-            acc[volunteer.category] = [];
-        }
-        acc[volunteer.category].push(volunteer);
-        return acc;
-    }, {} as Record<VolunteerCategory, VolunteerOpportunity[]>);
-
-    if (loading) {
-        return (
-            <>
-                <Header />
-                <main className="min-h-screen bg-gray-50">
-                    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                            <p className="mt-4 text-gray-600">
-                                Loading volunteer opportunities...
-                            </p>
-                        </div>
-                    </div>
-                </main>
-                <Footer />
-            </>
-        );
-    }
+    const volunteersByCategory = volunteers.reduce(
+        (acc, volunteer) => {
+            if (!acc[volunteer.category]) {
+                acc[volunteer.category] = [];
+            }
+            acc[volunteer.category].push(volunteer);
+            return acc;
+        },
+        {} as Record<VolunteerCategory, VolunteerOpportunity[]>
+    );
 
     if (error) {
         return (
-            <>
-                <div className="min-h-screen bg-accent-50">
-                    <Header />
-                    <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                            <h2 className="text-lg font-semibold text-red-800 mb-2">
-                                Error Loading Volunteer Opportunities
-                            </h2>
-                            <p className="text-red-700">{error}</p>
-                        </div>
+            <div className="min-h-screen bg-accent-50">
+                <Header />
+                <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                        <h2 className="text-lg font-semibold text-red-800 mb-2">
+                            Error Loading Volunteer Opportunities
+                        </h2>
+                        <p className="text-red-700">{error}</p>
                     </div>
-                    <Footer />
                 </div>
-            </>
+                <Footer />
+            </div>
         );
     }
 

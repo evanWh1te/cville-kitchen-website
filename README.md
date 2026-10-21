@@ -71,8 +71,8 @@ Create the backend environment file and a local database:
 cp backend/.env.example backend/.env
 # edit backend/.env — at minimum set JWT_SECRET
 
-pnpm --filter @das-kitchen/backend exec prisma migrate dev
-pnpm --filter @das-kitchen/backend db:seed
+pnpm --filter @cville-kitchen/backend exec prisma migrate dev
+pnpm --filter @cville-kitchen/backend db:seed
 ```
 
 Run both apps together from the repo root:
@@ -102,6 +102,11 @@ The frontend uses `BACKEND_INTERNAL_URL` (defaults to
 `http://127.0.0.1:3001/api`) to reach the backend when proxying, and
 `COOKIE_INSECURE=true` to allow cookies over plain HTTP in local/container runs.
 
+`SITE_URL` (defaults to `https://cville.kitchen`) is the base for canonical
+tags, Open Graph URLs, `sitemap.xml`, and structured data. Statically
+prerendered pages bake it in at build time, so pointing a staging deploy at a
+different domain means setting it for the build, not only the container.
+
 ## Creating the first admin
 
 Either set `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` before running the seed,
@@ -122,7 +127,8 @@ Run from the repo root:
 
 Add `:frontend` or `:backend` to target a single workspace (e.g.
 `pnpm build:backend`). Backend-specific database scripts live in
-`backend/package.json` (`db:seed`, `db:reset`).
+`backend/package.json` (`db:seed`, `db:reset`), and `scripts/backup-db.sh`
+snapshots the database (see [Backups](#backups)).
 
 ## API endpoints
 
@@ -163,6 +169,47 @@ docker compose up --build
 
 The container expects the SQLite database to be mounted at `/app/backend/data/`.
 Set `PRISMA_MIGRATE=true` to run `prisma migrate deploy` on startup.
+
+## Backups
+
+The database is a single SQLite file on a bind mount, so nothing is backed up by
+default — losing the volume loses every resource and volunteer entry the admins
+have written. `scripts/backup-db.sh` takes a consistent snapshot using SQLite's
+online backup API, which is safe to run while the app is serving traffic (a
+plain `cp` is not).
+
+```bash
+# writes ./backups/database-YYYYmmdd-HHMMSS.db.gz
+./scripts/backup-db.sh
+
+# point it at the real deployment paths
+DB_PATH=/srv/kitchen/data/database.db \
+BACKUP_DIR=/var/backups/kitchen \
+RETENTION_DAYS=30 \
+    ./scripts/backup-db.sh
+```
+
+Each snapshot is verified with `PRAGMA integrity_check` and discarded if it
+fails, and old snapshots are pruned only after a verified success, so a run of
+failures can never leave you with nothing.
+
+Schedule it from the host crontab (`crontab -e`) — nightly at 3:15am:
+
+```cron
+15 3 * * * DB_PATH=/srv/kitchen/data/database.db BACKUP_DIR=/var/backups/kitchen /srv/kitchen/scripts/backup-db.sh >> /var/log/kitchen-backup.log 2>&1
+```
+
+Restore by stopping the stack, decompressing over the database file, and
+starting again:
+
+```bash
+docker compose down
+gunzip -c /var/backups/kitchen/database-20250101-031500.db.gz > /srv/kitchen/data/database.db
+docker compose up -d
+```
+
+Backups on the same disk as the database do not protect against disk loss. Copy
+them off the host periodically.
 
 ## Contributing
 

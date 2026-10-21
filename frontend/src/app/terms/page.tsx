@@ -1,5 +1,5 @@
 /*
- * Charlottesville - Mutual Aid Organization Website
+ * Charlottesville Kitchen - Mutual Aid Organization Website
  * Copyright (C) 2025 Evan White
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,10 @@ import Footer from '@/components/Footer';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-    title: 'Terms of Service - Charlottesville Mutual Aid',
+    title: 'Terms of Service',
+    alternates: { canonical: '/terms' },
     description:
-        'Charlottesville Mutual Aid terms of service and usage guidelines.'
+        'Charlottesville Kitchen terms of service and usage guidelines.'
 };
 
 export default function TermsPage() {

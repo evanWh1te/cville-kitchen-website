@@ -1,0 +1,172 @@
+# @format
+#
+# CI/CD for cville-kitchen-website.
+#
+# On pull requests to main:
+#   1. verify — type-check and lint only. Nothing is published.
+#
+# On every push to main:
+#   1. verify — as above, gating the build.
+#   2. build  — build the container with the runner's Docker daemon and push it
+#               to the Forgejo registry, tagged with the short commit SHA
+#               (+ :latest).
+#   3. deploy — clone talos-deployments, bump the pinned image tag in
+#               applications/cville-kitchen-website/overlays/production, and
+#               commit. ArgoCD (watching that repo) then syncs it live.
+#
+# Forgejo scans .forgejo/workflows first and ignores .github/workflows entirely
+# when this directory exists, so the GitHub mirror's workflow never runs here
+# and this one never runs on GitHub. Neither side double-builds.
+#
+# PORT 80 / PLAIN HTTP:
+#   Forgejo (web + registry) is served over plain HTTP on :80 — there is no :443.
+#   A registry/image reference with no port defaults to :443, so every client
+#   (kaniko, docker, containerd) must be told to use :80 over HTTP explicitly:
+#     * docker push/login below address the registry as `…:80` (see IMAGE_PUSH),
+#       and the runner host's daemon must list it as insecure ON THAT PORT:
+#         /etc/docker/daemon.json
+#           { "insecure-registries": ["forgejo.whitehome.internal:80"] }
+#         sudo systemctl restart docker
+#     * the git clone in `deploy` uses http:// (not https://).
+#   The k8s manifests keep the BARE name (forgejo.whitehome.internal/…) with no
+#   port — the Talos nodes resolve that to http://…:80 via a registry mirror.
+#   The registry stores by repo path (evan/cville-kitchen-website), so the :80
+#   push and the bare-name pull hit the same repository.
+#
+# THIS APP IS STATEFUL — unlike the homepage, it owns a SQLite database at
+# /app/backend/data/database.db. The deployment it feeds must therefore:
+#   * mount a PersistentVolumeClaim at /app/backend/data
+#   * run replicas: 1 with strategy Recreate — SQLite takes a single writer, and
+#     the Next.js cache invalidation is per-process, so a second pod would serve
+#     stale listings after an admin edit
+#   * set PRISMA_MIGRATE=true, or a fresh volume never gets a schema
+#   * expose only port 3000; 3001 is the backend the proxy reaches on localhost
+#
+# REQUIRED repo/org secrets (Forgejo → repo Settings → Actions → Secrets):
+#   REGISTRY_USER   Forgejo username that owns the package (e.g. evan)
+#   REGISTRY_TOKEN  Forgejo access token with `write:package` scope
+#   DEPLOY_TOKEN    Forgejo access token with write access to the
+#                   evan/talos-deployments repo (for the tag write-back)
+
+name: build-deploy
+
+on:
+    push:
+        branches: [main]
+        tags: ['v*']
+    pull_request:
+        branches: [main]
+
+env:
+    # Bare name used in the k8s manifests / kustomize (Talos mirrors it to :80).
+    REGISTRY_HOST: forgejo.whitehome.internal
+    IMAGE: forgejo.whitehome.internal/evan/cville-kitchen-website
+    # HTTP-on-:80 endpoint used only by docker to log in / push.
+    REGISTRY_PUSH: forgejo.whitehome.internal:80
+    IMAGE_PUSH: forgejo.whitehome.internal:80/evan/cville-kitchen-website
+    # Baked into the image at build time; see the ARG in the Dockerfile.
+    SITE_URL: https://cville.kitchen
+
+jobs:
+    verify:
+        runs-on: debian
+        # Pinned to the same major as the Dockerfile's node:24-alpine base, so a
+        # type error cannot pass here and then fail the image build.
+        container:
+            image: docker.io/library/node:24-bookworm-slim
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            # corepack reads the packageManager field in package.json, so pnpm
+            # matches the version the lockfile was written with.
+            - name: Enable pnpm
+              run: |
+                  corepack enable
+                  corepack prepare --activate
+                  pnpm --version
+
+            - name: Install dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Generate Prisma client
+              run: pnpm --filter @cville-kitchen/backend exec prisma generate
+
+            - name: Type-check
+              run: pnpm type-check
+
+            - name: Lint
+              run: pnpm lint
+
+    build:
+        needs: verify
+        # Only publish images for pushes to main / version tags, not for PRs.
+        if: ${{ github.event_name == 'push' }}
+        runs-on: debian
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Build and push image
+              env:
+                  REGISTRY_USER: ${{ secrets.REGISTRY_USER }}
+                  REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+              run: |
+                  set -eu
+                  TAG="${GITHUB_SHA:0:12}"
+
+                  echo "$REGISTRY_TOKEN" | docker login "$REGISTRY_PUSH" \
+                    -u "$REGISTRY_USER" --password-stdin
+
+                  docker build \
+                    --build-arg "SITE_URL=${SITE_URL}" \
+                    -t "${IMAGE_PUSH}:${TAG}" \
+                    -t "${IMAGE_PUSH}:latest" \
+                    .
+
+                  docker push "${IMAGE_PUSH}:${TAG}"
+                  docker push "${IMAGE_PUSH}:latest"
+
+                  docker logout "$REGISTRY_PUSH" || true
+
+    deploy:
+        needs: build
+        # Tags produce an image but should not move production on their own.
+        if: ${{ github.ref == 'refs/heads/main' }}
+        runs-on: debian
+        container:
+            image: docker.io/library/debian:12-slim
+        steps:
+            - name: Install tooling
+              run: |
+                  apt-get update -qq && apt-get install -y -qq git curl ca-certificates tar >/dev/null
+                  KUSTOMIZE_VERSION=5.6.0
+                  curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" | tar xz -C /usr/local/bin kustomize
+
+            - name: Bump image tag in talos-deployments (GitOps write-back)
+              env:
+                  DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+              run: |
+                  set -e
+                  TAG="${GITHUB_SHA:0:12}"
+                  WS="$(pwd)"
+                  git config --global user.email "forgejo-ci@whitehome.internal"
+                  git config --global user.name "forgejo-ci"
+
+                  # Forgejo is plain HTTP on :80 — clone over http://.
+                  git clone --depth 1 \
+                    "http://x-access-token:${DEPLOY_TOKEN}@${REGISTRY_HOST}/evan/talos-deployments.git" \
+                    "$WS/talos-deployments"
+                  git config --global --add safe.directory "$WS/talos-deployments"
+
+                  cd "$WS/talos-deployments/applications/cville-kitchen-website/overlays/production"
+                  # Manifests use the BARE name (no :80); Talos mirror handles HTTP.
+                  kustomize edit set image "${IMAGE}=${IMAGE}:${TAG}"
+
+                  cd "$WS/talos-deployments"
+                  if git diff --quiet; then
+                      echo "image tag already ${TAG} — nothing to deploy"
+                      exit 0
+                  fi
+                  git commit -am "deploy(cville-kitchen-website): image ${TAG}"
+                  git push origin main

@@ -22,18 +22,22 @@ COPY --from=deps /app/backend/node_modules ./backend/node_modules
 COPY . .
 
 # Generate the Prisma client into the shared store, then build both apps
-RUN pnpm --filter @das-kitchen/backend exec prisma generate
-RUN pnpm --filter @das-kitchen/backend build
+RUN pnpm --filter @cville-kitchen/backend exec prisma generate
+RUN pnpm --filter @cville-kitchen/backend build
 # Treat lint/type warnings as warnings, not build errors
 ENV CI=false
-RUN pnpm --filter @das-kitchen/frontend build
+# Statically prerendered pages bake canonical/Open Graph URLs in at build time,
+# so the site's base URL has to be present for the build, not just at run time.
+ARG SITE_URL=https://cville.kitchen
+ENV SITE_URL=$SITE_URL
+RUN pnpm --filter @cville-kitchen/frontend build
 
 # Drop devDependencies to slim the runtime image (build artifacts already
 # emitted). CI=true keeps pnpm from prompting before it purges node_modules,
 # which it cannot do without a TTY. The purge also discards the generated
 # Prisma client, so regenerate it against the pruned dependency tree.
 RUN CI=true pnpm prune --prod
-RUN pnpm --filter @das-kitchen/backend exec prisma generate
+RUN pnpm --filter @cville-kitchen/backend exec prisma generate
 
 # Runner stage
 FROM base AS runner

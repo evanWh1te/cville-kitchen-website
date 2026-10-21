@@ -1,10 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidateTag } from 'next/cache';
+import { PUBLIC_DATA_TAGS } from '@/lib/server-api';
 
 export const dynamic = 'force-dynamic';
 
 const INTERNAL_BASE = (
     process.env.BACKEND_INTERNAL_URL || 'http://127.0.0.1:3001/api'
 ).replace(/\/$/, '');
+
+// Admin writes to these backend paths change what the public listing pages
+// show, so a successful write drops the cached copy the pages read from.
+const CACHE_TAG_BY_PREFIX: ReadonlyArray<[string, string]> = [
+    ['/resources', PUBLIC_DATA_TAGS.resources],
+    ['/volunteers', PUBLIC_DATA_TAGS.volunteers]
+];
+
+function revalidatePublicDataFor(path: string) {
+    const match = CACHE_TAG_BY_PREFIX.find(
+        ([prefix]) => path === prefix || path.startsWith(`${prefix}/`)
+    );
+    if (match) {
+        // 'max' fully purges the entry. updateTag would be the alternative but
+        // it is only callable from a Server Action, not a route handler.
+        revalidateTag(match[1], 'max');
+    }
+}
 
 export async function proxyRequest(req: NextRequest, path: string) {
     const url = `${INTERNAL_BASE}${path.startsWith('/') ? path : `/${path}`}`;
@@ -21,6 +41,13 @@ export async function proxyRequest(req: NextRequest, path: string) {
         redirect: 'manual',
         cache: 'no-store'
     });
+
+    // Only a write that the backend actually accepted should clear the cache.
+    if (bodyAllowed && res.status < 400) {
+        revalidatePublicDataFor(
+            path.startsWith('/') ? path : `/${path}`
+        );
+    }
 
     const out = new NextResponse(res.body, { status: res.status });
 
