@@ -169,7 +169,8 @@ FREE_FRIDGES_PANTRIES:
       type: PANTRY
       location: PVCC Panther Pantry - Main Building
       address: PVCC Main Building
-      hours: 'Monday-Thursday: 8am-5:30pm, Friday: 8am-12pm, Closed Saturday/Sunday'
+      hours:
+          'Monday-Thursday: 8am-5:30pm, Friday: 8am-12pm, Closed Saturday/Sunday'
       requirements: For current PVCC students
       lastUpdated: 2025-11-13
 
@@ -178,7 +179,8 @@ FREE_FRIDGES_PANTRIES:
       type: PANTRY
       location: PVCC Panther Pantry - Stultz Center
       address: PVCC Stultz Center
-      hours: 'Monday-Thursday: 8am-10pm, Friday-Saturday: 8am-5pm, Closed Sunday'
+      hours:
+          'Monday-Thursday: 8am-10pm, Friday-Saturday: 8am-5pm, Closed Sunday'
       requirements: For current PVCC students
       lastUpdated: 2025-11-13
 
@@ -187,8 +189,9 @@ FREE_FRIDGES_PANTRIES:
       type: PANTRY
       location: The Beautiful Idea
       address: 411 East Main Street
-      hours: 'Tuesday-Thursday: 11am-8pm, Friday-Saturday: 10am-9pm, Sunday: 11am-7pm,
-          Closed Mondays'
+      hours:
+          'Tuesday-Thursday: 11am-8pm, Friday-Saturday: 10am-9pm, Sunday:
+          11am-7pm, Closed Mondays'
       notes: Inside location
       lastUpdated: 2025-11-13
 
@@ -198,8 +201,9 @@ FREE_FRIDGES_PANTRIES:
       description: Shelf-stable, reapportioned items, StudCo Free Store
       location: UVA Cavalier Food Pantry
       address: Newcomb Hall Student Activities Center, Room 144
-      hours: 'Monday-Thursday: 7am-12am, Friday: 7am-9pm, Saturday: 7am-12am, Sunday:
-          8am-12am during academic year'
+      hours:
+          'Monday-Thursday: 7am-12am, Friday: 7am-9pm, Saturday: 7am-12am,
+          Sunday: 8am-12am during academic year'
       requirements: For UVA students
       contactInfo: Instagram @pantryatuva
       lastUpdated: 2025-11-13
@@ -210,8 +214,9 @@ FREE_FRIDGES_PANTRIES:
       description: Perishable, shelf-stable, allergen, and hygiene items
       location: UVA Cavalier Food Pantry
       address: Student Health & Wellness 495
-      hours: 'Monday-Friday: 7:45am-2am, Saturday-Sunday: 7:45am-2am during academic
-          year'
+      hours:
+          'Monday-Friday: 7:45am-2am, Saturday-Sunday: 7:45am-2am during
+          academic year'
       requirements: For UVA students. Student swipe card access only
       contactInfo: Instagram @pantryatuva
       lastUpdated: 2025-11-13
@@ -219,7 +224,8 @@ FREE_FRIDGES_PANTRIES:
     - slug: visible-records-little-free-fridge
       title: Visible/Records Little Free Fridge
       type: PANTRY
-      description: Very high turnover; often a mix of fresh produce, bread, prepared
+      description:
+          Very high turnover; often a mix of fresh produce, bread, prepared
           foods, pantry items
       location: Visible/Records
       address: 1740 Broadway Street
@@ -236,9 +242,11 @@ EMERGENCY_FOOD:
       location: B.F. Yancey Community Center
       address: 7625 Porters Rd, Esmont, VA
       website: https://www.facebook.com/BFYanceyCommunityFoodPantry
-      hours: 'Open 5-7pm on Fridays. Food pantry: 5:30-8:30pm
+      hours:
+          'Open 5-7pm on Fridays. Food pantry: 5:30-8:30pm
           Monday/Wednesday/Thursday, 10am-2pm Tuesday/Wednesday/Friday'
-      notes: Drive-up, no need to call ahead. Also holds events like Backpack
+      notes:
+          Drive-up, no need to call ahead. Also holds events like Backpack
           giveaways. Check Facebook Page for most recent events and distribution
           dates. Updated 8/8/25
       contactInfo: 'Facebook: BFYanceyCommunityFoodPantry'
@@ -247,9 +255,11 @@ EMERGENCY_FOOD:
     - slug: blue-ridge-area-food-bank-eastern-region
       title: Blue Ridge Area Food Bank - Eastern Region
       type: PANTRY
-      description: For ongoing food needs, they refer people to partner food pantries.
+      description:
+          For ongoing food needs, they refer people to partner food pantries.
           Use food finder tool at foodfinder.brafb.org
-      location: Blue Ridge Area Food Bank, Eastern Region (Thomas Jefferson Branch)
+      location:
+          Blue Ridge Area Food Bank, Eastern Region (Thomas Jefferson Branch)
       address: 1207 Harris St, Charlottesville, VA 22902
       hours: Monday-Friday 7:30am-4:00pm
       notes: Regular assistance available. Updated 8/8/25
@@ -262,11 +272,14 @@ EMERGENCY_FOOD:
       location: Emergency Food Network
       address: 900 Harris St
       phone: 434-979-9180
-      hours: Call once per month between 9am and noon on Mondays, Wednesdays, and
+      hours:
+          Call once per month between 9am and noon on Mondays, Wednesdays, and
           Fridays. Pick up same day 1:30-3:30pm
-      requirements: Must provide last 4 digits of SSN, household size, and address.
-          Must live in Charlottesville or Albemarle county.
-      notes: Includes canned tuna and chicken, fruits, vegetables, cereal, beans,
+      requirements:
+          Must provide last 4 digits of SSN, household size, and address. Must
+          live in Charlottesville or Albemarle county.
+      notes:
+          Includes canned tuna and chicken, fruits, vegetables, cereal, beans,
           soup, peanut butter, mac and cheese, bread, margarine, cheese, and
           milk. Special diabetic bags available. Baby food and formula if
           available. Diapers available. Ready-to-eat foods for those without
@@ -277,15 +290,19 @@ EMERGENCY_FOOD:
     - slug: loaves-and-fishes
       title: Loaves and Fishes
       type: PANTRY
-      description: 7 days' supply, 2x/month. At minimum 100 lbs for 4-person household.
+      description:
+          7 days' supply, 2x/month. At minimum 100 lbs for 4-person household.
       location: Loaves and Fishes
       address: 2050 Lambs Road, Charlottesville, VA 22901
       phone: 434-996-7868
-      hours: 'Distribution: Wednesdays (2-4pm), Thursdays (6:30-8:30pm), Saturdays
+      hours:
+          'Distribution: Wednesdays (2-4pm), Thursdays (6:30-8:30pm), Saturdays
           (10am-12pm). Groceries by Appointment: Tuesdays 4-7pm'
-      requirements: Need names and birthdates of all household members plus total
-          monthly income. No proof required.
-      notes: 'Drive-through pick-up only. Parking lot opens one hour before
+      requirements:
+          Need names and birthdates of all household members plus total monthly
+          income. No proof required.
+      notes:
+          'Drive-through pick-up only. Parking lot opens one hour before
           distribution. Includes fresh eggs, milk, produce, bread, frozen meats,
           and shelf-stable staples. Families can come twice a month or more if
           needed. Pick-ups can be done by someone else on behalf of family (must
@@ -301,9 +318,11 @@ STUDENT_MEALS:
       description: Free and reduced meals program
       location: Albemarle County Public Schools
       website: https://www.k12albemarle.org/our-departments/nutrition
-      requirements: Students under 18 in Albemarle County Public School feeder areas
+      requirements:
+          Students under 18 in Albemarle County Public School feeder areas
       notes: Updated 8/8/25
-      contactInfo: Apply at
+      contactInfo:
+          Apply at
           k12albemarle.org/our-divisions/student-services/child-nutrition
       lastUpdated: 2025-11-13
 
@@ -337,7 +356,8 @@ CHURCH_PANTRIES:
       address: 4133 Earlysville Road, Earlysville, VA 22936
       phone: 434-973-2054
       hours: 2nd and 4th Wednesday of the month, 3:00-5:00pm
-      notes: Three-day emergency supply of food. No documentation necessary. Food
+      notes:
+          Three-day emergency supply of food. No documentation necessary. Food
           pantry takes place in Parish Hall. Drive through format. Updated
           8/8/25
       lastUpdated: 2025-11-13
@@ -350,7 +370,8 @@ CHURCH_PANTRIES:
       phone: (434) 973-6512
       website: https://www.coosonline.org/food-pantry
       hours: Monday, Wednesday, and Friday, 10:30am-12pm
-      notes: Food pantry located behind the church. No qualifications necessary.
+      notes:
+          Food pantry located behind the church. No qualifications necessary.
           Updated 8/8/25
       lastUpdated: 2025-11-13
 
@@ -361,7 +382,8 @@ CHURCH_PANTRIES:
       address: 1465 Incarnation Dr, Charlottesville, VA 22901
       email: foodministry@incarnationparish.org
       hours: Sunday, 1:30-3:30pm
-      notes: 'Can come weekly for non-perishables and vegetables. Every other week:
+      notes:
+          'Can come weekly for non-perishables and vegetables. Every other week:
           rice, beans, meat, eggs, cooking oil. No need to pre-register, no
           income or other requirements. Updated 8/8/25'
       contactInfo: 'Contact: Marta Daley'
@@ -384,10 +406,12 @@ CHURCH_PANTRIES:
       phone: (434) 295-7185
       website: https://holycomforterparish.org/soup-kitchen/
       hours: Monday, Tuesday, & Wednesday, 10:30am-12:30pm
-      notes: Walk-up to 3rd St entrance, taking orders outside. Also distributes
+      notes:
+          Walk-up to 3rd St entrance, taking orders outside. Also distributes
           packed lunches Thursday noon-1pm at 3rd Street location. Updated
           8/8/25
-      contactInfo: 'Pickup Address: 215 3rd Street NE (right behind library), Phone:
+      contactInfo:
+          'Pickup Address: 215 3rd Street NE (right behind library), Phone:
           434-293-8989'
       lastUpdated: 2025-11-13
 
@@ -398,8 +422,9 @@ CHURCH_PANTRIES:
       address: 5804 St. George Ave, Crozet, VA 22932
       phone: 434-823-5171
       hours: 3rd Thursday of the month
-      requirements: Requires referral from school counselors, may also accept requests
-          for help by calling
+      requirements:
+          Requires referral from school counselors, may also accept requests for
+          help by calling
       lastUpdated: 2025-11-13
 
     - slug: new-beginnings-christian-community
@@ -410,7 +435,8 @@ CHURCH_PANTRIES:
       phone: 434-249-5691
       website: https://www.newbeginningschristiancommunity.com
       hours: Friday, 1-4pm
-      notes: Call to arrange pick-up of a bag of food. Delivery available only for
+      notes:
+          Call to arrange pick-up of a bag of food. Delivery available only for
           extreme emergencies or those who cannot leave house. Fresh food
           available! No questions asked for ID or address. Can get 1-2 boxes per
           family. Updated 5/9/25
@@ -437,10 +463,12 @@ CHURCH_PANTRIES:
     - slug: unitarian-universalists
       title: Unitarian Universalists
       type: PANTRY
-      location: Unitarian Universalists (previously Thomas Jefferson Memorial Church)
+      location:
+          Unitarian Universalists (previously Thomas Jefferson Memorial Church)
       address: 717 Rugby Rd, Charlottesville, VA 22903
       hours: 1st Friday of the month, 9:00-10:00am
-      notes: Sign in at Summit House Parking Lot (703 Rugby Rd) starting at 8:00am.
+      notes:
+          Sign in at Summit House Parking Lot (703 Rugby Rd) starting at 8:00am.
           First-come-first-serve basis. Updated 8/8/25
       lastUpdated: 2025-11-13
 
@@ -448,7 +476,8 @@ FOOD_DELIVERY:
     - slug: blue-ridge-area-food-bank-reach-program
       title: Blue Ridge Area Food Bank REACH Program
       type: DELIVERY
-      description: Works with community partners to provide Reach bags via delivery or
+      description:
+          Works with community partners to provide Reach bags via delivery or
           pickup to seniors and homebound individuals who are food insecure
       location: Blue Ridge Area Food Bank
       phone: 434-248-3663
@@ -461,27 +490,32 @@ FOOD_DELIVERY:
       description: Home delivered meals for eligible seniors
       location: JABA
       phone: 434-817-5244
-      requirements: Individuals above age 60 who are low income, unable to leave home
+      requirements:
+          Individuals above age 60 who are low income, unable to leave home
           without assistance, unable to prepare meals due to disability or
           health, and have no caregiver to prepare well-balanced meals
-      notes: Continuing deliveries. Call for more information or fill out online form.
-          Updated 8/8/25
+      notes:
+          Continuing deliveries. Call for more information or fill out online
+          form. Updated 8/8/25
       lastUpdated: 2025-11-13
 
     - slug: meals-on-wheels
       title: Meals on Wheels
       type: DELIVERY
-      description: Meal delivery service to residents in Charlottesville and most of
+      description:
+          Meal delivery service to residents in Charlottesville and most of
           Albemarle county. One meal a day during lunchtime hours
       location: Meals on Wheels
       phone: 434-293-4364
       website: https://mealsonwheelscville.org
       hours: Office open Monday-Friday 9am-1pm
-      requirements: No age or income requirement, but goal is to reach home-bound
+      requirements:
+          No age or income requirement, but goal is to reach home-bound
           neighbors (unable to drive, usually alone during day) who are unable
           to provide their own meals
       notes: Hot lunch delivery meals running. Updated 8/8/25
-      contactInfo: Apply online at mealsonwheelscville.org or call office and leave
+      contactInfo:
+          Apply online at mealsonwheelscville.org or call office and leave
           message
       lastUpdated: 2025-11-13
 
@@ -489,7 +523,8 @@ LOCAL_EFFORTS:
     - slug: bellair-farm
       title: Bellair Farm
       type: PANTRY
-      description: “Buy a Bushel” program - you can help cover the costs of harvesting
+      description:
+          “Buy a Bushel” program - you can help cover the costs of harvesting
           and delivering food (to Loaves & Fishes for example). Freezer Fill Box
           (bulk meat) - $360+ worth of items for $300
       notes: DM on Instagram @bellairfarmcsa for more information
@@ -518,15 +553,17 @@ LOCAL_EFFORTS:
       location: Visible/Records
       address: 1740 Broadway Street
       hours: '1st Sunday monthly: 12:30-3:30pm'
-      notes: Bringing a dish is not required to attend, Updates on Instagram
+      notes:
+          Bringing a dish is not required to attend, Updates on Instagram
           @communitypotluck.cville
       lastUpdated: 2025-11-13
 
     - slug: cville-care-bears
       title: Cville Care Bears
       type: PANTRY
-      description: On the mall every weekend to provide food, drink, harm reduction,
-          and other necessities
+      description:
+          On the mall every weekend to provide food, drink, harm reduction, and
+          other necessities
       location: Charlottesville Downtown Mall
       email: cvillefreefarmersmarket@proton.me
       notes: Updates on Instagram @cvillecarebears
@@ -535,7 +572,8 @@ LOCAL_EFFORTS:
     - slug: food-assist-uva
       title: Food Assist @UVA
       type: PANTRY
-      description: Food Assist is a club composed of students at the University of
+      description:
+          Food Assist is a club composed of students at the University of
           Virginia who volunteer to deliver food donations from local
           restaurants and University organizations to community members in need.
           How would you like to get involved?
@@ -549,7 +587,8 @@ LOCAL_EFFORTS:
       email: edisa@foodsharingiscaring.org
       website: https://foodsharingiscaring.org
       hours: Sunday at 10AM
-      notes: 'Donate: $ at website / in-kind, Volunteer: 9:30am-12:30pm on distro
+      notes:
+          'Donate: $ at website / in-kind, Volunteer: 9:30am-12:30pm on distro
           days'
       lastUpdated: 2025-11-13
 
@@ -562,7 +601,8 @@ LOCAL_EFFORTS:
     - slug: piedmont-feeds
       title: Piedmont Feeds
       type: PANTRY
-      description: Website connecting individuals and families with food pantries,
+      description:
+          Website connecting individuals and families with food pantries,
           prepared meals, free grocery programs, and other resources across
           Culpeper, Fauquier, Madison, Orange, and Rappahannock counties
       website: https://piedmontfeeds.org
@@ -571,14 +611,16 @@ LOCAL_EFFORTS:
     - slug: prolyfyck-run-crews-pantries
       title: Prolyfyck Run Crew’s pantries
       type: PANTRY
-      description: Providing nonperishables, hygiene & menstrual products to the
+      description:
+          Providing nonperishables, hygiene & menstrual products to the
           communities they run through
-      notes: 'Food drive needs: canned goods (soups, vegetables, beans, tuna, etc.);
-          dry goods (rice, pasta, cereal, oats); hygiene items (toothpaste,
-          soap, menstrual products); snacks and shelf-stable items (granola
-          bars, nut butter, etc.). Drop off spots: Studio IX/JBird Supply
-          Coffee, Jefferson School Foundation (Suite 151), The Barbers Den
-          (during operating hours). Updates on Instagram @prolyfyckruncreww'
+      notes:
+          'Food drive needs: canned goods (soups, vegetables, beans, tuna,
+          etc.); dry goods (rice, pasta, cereal, oats); hygiene items
+          (toothpaste, soap, menstrual products); snacks and shelf-stable items
+          (granola bars, nut butter, etc.). Drop off spots: Studio IX/JBird
+          Supply Coffee, Jefferson School Foundation (Suite 151), The Barbers
+          Den (during operating hours). Updates on Instagram @prolyfyckruncreww'
       lastUpdated: 2025-11-13
 
     - slug: scrappy-elephant-food-drive
@@ -586,7 +628,8 @@ LOCAL_EFFORTS:
       type: PANTRY
       description: Donations for the Blue Ridge Area Food Ban
       address: 1745 Allied Street, Suite C
-      notes: 'Most needed items (NO GLASS): staples (canned fruits and veg, low
+      notes:
+          'Most needed items (NO GLASS): staples (canned fruits and veg, low
           sugar/sodium); proteins (nut butters, canned tuna/chicken, canned or
           dry beans); grains (cereal, pasta, rice, oatmeal, mac&cheese); meal
           makers (soups, stews, chilis, pasta sauce (low sodium)); seasonings:
@@ -603,7 +646,8 @@ LOCAL_EFFORTS:
       address: 100 Water Street
       website: https://www.virginiafreshmatch.org/locate
       hours: Saturdays 9am-1pm
-      notes: 'All November: Choose how much SNAP to spend, get double your SNAP for
+      notes:
+          'All November: Choose how much SNAP to spend, get double your SNAP for
           fruits and vegetables, plus get an extra $20 in tokens for free [If
           your SNAP balance is $0, you can still get $20 in free tokens for
           fruits and vegetables]'
@@ -612,7 +656,8 @@ LOCAL_EFFORTS:
 ADDITIONAL_RESOURCES:
     - slug: street-sheet
       title: Charlottesville Access Project - Street Sheet Resources
-      description: Contains information on public meals, emergency food, church based
+      description:
+          Contains information on public meals, emergency food, church based
           pantries, kids/student meals, and food delivery services.
       type: OTHER
       website: https://jmrl.org/sites/default/files/2025-02/StreetSheet-Edition31.pdf
@@ -620,13 +665,15 @@ ADDITIONAL_RESOURCES:
 
     - slug: helpful-resource-by-city
       title: '@helpfulresourcesbycity'
-      description: Available resources to reduce violence, poverty, drug overdoses,
-          etc. by city.
+      description:
+          Available resources to reduce violence, poverty, drug overdoses, etc.
+          by city.
       type: OTHER
       website: https://linktr.ee/helpfulresourcesbycity
 
     - slug: municipality
       title: City of Charlottesville & Albemarle County Food Resources
-      description: Links to emergency food, delivered food, and public meal resources
+      description:
+          Links to emergency food, delivered food, and public meal resources
       type: OTHER
       website: https://www.charlottesville.gov/377/Available-Food-Resources-in-the-Communit
